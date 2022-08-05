@@ -1,0 +1,8 @@
+## Build
+/node_modules/
+/public/build/
+.DS_Store
+
+#Editor
+.idea/
+qmk-editor.iml
