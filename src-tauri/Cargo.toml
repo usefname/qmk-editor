@@ -1,11 +1,10 @@
 [package]
-name = "app"
+name = "qmk-editor"
 version = "0.1.0"
 description = "A Tauri App"
-authors = ["you"]
 license = ""
 repository = ""
-default-run = "app"
+default-run = "qmk-editor"
 edition = "2021"
 rust-version = "1.57"
 
@@ -18,6 +17,8 @@ tauri-build = { version = "1.0.4", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.0.5", features = ["api-all"] }
+anyhow = "1.0.58"
+walkdir = "2"
 
 [features]
 # by default Tauri runs in production mode
