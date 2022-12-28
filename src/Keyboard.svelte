@@ -1,9 +1,10 @@
 <script>
-    import {layout_largest_x, layout_largest_y} from "./layout";
-    import {insertEmptyLayer, isLayerEmpty, padLayerSize} from "./layers";
+    import {layout_largest_x, layout_largest_y} from "./lib/layout";
+    import {insertEmptyLayer, isLayerEmpty, padLayerSize} from "./lib/layers";
     import {onMount} from "svelte";
     import KeyCap from "./KeyCap.svelte";
-    import {classifyKey, LAYERED_KEY, LAYERED_WHEN_HELD_KEY, NORMAL_KEY} from "./key-info.js";
+    import {classifyKey, LAYERED_KEY, LAYERED_WHEN_HELD_KEY, NORMAL_KEY} from "./lib/key-info.js";
+    import {eventKeyCodeToQMKKeyCode} from "./lib/keycode";
 
     export let name = "Unnamed keyboard";
     export let layout;
@@ -12,15 +13,6 @@
     let currentLayerIndex = 1;
     const max_layers = 10;
 
-    for (let i = 0; i < layout.length; i++) {
-        keymap.push("LM(KC_" + i + ")");
-    }
-
-    layers.push(keymap);
-    layers = padLayerSize(layers, layout.length);
-
-    $: currentLayer = layers[currentLayerIndex];
-    $: keyClass = layers[currentLayerIndex].map((val) => classifyKey(val));
     let largest_y = layout_largest_y(layout);
     let largest_x = layout_largest_x(layout);
     let key_x_spacing = 55;
@@ -54,20 +46,47 @@
             }
         }
     }
+
+    function handleSelectedKey(event) {
+        selectedKey = event.detail.key;
+    }
+
+    $: currentLayer = layers[currentLayerIndex];
+    $: keyClass = layers[currentLayerIndex].map((val) => classifyKey(val));
+    $: selectedKey = 3;
+
+    for (let i = 0; i < layout.length; i++) {
+        keymap.push("LM(KC_" + i + ")");
+    }
+
+    layers.push(keymap);
+    layers = padLayerSize(layers, layout.length);
+    const onKeyDown = (event) => {
+        if (event.key && eventKeyCodeToQMKKeyCode.has(event.code)) {
+            currentLayer[selectedKey] = eventKeyCodeToQMKKeyCode.get(event.code);
+            event.preventDefault();
+            selectedKey = null;
+        }
+    };
+
 </script>
 
-<div class="columns">
+<div class="columns"
+     tabindex="0"
+     on:keydown={onKeyDown}
+     autofocus
+>
     <div
         class="column keyboard is-narrow"
         style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}px; --key_y_spacing: {key_y_spacing}px; --key_width: {key_width}px; --key_height: {key_height}px"
     >
         {#each layout as key, i}
             {#if NORMAL_KEY === keyClass[i]}
-                <KeyCap {key} caption={currentLayer[i]} />
+                <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
             {:else if LAYERED_KEY === keyClass[i] }
-                <KeyCap {key} caption={currentLayer[i]} />
+                <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
             {:else if LAYERED_WHEN_HELD_KEY === keyClass[i] }
-                <KeyCap {key} caption={currentLayer[i]} />
+                <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
             {/if}
         {/each}
     </div>
@@ -90,7 +109,7 @@
         </div>
         {#each layers as layer, i}
             {#if !isLayerEmpty(layer)}
-                <label class="radio is-size-5">
+                <label class="label-layer-select radio is-size-5">
                     <input
                         value={i}
                         on:change={changeLayer}
@@ -98,7 +117,6 @@
                         name="layer"
                         checked={currentLayerIndex === i ? "checked" : ""}
                     />
-                    <!--                    <input type="radio" name="layer" checked={currentLayer === i ? 'checked':''}/>-->
                     {i}
                 </label>
             {:else}
@@ -108,17 +126,39 @@
                 </label>
             {/if}
         {/each}
-
     </div>
 </div>
-
+<div class="columns">
+    <div class="column column control">
+        <h4 class="is-size-4">Key type</h4>
+        <div class="column">
+            <label class="label-key-type radio is-size-5">
+                <input value="normal" type="radio" name="keytype" checked="true">
+                Normal
+            </label>
+            <label class="radio is-size-5">
+                <input value="layers" type="radio" name="keytype">
+                Layers
+            </label>
+            <label class="radio is-size-5">
+                <input value="raw" type="radio" name="keytype">
+                Raw
+            </label>
+        </div>
+    </div>
+</div>
 <style>
+    .columns {
+        outline: none;
+    }
     button {
         margin: 5px;
     }
     label.radio {
-        display: block;
         margin-left: 0.5em;
+    }
+    .label-layer-select {
+        display: block;
     }
     .keyboard {
         height: calc((var(--kb_largest_y) + 0.2) * var(--key_y_spacing));
