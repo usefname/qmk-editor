@@ -2,7 +2,7 @@
     import {layout_largest_x, layout_largest_y} from "./lib/layout";
     import {insertEmptyLayer, isLayerEmpty, padLayerSize} from "./lib/layers";
     import {onMount} from "svelte";
-    import KeyCap from "./KeyCap.svelte";
+    import KeyCap from "./KeyNormal.svelte";
     import {classifyKey, LAYERED_KEY, LAYERED_WHEN_HELD_KEY, NORMAL_KEY} from "./lib/key-info.js";
     import {eventKeyCodeToQMKKeyCode} from "./lib/keycode";
 
@@ -55,6 +55,11 @@
     $: keyClass = layers[currentLayerIndex].map((val) => classifyKey(val));
     $: selectedKey = 3;
 
+    let keyCapMode = "normal";
+    const keyCapModeNormal = "normal";
+    const keyCapModeLayer = "layer";
+    const keyCapModeRaw = "raw";
+
     for (let i = 0; i < layout.length; i++) {
         keymap.push("LM(KC_" + i + ")");
     }
@@ -81,13 +86,13 @@
         style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}px; --key_y_spacing: {key_y_spacing}px; --key_width: {key_width}px; --key_height: {key_height}px"
     >
         {#each layout as key, i}
-            {#if NORMAL_KEY === keyClass[i]}
+            <!--{#if NORMAL_KEY === keyClass[i]}-->
                 <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
-            {:else if LAYERED_KEY === keyClass[i] }
-                <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
-            {:else if LAYERED_WHEN_HELD_KEY === keyClass[i] }
-                <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
-            {/if}
+            <!--{:else if LAYERED_KEY === keyClass[i] }-->
+            <!--    <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>-->
+            <!--{:else if LAYERED_WHEN_HELD_KEY === keyClass[i] }-->
+            <!--    <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>-->
+            <!--{/if}-->
         {/each}
     </div>
 
@@ -133,19 +138,20 @@
         <h4 class="is-size-4">Key type</h4>
         <div class="column">
             <label class="label-key-type radio is-size-5">
-                <input value="normal" type="radio" name="keytype" checked="true">
+                <input value={keyCapModeNormal} bind:group={keyCapMode} type="radio" name="keytype" checked="true">
                 Normal
             </label>
             <label class="radio is-size-5">
-                <input value="layers" type="radio" name="keytype">
+                <input value={keyCapModeLayer} bind:group={keyCapMode} type="radio" name="keytype">
                 Layers
             </label>
             <label class="radio is-size-5">
-                <input value="raw" type="radio" name="keytype">
+                <input value={keyCapModeRaw} bind:group={keyCapMode} type="radio" name="keytype">
                 Raw
             </label>
         </div>
     </div>
+    Hello {keyCapMode}
 </div>
 <style>
     .columns {
