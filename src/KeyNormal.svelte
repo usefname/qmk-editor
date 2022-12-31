@@ -1,5 +1,6 @@
 <script>
     import {createEventDispatcher} from "svelte";
+    import {captionToLabel, getComposedKeyInnerCaption, isComposedKey, hasNoKey} from "./lib/key-info";
 
     export let caption;
     export let key;
@@ -8,28 +9,6 @@
 
     const eventDispatcher = createEventDispatcher();
 
-    function isEmpty(caption) {return caption === "KC_NO"}
-    function isNormalKey(caption) {return caption.substring(0,3) === "KC_"}
-    function isComposedKey(caption) {return caption.indexOf('(') > 0}
-    function getComposedKeyCaption(caption) {return caption.substring(0, caption.indexOf('('))}
-    function getComposedKeyInnerCaption(caption) {
-        if (caption.indexOf('(')) {
-            return captionToLabel(caption.substring(caption.indexOf('(')+1, caption.length-1));
-        }
-        return '';
-    }
-    function captionToLabel(caption) {
-        if (isEmpty(caption)) {
-            return "N/A";
-        } else if (isNormalKey(caption)) {
-            return caption.substring(3);
-        } else if (isComposedKey(caption)) {
-            return getComposedKeyCaption(caption);
-        }
-        else {
-            return caption;
-        }
-    }
 
     function dispatchSelectedKey() {
         let selectedValue = selected ? null : keyIndex;
@@ -39,8 +18,8 @@
 
 $: calculatedCaption = captionToLabel(caption);
     $: calculatedInnerCaption = getComposedKeyInnerCaption(caption);
-    $: calculatedColor = isEmpty(caption) ? "#999" : "#0a2040";
-    $: calculatedBackgroundColor = isEmpty(caption) ? "#eee" : "#dad4c4";
+    $: calculatedColor = hasNoKey(caption) ? "#999" : "#0a2040";
+    $: calculatedBackgroundColor = hasNoKey(caption) ? "#eee" : "#dad4c4";
     $: calculatedIsComposedKey = isComposedKey(caption);
 
 

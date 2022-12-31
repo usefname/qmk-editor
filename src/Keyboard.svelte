@@ -2,9 +2,11 @@
     import {layout_largest_x, layout_largest_y} from "./lib/layout";
     import {insertEmptyLayer, isLayerEmpty, padLayerSize} from "./lib/layers";
     import {onMount} from "svelte";
-    import KeyCap from "./KeyNormal.svelte";
+    import KeyNormal from "./KeyNormal.svelte";
     import {classifyKey, LAYERED_KEY, LAYERED_WHEN_HELD_KEY, NORMAL_KEY} from "./lib/key-info.js";
     import {eventKeyCodeToQMKKeyCode} from "./lib/keycode";
+    import KeyRaw from "./KeyRaw.svelte";
+    import KeyLayer from "./KeyLayer.svelte";
 
     export let name = "Unnamed keyboard";
     export let layout;
@@ -50,15 +52,18 @@
     function handleSelectedKey(event) {
         selectedKey = event.detail.key;
     }
+    function handleUpdateCaption(event) {
+        layers[currentLayerIndex][event.detail.key] = event.detail.caption;
+    }
 
     $: currentLayer = layers[currentLayerIndex];
     $: keyClass = layers[currentLayerIndex].map((val) => classifyKey(val));
     $: selectedKey = 3;
 
-    let keyCapMode = "normal";
     const keyCapModeNormal = "normal";
     const keyCapModeLayer = "layer";
     const keyCapModeRaw = "raw";
+    let keyCapMode = keyCapModeRaw;
 
     for (let i = 0; i < layout.length; i++) {
         keymap.push("LM(KC_" + i + ")");
@@ -67,7 +72,7 @@
     layers.push(keymap);
     layers = padLayerSize(layers, layout.length);
     const onKeyDown = (event) => {
-        if (event.key && eventKeyCodeToQMKKeyCode.has(event.code)) {
+        if (keyCapMode === keyCapModeNormal && event.key && eventKeyCodeToQMKKeyCode.has(event.code)) {
             currentLayer[selectedKey] = eventKeyCodeToQMKKeyCode.get(event.code);
             event.preventDefault();
             selectedKey = null;
@@ -86,13 +91,14 @@
         style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}px; --key_y_spacing: {key_y_spacing}px; --key_width: {key_width}px; --key_height: {key_height}px"
     >
         {#each layout as key, i}
-            <!--{#if NORMAL_KEY === keyClass[i]}-->
-                <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
-            <!--{:else if LAYERED_KEY === keyClass[i] }-->
-            <!--    <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>-->
-            <!--{:else if LAYERED_WHEN_HELD_KEY === keyClass[i] }-->
-            <!--    <KeyCap {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>-->
-            <!--{/if}-->
+
+            {#if keyCapModeNormal === keyCapMode}
+                <KeyNormal {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
+            {:else if keyCapModeLayer === keyCapMode }
+                <KeyLayer {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
+            {:else if keyCapModeRaw === keyCapMode }
+                <KeyRaw {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
+            {/if}
         {/each}
     </div>
 
@@ -151,7 +157,6 @@
             </label>
         </div>
     </div>
-    Hello {keyCapMode}
 </div>
 <style>
     .columns {
