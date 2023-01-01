@@ -17,10 +17,10 @@
 
 
 $: calculatedCaption = captionToLabel(caption);
+    $: calculatedIsComposedKey = isComposedKey(caption);
     $: calculatedInnerCaption = getComposedKeyInnerCaption(caption);
     $: calculatedColor = hasNoKey(caption) ? "#999" : "#0a2040";
     $: calculatedBackgroundColor = hasNoKey(caption) ? "#eee" : "#dad4c4";
-    $: calculatedIsComposedKey = isComposedKey(caption);
 
 
 </script>
@@ -73,6 +73,7 @@ $: calculatedCaption = captionToLabel(caption);
         line-height: 1.3rem;
 
         font-family: 'Montserrat', sans-serif;
+        font-size: small;
         box-shadow: 0px -1px 0px 3px inset rgba(0, 0, 0, 0.1),
         0px 0px 0px 1px rgba(0, 0, 0, 0.3);
     }

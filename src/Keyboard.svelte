@@ -2,11 +2,11 @@
     import {layout_largest_x, layout_largest_y} from "./lib/layout";
     import {insertEmptyLayer, isLayerEmpty, padLayerSize} from "./lib/layers";
     import {onMount} from "svelte";
-    import KeyNormal from "./KeyNormal.svelte";
+    import Key from "./Key.svelte";
     import {classifyKey, LAYERED_KEY, LAYERED_WHEN_HELD_KEY, NORMAL_KEY} from "./lib/key-info.js";
     import {eventKeyCodeToQMKKeyCode} from "./lib/keycode";
-    import KeyRaw from "./KeyRaw.svelte";
-    import KeyLayer from "./KeyLayer.svelte";
+    import RawKey from "./RawKey.svelte";
+    import CompositeKey from "./CompositeKey.svelte";
 
     export let name = "Unnamed keyboard";
     export let layout;
@@ -58,12 +58,12 @@
 
     $: currentLayer = layers[currentLayerIndex];
     $: keyClass = layers[currentLayerIndex].map((val) => classifyKey(val));
-    $: selectedKey = 3;
+    $: selectedKey = -1;
 
-    const keyCapModeNormal = "normal";
-    const keyCapModeLayer = "layer";
-    const keyCapModeRaw = "raw";
-    let keyCapMode = keyCapModeRaw;
+    const keyEditStandard = "Standard";
+    const keyEditComposite = "Composite";
+    const keyEditRaw = "Raw";
+    let keyCapMode = keyEditStandard;
 
     for (let i = 0; i < layout.length; i++) {
         keymap.push("LM(KC_" + i + ")");
@@ -72,7 +72,7 @@
     layers.push(keymap);
     layers = padLayerSize(layers, layout.length);
     const onKeyDown = (event) => {
-        if (keyCapMode === keyCapModeNormal && event.key && eventKeyCodeToQMKKeyCode.has(event.code)) {
+        if (keyCapMode === keyEditStandard && event.key && eventKeyCodeToQMKKeyCode.has(event.code)) {
             currentLayer[selectedKey] = eventKeyCodeToQMKKeyCode.get(event.code);
             event.preventDefault();
             selectedKey = null;
@@ -92,12 +92,12 @@
     >
         {#each layout as key, i}
 
-            {#if keyCapModeNormal === keyCapMode}
-                <KeyNormal {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
-            {:else if keyCapModeLayer === keyCapMode }
-                <KeyLayer {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey}/>
-            {:else if keyCapModeRaw === keyCapMode }
-                <KeyRaw {key} caption={currentLayer[i]} keyIndex={i} selected={i==selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
+            {#if keyEditStandard === keyCapMode}
+                <Key {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey}/>
+            {:else if keyEditComposite === keyCapMode }
+                <CompositeKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey}/>
+            {:else if keyEditRaw === keyCapMode }
+                <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
             {/if}
         {/each}
     </div>
@@ -141,19 +141,19 @@
 </div>
 <div class="columns">
     <div class="column column control">
-        <h4 class="is-size-4">Key type</h4>
+        <h4 class="is-size-4">Key edit mode</h4>
         <div class="column">
             <label class="label-key-type radio is-size-5">
-                <input value={keyCapModeNormal} bind:group={keyCapMode} type="radio" name="keytype" checked="true">
-                Normal
+                <input value={keyEditStandard} bind:group={keyCapMode} type="radio" name="keytype" checked="true">
+                {keyEditStandard}
             </label>
             <label class="radio is-size-5">
-                <input value={keyCapModeLayer} bind:group={keyCapMode} type="radio" name="keytype">
-                Layers
+                <input value={keyEditComposite} bind:group={keyCapMode} type="radio" name="keytype">
+                {keyEditComposite}
             </label>
             <label class="radio is-size-5">
-                <input value={keyCapModeRaw} bind:group={keyCapMode} type="radio" name="keytype">
-                Raw
+                <input value={keyEditRaw} bind:group={keyCapMode} type="radio" name="keytype">
+                {keyEditRaw}
             </label>
         </div>
     </div>
