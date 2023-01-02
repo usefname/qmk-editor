@@ -22,7 +22,7 @@ const isKeyLayeredWhenHeld = (caption) => {
             .filter((match) => caption.startsWith(match)).length > 0;
 }
 
-export const hasNoKey = (caption) => {return caption === "KC_NO"}
+export const hasNoKey = (caption) => {return caption === "KC_NO" || caption === "XXXXXXX"}
 export const isNormalKey = (caption) => {return caption.substring(0,3) === "KC_"}
 export const isComposedKey = (caption) => {return caption.indexOf('(') > 0}
 export const getComposedKeyCaption = (caption) => {return caption.substring(0, caption.indexOf('('))}
@@ -54,8 +54,25 @@ export const captionToLabelOld = (caption) => {
 
 export const captionToDisplayRepresentation = new Map ([
     ["KC_NO", "N/A"],
+    ["XXXXXXX", "N/A"],
+    ["KC_ENTER", "⏎"],
+    ["KC_ENT", "⏎"],
+    ["KC_BACKSPACE", "⌫"],
+    ["KC_BSPC", "⌫"],
     ["KC_ESCAPE", "Esc"],
     ["KC_ESC", "Esc"],
+    ["KC_SPACE", "Space"],
+    ["KC_SPC", "Space"],
+    ["KC_MINUS", "-"],
+    ["KC_MINS", "-"],
+    ["KC_EQUAL", "="],
+    ["KC_EQL", "="],
+    ["KC_LEFT_BRACKET", "["],
+    ["KC_LBRC", "["],
+    ["KC_RIGHT_BRACKET", "]"],
+    ["KC_RBRC", "]"],
+    ["KC_BACKSLASH", "\\"],
+    ["KC_BSLS", "\\"],
     ["KC_LEFT_CTRL", "Left Ctrl"],
     ["KC_RIGHT_CTRL", "Right Ctrl"],
     ["KC_ALT", "Alt"],
