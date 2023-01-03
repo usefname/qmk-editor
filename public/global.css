@@ -1,0 +1,12 @@
+:root {
+    --color1: #e2afa5;
+    --color2: #d9c286;
+    --color3: #1d4d8e;
+    --color4: #1d7292;
+    --color5: #23a09a;
+
+    --key-color: #0a2040;
+    --key-noop-color: #999;
+    --key-background-color: #dad4c4;
+    --key-noop-background-color: #eee;
+}

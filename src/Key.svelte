@@ -9,7 +9,6 @@
 
     const eventDispatcher = createEventDispatcher();
 
-
     function dispatchSelectedKey() {
         let selectedValue = selected ? null : keyIndex;
         eventDispatcher("selectedKey", {key: selectedValue});
@@ -19,25 +18,23 @@
 $: calculatedCaption = captionToLabel(caption);
     $: calculatedIsComposedKey = isComposedKey(caption);
     $: calculatedInnerCaption = getComposedKeyInnerCaption(caption);
-    $: calculatedColor = hasNoKey(caption) ? "#999" : "#0a2040";
-    $: calculatedBackgroundColor = hasNoKey(caption) ? "#eee" : "#dad4c4";
-
-
+    $: calculatedHasKey = !hasNoKey(caption);
 </script>
 
 <div
         class="key"
-        class:key-normal={selected === false}
+        class:key-not-selected={selected === false}
         class:key-selected={selected}
+        class:key-with-caption={calculatedHasKey}
+        class:key-without-caption={!calculatedHasKey}
         on:click={dispatchSelectedKey}
-        style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};background: {calculatedBackgroundColor}; color: {calculatedColor}">
+        style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
     <div class="key-caption">
         {#if calculatedIsComposedKey}
             <div class="outer-key">
                 {calculatedCaption}
             </div>
             <div class="inner-key">
-<!--                <input class="inner-key" type="text" style="background: {calculatedBackgroundColor}; color: {calculatedColor}"/>-->
                 {calculatedInnerCaption}
             </div>
         {:else }
@@ -47,13 +44,24 @@ $: calculatedCaption = captionToLabel(caption);
 </div>
 
 <style>
+    .key-with-caption {
+        color: var(--key-color);
+        background-color: var(--key-background-color);
+    }
+
+    .key-without-caption {
+        color: var(--key-noop-color);
+        background-color: var(--key-noop-background-color);
+    }
+
     .key-selected {
         border-radius: 6px;
         border-style: solid;
-        border-color: #00a4a7;
+
+        border-color: var(--color5);
     }
 
-    .key-normal {
+    .key-not-selected {
         border-radius: 6px;
         border-left: 1px solid rgba(0, 0, 0, 0.1);
         border-right: 1px solid rgba(0, 0, 0, 0.1);
