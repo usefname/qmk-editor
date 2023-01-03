@@ -58,7 +58,7 @@
 
     $: currentLayer = layers[currentLayerIndex];
     $: keyClass = layers[currentLayerIndex].map((val) => classifyKey(val));
-    $: selectedKey = -1;
+    $: selectedKey = 3;
 
     const keyEditStandard = "Standard";
     const keyEditComposite = "Composite";
@@ -71,6 +71,7 @@
 
     layers.push(keymap);
     layers = padLayerSize(layers, layout.length);
+
     const onKeyDown = (event) => {
         if (keyCapMode === keyEditStandard && event.key && eventKeyCodeToQMKKeyCode.has(event.code)) {
             currentLayer[selectedKey] = eventKeyCodeToQMKKeyCode.get(event.code);
@@ -79,11 +80,16 @@
         }
     };
 
+    const onMouseUp = () => {
+        selectedKey = null;
+    };
+
 </script>
 
 <div class="columns"
      tabindex="0"
      on:keydown={onKeyDown}
+     on:mouseup={onMouseUp}
      autofocus
 >
     <div
