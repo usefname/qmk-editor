@@ -1,4 +1,4 @@
-import {captionToDisplayRepresentation} from "./keycode-caption";
+import {QKToCaption} from "./keycode-caption";
 
 export const NORMAL_KEY = "NormalKey";
 export const LAYERED_KEY = "LayeredKey";
@@ -54,26 +54,26 @@ export const captionToLabelOld = (caption) => {
 }
 
 for (let number = 0; number < 10; number++) {
-    captionToDisplayRepresentation.set("KC_"+number, number.toString());
+    QKToCaption.set("KC_"+number, number.toString());
 }
 
 for (let functionKey = 1; functionKey <= 12; functionKey++) {
-    captionToDisplayRepresentation.set("KC_F"+functionKey, "F"+functionKey.toString());
+    QKToCaption.set("KC_F"+functionKey, "F"+functionKey.toString());
 }
 
 for (let i = 'a'.charCodeAt(0); i <= 'z'.charCodeAt(0); i++) {
     let c = String.fromCharCode(i)
-    captionToDisplayRepresentation.set("KC_"+c, c);
+    QKToCaption.set("KC_"+c, c);
 }
 for (let i = 'A'.charCodeAt(0); i <= 'Z'.charCodeAt(0); i++) {
     let c = String.fromCharCode(i)
-    captionToDisplayRepresentation.set("KC_"+c, c);
+    QKToCaption.set("KC_"+c, c);
 }
 
 export const captionToLabel = (caption) => {
     let upperCaseCaption = caption.toUpperCase();
-    if (captionToDisplayRepresentation.has(upperCaseCaption)) {
-        return captionToDisplayRepresentation.get(upperCaseCaption);
+    if (QKToCaption.has(upperCaseCaption)) {
+        return QKToCaption.get(upperCaseCaption);
     }
     return caption;
 }

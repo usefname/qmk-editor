@@ -31,7 +31,7 @@ export const eventKeyCodeToQMKKeyCode = new Map(
         ["AudioVolumeMute", "KC_AUDIO_MUTE"],
         ["MediaTrackNext", "KC_MEDIA_NEXT_TRACK"],
         ["MediaTrackPrevious", "KC_MEDIA_PREV_TRACK"],
-        ["MediaTrackPrevious", "KC_MEDIA_PLAY_PAUSE"],
+        ["MediaPlayPause", "KC_MEDIA_PLAY_PAUSE"],
         ["Tab", "KC_TAB"],
         ["Enter", "KC_ENTER"],
         ["Backspace", "KC_BACKSPACE"],

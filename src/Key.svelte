@@ -27,6 +27,8 @@ $: calculatedCaption = captionToLabel(caption);
         class:key-selected={selected}
         class:key-with-caption={calculatedHasKey}
         class:key-without-caption={!calculatedHasKey}
+        class:key-small-caption={calculatedCaption.length > 3}
+        class:key-large-caption={calculatedCaption.length <= 3}
         on:click={dispatchSelectedKey}
         style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
     <div class="key-caption">
@@ -44,6 +46,14 @@ $: calculatedCaption = captionToLabel(caption);
 </div>
 
 <style>
+    .key-small-caption {
+        font-size: small;
+    }
+
+    .key-large-caption {
+        font-size: larger;
+    }
+
     .key-with-caption {
         color: var(--key-color);
         background-color: var(--key-background-color);
@@ -81,7 +91,6 @@ $: calculatedCaption = captionToLabel(caption);
         line-height: 1.3rem;
 
         font-family: 'Montserrat', sans-serif;
-        font-size: small;
         box-shadow: 0px -1px 0px 3px inset rgba(0, 0, 0, 0.1),
         0px 0px 0px 1px rgba(0, 0, 0, 0.3);
     }
