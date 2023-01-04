@@ -51,6 +51,7 @@
 
     function handleSelectedKey(event) {
         selectedKey = event.detail.key;
+
     }
     function handleUpdateCaption(event) {
         layers[currentLayerIndex][event.detail.key] = event.detail.caption;
@@ -93,7 +94,7 @@
      autofocus
 >
     <div
-        class="column keyboard is-narrow"
+        class="column keyboard is-narrow box"
         style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}px; --key_y_spacing: {key_y_spacing}px; --key_width: {key_width}px; --key_height: {key_height}px"
     >
         {#each layout as key, i}
@@ -183,17 +184,17 @@
 
         background: #fff;
         border-color: #fff;
-        box-shadow: 0 0 3px #0000004d;
+        /*box-shadow: 0 0 3px #0000004d;*/
 
-        border-radius: 5px;
+        /*border-radius: 5px;*/
         position: relative;
-        border-bottom-style: solid;
-        border-bottom-width: 5px;
-        border-left-style: solid;
-        border-left-width: 5px;
-        border-right-style: solid;
-        border-right-width: 5px;
-        border-top-style: solid;
-        border-top-width: 5px;
+        /*border-bottom-style: solid;*/
+        /*border-bottom-width: 5px;*/
+        /*border-left-style: solid;*/
+        /*border-left-width: 5px;*/
+        /*border-right-style: solid;*/
+        /*border-right-width: 5px;*/
+        /*border-top-style: solid;*/
+        /*border-top-width: 5px;*/
     }
 </style>

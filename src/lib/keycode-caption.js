@@ -407,7 +407,7 @@ export const QKToCaption = new Map([
 );
 
 
-export const QKToDescription = new Map(
+export const QKToDescription = new Map([
     ["KC_NO", "Ignore this key (NOOP)"],
     ["XXXXXXX", "Ignore this key (NOOP)"],
     ["KC_TRANSPARENT", "Use the next lowest non-transparent key"],
@@ -811,5 +811,6 @@ export const QKToDescription = new Map(
     ["KC_GT", ">"],
     ["KC_QUESTION", "?"],
     ["KC_QUES", "?"],
+    ]
 );
 

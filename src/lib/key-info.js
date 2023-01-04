@@ -34,9 +34,7 @@ export const getComposedKeyInnerCaption = (caption) => {
     // }
     // return '';
     let innerCaption = caption.substring(caption.indexOf('(')+1, caption.length-1);
-    console.log("inner:" + innerCaption);
     let label = captionToLabel(innerCaption);
-    console.log("label:" + label);
     return label;
 }
 

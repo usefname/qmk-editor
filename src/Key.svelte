@@ -1,26 +1,30 @@
 <script>
     import {createEventDispatcher} from "svelte";
     import {captionToLabel, getComposedKeyInnerCaption, isComposedKey, hasNoKey} from "./lib/key-info";
+    import {QKToDescription} from "./lib/keycode-caption"
 
     export let caption;
     export let key;
     export let keyIndex;
-    export let selected = false;
+    export let selected;
 
     const eventDispatcher = createEventDispatcher();
-
-    function dispatchSelectedKey() {
-        let selectedValue = selected ? null : keyIndex;
-        eventDispatcher("selectedKey", {key: selectedValue});
-    }
-
-
-$: calculatedCaption = captionToLabel(caption);
+    $: calculatedCaption = captionToLabel(caption);
     $: calculatedIsComposedKey = isComposedKey(caption);
     $: calculatedInnerCaption = getComposedKeyInnerCaption(caption);
     $: calculatedHasKey = !hasNoKey(caption);
-</script>
 
+    let dispatchSelectedKey = (event) => {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        if (selected === false) {
+            eventDispatcher("selectedKey", {key: keyIndex});
+        } else {
+            eventDispatcher("selectedKey", {key: null});
+        }
+    }
+
+</script>
 <div
         class="key"
         class:key-not-selected={selected === false}
@@ -29,7 +33,7 @@ $: calculatedCaption = captionToLabel(caption);
         class:key-without-caption={!calculatedHasKey}
         class:key-small-caption={calculatedCaption.length > 3}
         class:key-large-caption={calculatedCaption.length <= 3}
-        on:click={dispatchSelectedKey}
+        on:mouseup={dispatchSelectedKey}
         style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
     <div class="key-caption">
         {#if calculatedIsComposedKey}
@@ -44,7 +48,6 @@ $: calculatedCaption = captionToLabel(caption);
         {/if}
     </div>
 </div>
-
 <style>
     .key-small-caption {
         font-size: small;
@@ -76,7 +79,11 @@ $: calculatedCaption = captionToLabel(caption);
         border-left: 1px solid rgba(0, 0, 0, 0.1);
         border-right: 1px solid rgba(0, 0, 0, 0.1);
     }
-
+    .key-not-selected:hover {
+        border-style: solid;
+        border-width: thin;
+        border-color: var(--color3);
+    }
     .key {
         top: calc(var(--key_y)*var(--key_y_spacing));
         left: calc(var(--key_x)*var(--key_x_spacing));
