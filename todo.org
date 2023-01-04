@@ -1,0 +1,12 @@
+* STARTED Keycap hover show key and key description
+** DONE Show outline when hovering over keycap
+** TODO Show keycap description
+* TODO Area showing all awailable captions
+* TODO Drag and drop
+* TODO Save and load files
+** TODO Load last file on startup
+** TODO Settingsfile
+* TODO Multifunction key caption
+** TODO Make keycap parts clickable seperatly
+** TODO Caption only works for last part of multifunction key
+** TODO Handle more than two caption parts
