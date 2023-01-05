@@ -69,7 +69,8 @@
     for (let i = 0; i < layout.length; i++) {
         keymap.push("LM(KC_" + i + ")");
     }
-
+    keymap[70] = "KC_A";
+    keymap[71] = "KC_ENTER";
     layers.push(keymap);
     layers = padLayerSize(layers, layout.length);
 
@@ -88,9 +89,9 @@
 </script>
 
 <div class="columns"
-     tabindex="0"
      on:keydown={onKeyDown}
      on:mouseup={onMouseUp}
+     tabindex="0"
      autofocus
 >
     <div
@@ -101,8 +102,6 @@
 
             {#if keyEditStandard === keyCapMode}
                 <Key {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey}/>
-            {:else if keyEditComposite === keyCapMode }
-                <CompositeKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey}/>
             {:else if keyEditRaw === keyCapMode }
                 <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
             {/if}
@@ -153,10 +152,6 @@
             <label class="label-key-type radio is-size-5">
                 <input value={keyEditStandard} bind:group={keyCapMode} type="radio" name="keytype" checked="true">
                 {keyEditStandard}
-            </label>
-            <label class="radio is-size-5">
-                <input value={keyEditComposite} bind:group={keyCapMode} type="radio" name="keytype">
-                {keyEditComposite}
             </label>
             <label class="radio is-size-5">
                 <input value={keyEditRaw} bind:group={keyCapMode} type="radio" name="keytype">

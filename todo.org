@@ -1,7 +1,9 @@
-* STARTED Keycap hover show key and key description
+* DONE Keycap hover show key and key description
 ** DONE Show outline when hovering over keycap
-** TODO Show keycap description
-* TODO Area showing all awailable captions
+** DONE Show keycap description
+* TODO Area showing all available captions
+** TODO Create lists of caption types
+** TODO Create bulma tabs for each caption type
 * TODO Drag and drop
 * TODO Save and load files
 ** TODO Load last file on startup
@@ -10,3 +12,5 @@
 ** TODO Make keycap parts clickable seperatly
 ** TODO Caption only works for last part of multifunction key
 ** TODO Handle more than two caption parts
+* TODO Bulma colors
+* TODO Bulma layout
