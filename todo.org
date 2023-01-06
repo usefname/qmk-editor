@@ -1,8 +1,8 @@
 * DONE Keycap hover show key and key description
 ** DONE Show outline when hovering over keycap
 ** DONE Show keycap description
-* TODO Area showing all available captions
-** TODO Create lists of caption types
+* STARTED Area showing all available captions
+** STARTED Create lists of caption types
 ** TODO Create bulma tabs for each caption type
 * TODO Drag and drop
 * TODO Save and load files
