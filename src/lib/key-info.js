@@ -1,4 +1,4 @@
-import {QKToCaption} from "./keycode-caption";
+import {QKToCaption} from "./qk-keycode-caption";
 
 export const NORMAL_KEY = "NormalKey";
 export const LAYERED_KEY = "LayeredKey";

@@ -4,9 +4,10 @@
     import {onMount} from "svelte";
     import Key from "./Key.svelte";
     import {classifyKey, LAYERED_KEY, LAYERED_WHEN_HELD_KEY, NORMAL_KEY} from "./lib/key-info.js";
-    import {eventKeyCodeToQMKKeyCode} from "./lib/keycode";
+    import {eventKeyCodeToQMKKeyCode} from "./lib/js-qk-keycode";
     import RawKey from "./RawKey.svelte";
     import CompositeKey from "./CompositeKey.svelte";
+    import KeycodeLibrary from "./KeycodeLibrary.svelte";
 
     export let name = "Unnamed keyboard";
     export let layout;
@@ -21,6 +22,8 @@
     let key_y_spacing = 55;
     let key_width = 50;
     let key_height = 50;
+    let library_key_width = 40;
+    let library_key_height = 40;
 
     onMount(async () => {
         try {
@@ -159,6 +162,9 @@
             </label>
         </div>
     </div>
+</div>
+<div style="--key_width: {library_key_width}px; --key_height: {library_key_height}px;--key_spacing: {key_x_spacing - key_width}px;">
+    <KeycodeLibrary/>
 </div>
 <style>
     .columns {

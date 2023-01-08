@@ -1,3 +1,5 @@
+//From qmk firmware docs/keycodes.md
+
 export const QKToCaption = new Map([
         ["KC_NO", "N/A"],
         ["XXXXXXX", "N/A"],

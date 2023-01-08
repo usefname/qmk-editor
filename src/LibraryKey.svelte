@@ -1,14 +1,8 @@
 <script>
-    import {createEventDispatcher} from "svelte";
     import {captionToLabel, getComposedKeyInnerCaption, isComposedKey, hasNoKey} from "./lib/key-info";
     import {QKToDescription} from "./lib/qk-keycode-caption"
 
-    const eventDispatcher = createEventDispatcher();
-
     export let caption;
-    export let key;
-    export let keyIndex;
-    export let selected;
 
     $: captionDescription = QKToDescription.has(caption) ? QKToDescription.get(caption) : null;
     $: calculatedCaption = captionToLabel(caption);
@@ -16,44 +10,28 @@
     $: calculatedInnerCaption = getComposedKeyInnerCaption(caption);
     $: calculatedHasKey = !hasNoKey(caption);
 
-    let dispatchSelectedKey = (event) => {
-        event.stopImmediatePropagation();
-        event.preventDefault();
-        if (selected === false) {
-            eventDispatcher("selectedKey", {key: keyIndex});
-        } else {
-            eventDispatcher("selectedKey", {key: null});
-        }
-    }
-
 </script>
 <div
-        class="key"
-        class:key-not-selected={selected === false}
-        class:key-selected={selected}
+        class="key key-not-selected"
         class:key-with-caption={calculatedHasKey}
         class:key-without-caption={!calculatedHasKey}
-        class:key-small-caption={calculatedCaption.length > 3}
+        class:key-smallest-caption={calculatedCaption.length > 6}
+        class:key-small-caption={calculatedCaption.length > 3 && calculatedCaption <= 6}
         class:key-large-caption={calculatedCaption.length <= 3}
-        on:mouseup={dispatchSelectedKey}
-        style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
-    <div class="key-caption">
-        {#if calculatedIsComposedKey}
-            <div class="outer-key">
+>
+        <div class="key-caption">
+            {#if calculatedIsComposedKey}
+                <div class="outer-key">
+                    {calculatedCaption}
+                </div>
+                <div class="inner-key">
+                    {calculatedInnerCaption}
+                </div>
+            {:else }
                 {calculatedCaption}
-            </div>
-            <div class="inner-key">
-                {calculatedInnerCaption}
-            </div>
-        {:else }
-            {calculatedCaption}
-        {/if}
-    </div>
-</div>
-
-<div
-        class="key-info-popup notification message is-info is-size-7"
-        style="--key_x:{key.x}; --key_y:{key.y}; --key_w:1; --key_h:1;">
+            {/if}
+        </div>
+    <div class="key-info-popup notification message is-info is-size-7">
         <div class="key-info-message message-body">
             <h6 class="is-size-6">
                 {caption}
@@ -62,6 +40,7 @@
                 {captionDescription}
             {/if}
         </div>
+    </div>
 </div>
 
 <style>
@@ -69,8 +48,10 @@
         display: none;
         position: absolute;
         padding: 5px;
-        top: calc(var(--key_y)*var(--key_y_spacing) - 25px);
-        left: calc(var(--key_x)*var(--key_x_spacing) + 100px);
+        /*top: 25px;*/
+        /*left: 100px;*/
+        top: -75px;
+        left: 50px;
         z-index: 2000;
     }
     .key-info-message {
@@ -82,19 +63,22 @@
         30%   { opacity: 0; }
         100% { opacity: 1; }
     }
-    .key:hover + .key-info-popup {
+    .key:hover > .key-info-popup {
         display: block;
         opacity: 1;
         animation: fadeTooltip 1s ease-in-out;
     }
 
+    .key-smallest-caption {
+        font-size: x-small;
+    }
 
     .key-small-caption {
         font-size: small;
     }
 
     .key-large-caption {
-        font-size: larger;
+        font-size: medium;
     }
 
     .key-with-caption {
@@ -118,18 +102,21 @@
         border-radius: 6px;
         border-left: 1px solid rgba(0, 0, 0, 0.1);
         border-right: 1px solid rgba(0, 0, 0, 0.1);
+        margin: calc(var(--key_spacing) - 3px);
     }
+
     .key-not-selected:hover {
         border-style: solid;
         border-width: thin;
         border-color: var(--color3);
     }
     .key {
-        top: calc(var(--key_y)*var(--key_y_spacing));
-        left: calc(var(--key_x)*var(--key_x_spacing));
-        width: calc(var(--key_w)*var(--key_width));
-        height: calc(var(--key_h)*var(--key_height));
-        position: absolute;
+        width: var(--key_width);
+        height: var(--key_height);
+        position: relative;
+        display: inline-grid;
+        align-items: center;
+        justify-content: center;
 
         box-sizing: border-box;
         white-space: pre-line;
@@ -142,10 +129,11 @@
         0px 0px 0px 1px rgba(0, 0, 0, 0.3);
     }
     .key-caption {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        justify-content: center;
+        /*position: absolute;*/
+        /*top: 50%;*/
+        /*left: 50%;*/
+        /*transform: translate(-50%, -50%);*/
     }
     .inner-key {
         text-align: center;
@@ -163,11 +151,5 @@
         padding: 1px;
         text-align: center;
         font-size: small;
-        /*text-shadow: 1px 1px gray;*/
-        /*text-shadow: 0px 0px 9px white;*/
-        /*box-shadow: 0px 0px 0px 1px inset rgba(0, 0, 0, 0.1),*/
-        /*0px 0px 0px 0px rgba(0, 0, 0, 0.3);*/
-
-        /*text-shadow: 2px 2px 3px rgba(255,255,255,0.1);*/
     }
 </style>
