@@ -91,13 +91,6 @@
         background-color: var(--key-noop-background-color);
     }
 
-    .key-selected {
-        border-radius: 6px;
-        border-style: solid;
-
-        border-color: var(--color5);
-    }
-
     .key-not-selected {
         border-radius: 6px;
         border-left: 1px solid rgba(0, 0, 0, 0.1);
@@ -111,8 +104,8 @@
         border-color: var(--color3);
     }
     .key {
-        width: var(--key_width);
-        height: var(--key_height);
+        height: calc(var(--key_width)*1px);
+        width: calc(var(--key_height)*1px);
         position: relative;
         display: inline-grid;
         align-items: center;

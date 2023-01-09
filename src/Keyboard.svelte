@@ -99,7 +99,7 @@
 >
     <div
         class="column keyboard is-narrow box"
-        style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}px; --key_y_spacing: {key_y_spacing}px; --key_width: {key_width}px; --key_height: {key_height}px"
+        style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height}"
     >
         {#each layout as key, i}
 
@@ -163,7 +163,7 @@
         </div>
     </div>
 </div>
-<div style="--key_width: {library_key_width}px; --key_height: {library_key_height}px;--key_spacing: {key_x_spacing - key_width}px;">
+<div style="--key_width: {library_key_width}; --key_height: {library_key_height};--key_spacing: {key_x_spacing - key_width};">
     <KeycodeLibrary/>
 </div>
 <style>
@@ -180,8 +180,8 @@
         display: block;
     }
     .keyboard {
-        height: calc((var(--kb_largest_y) + 0.2) * var(--key_y_spacing));
-        width: calc((var(--kb_largest_x) + 0.2) * var(--key_x_spacing));
+        height: calc((var(--kb_largest_y) + 0.2) * var(--key_y_spacing) * 1px);
+        width: calc((var(--kb_largest_x) + 0.2) * var(--key_x_spacing) * 1px);
 
         background: #fff;
         border-color: #fff;

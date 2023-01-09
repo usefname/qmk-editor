@@ -37,8 +37,6 @@ $: calculatedBackgroundColor = hasNoKey(caption) ? "#eee" : "#dad4c4";
         border-left: 1px solid rgba(0, 0, 0, 0.1);
         border-right: 1px solid rgba(0, 0, 0, 0.1);
     }
-    .compsed-key {
-    }
     .key-input {
         /*width: 30px;*/
         /*height: 25px;*/

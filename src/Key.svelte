@@ -69,12 +69,13 @@
         display: none;
         position: absolute;
         padding: 5px;
-        top: calc(var(--key_y)*var(--key_y_spacing) - 25px);
-        left: calc(var(--key_x)*var(--key_x_spacing) + 100px);
+        top: calc((var(--key_y)*var(--key_y_spacing)) * 1px);
+        left: calc((var(--key_x)*var(--key_x_spacing) * 1px) + (var(--key_w)*var(--key_width)) * 1px);
         z-index: 2000;
     }
     .key-info-message {
         padding: 1em 1.25em;
+        margin: 0 0;
     }
 
     @keyframes fadeTooltip {
@@ -87,7 +88,6 @@
         opacity: 1;
         animation: fadeTooltip 1s ease-in-out;
     }
-
 
     .key-small-caption {
         font-size: small;
@@ -125,10 +125,10 @@
         border-color: var(--color3);
     }
     .key {
-        top: calc(var(--key_y)*var(--key_y_spacing));
-        left: calc(var(--key_x)*var(--key_x_spacing));
-        width: calc(var(--key_w)*var(--key_width));
-        height: calc(var(--key_h)*var(--key_height));
+        top: calc(var(--key_y)*var(--key_y_spacing)*1px);
+        left: calc(var(--key_x)*var(--key_x_spacing)*1px);
+        width: calc(var(--key_w)*var(--key_width)*1px);
+        height: calc(var(--key_h)*var(--key_height)*1px);
         position: absolute;
 
         box-sizing: border-box;

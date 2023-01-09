@@ -39,6 +39,13 @@ export default {
 	},
 	plugins: [
 		svelte({
+			onwarn(warning, handler) {
+				if (warning.message === 'A11y: <a> element should have an href attribute'
+				|| warning.message === 'A11y: Avoid using autofocus') {
+					return;
+				}
+				handler(warning);
+			},
 			compilerOptions: {
 				// enable run-time checks when not in production
 				dev: !production
