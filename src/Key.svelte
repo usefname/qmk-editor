@@ -15,6 +15,7 @@
     $: calculatedIsComposedKey = isComposedKey(caption);
     $: calculatedInnerCaption = getComposedKeyInnerCaption(caption);
     $: calculatedHasKey = !hasNoKey(caption);
+    $: dropHover = false;
 
     let dispatchSelectedKey = (event) => {
         event.stopImmediatePropagation();
@@ -26,16 +27,61 @@
         }
     }
 
+    const onDragStart = (event) => {
+        event.dataTransfer.setData("text/plain", caption);
+        event.dataTransfer.setData("_qmk/effect", "swap");
+        event.dataTransfer.setData("_qmk/source", "keycap");
+        event.dataTransfer.setData("_qmk/sourceIndex", keyIndex);
+        dropHover = true;
+    };
+
+    const onDrop = (event) => {
+        let data = event.dataTransfer.getData("text/plain");
+        if (data.length > 0 && data.length < 1024) {
+            let type = event.dataTransfer.getData("_qmk/effect");
+            let sourceKeyIndex = event.dataTransfer.getData("_qmk/sourceIndex");
+            if (type === "swap" && !isNaN(sourceKeyIndex)) {
+                eventDispatcher("updateCaption", {key: sourceKeyIndex, caption: caption});
+            }
+            eventDispatcher("updateCaption", {key: keyIndex, caption: data});
+        }
+        dropHover = false;
+        selected = false;
+        event.preventDefault();
+    };
+    const onDragEnter = (event) => {
+        event.dataTransfer.dropEffect = "copy";
+        dropHover = true;
+        event.preventDefault();
+    };
+    const onDragOver = (event) => {
+        event.dataTransfer.dropEffect = "copy";
+        dropHover = true;
+        event.preventDefault();
+    };
+    const onDragLeave = (event) => {
+        dropHover = false;
+        event.preventDefault();
+    };
+
+
 </script>
 <div
         class="key"
-        class:key-not-selected={selected === false}
+        class:key-not-selected={selected === false && dropHover === false}
+        class:key-drop-hover={dropHover}
         class:key-selected={selected}
         class:key-with-caption={calculatedHasKey}
         class:key-without-caption={!calculatedHasKey}
         class:key-small-caption={calculatedCaption.length > 3}
         class:key-large-caption={calculatedCaption.length <= 3}
         on:mouseup={dispatchSelectedKey}
+        on:dragstart={onDragStart}
+        on:drop={onDrop}
+        on:dragenter={onDragEnter}
+        on:dragover={onDragOver}
+        on:dragleave={onDragLeave}
+        draggable="true"
         style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
     <div class="key-caption">
         {#if calculatedIsComposedKey}
@@ -114,16 +160,25 @@
         border-color: var(--color5);
     }
 
+    .key-drop-hover {
+        border-radius: 6px;
+        border-style: solid;
+
+        border-color: var(--color4);
+    }
+
     .key-not-selected {
         border-radius: 6px;
         border-left: 1px solid rgba(0, 0, 0, 0.1);
         border-right: 1px solid rgba(0, 0, 0, 0.1);
     }
+
     .key-not-selected:hover {
         border-style: solid;
         border-width: thin;
         border-color: var(--color3);
     }
+
     .key {
         top: calc(var(--key_y)*var(--key_y_spacing)*1px);
         left: calc(var(--key_x)*var(--key_x_spacing)*1px);

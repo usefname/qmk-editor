@@ -5,8 +5,12 @@
     --color4: #1d7292;
     --color5: #23a09a;
 
-    --key-color: #0a2040;
+    /*--key-color: #0a2040;*/
+    /*--key-noop-color: #999;*/
+    /*--key-background-color: #dad4c4;*/
+    /*--key-noop-background-color: #eee;*/
+    --key-color: #2cre50;
     --key-noop-color: #999;
-    --key-background-color: #dad4c4;
+    --key-background-color: #ccc;
     --key-noop-background-color: #eee;
 }

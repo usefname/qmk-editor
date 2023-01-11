@@ -77,7 +77,7 @@
     layers.push(keymap);
     layers = padLayerSize(layers, layout.length);
 
-    const onKeyDown = (event) => {
+    const setCaption = (event) => {
         if (keyCapMode === keyEditStandard && event.key && eventKeyCodeToQMKKeyCode.has(event.code)) {
             currentLayer[selectedKey] = eventKeyCodeToQMKKeyCode.get(event.code);
             event.preventDefault();
@@ -85,30 +85,33 @@
         }
     };
 
-    const onMouseUp = () => {
+    const deselectKey = () => {
         selectedKey = null;
     };
 
 </script>
 
 <div class="columns"
-     on:keydown={onKeyDown}
-     on:mouseup={onMouseUp}
+     on:keydown={setCaption}
+     on:mouseup={deselectKey}
+     on:dragstart={deselectKey}
      tabindex="0"
      autofocus
 >
     <div
-        class="column keyboard is-narrow box"
+        class="column keyboard-container is-narrow box"
         style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height}"
     >
-        {#each layout as key, i}
+        <div class="keyboard">
+            {#each layout as key, i}
 
-            {#if keyEditStandard === keyCapMode}
-                <Key {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey}/>
-            {:else if keyEditRaw === keyCapMode }
-                <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
-            {/if}
-        {/each}
+                {#if keyEditStandard === keyCapMode}
+                    <Key {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
+                {:else if keyEditRaw === keyCapMode }
+                    <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
+                {/if}
+            {/each}
+        </div>
     </div>
 
     <div class="column control">
@@ -179,16 +182,26 @@
     .label-layer-select {
         display: block;
     }
-    .keyboard {
-        height: calc((var(--kb_largest_y) + 0.2) * var(--key_y_spacing) * 1px);
-        width: calc((var(--kb_largest_x) + 0.2) * var(--key_x_spacing) * 1px);
+    .keyboard-container {
+        height: calc((var(--kb_largest_y) + 0.3) * var(--key_y_spacing) * 1px);
+        width: calc((var(--kb_largest_x) + 0.3) * var(--key_x_spacing) * 1px);
 
-        background: #fff;
-        border-color: #fff;
+        background-color: #eee;
+        border-color: #ccc;
+        box-shadow: 0 0 3px #0000004d;
+    }
+    .keyboard {
+
+        /*background: #fff;*/
+        /*background: rgb(98,98,98);*/
+        /*background: linear-gradient(220deg, rgba(220,220,220,1) 0%, rgba(220,220,220,1) 17%, rgba(220,220,220,1) 51%);*/
+
+        background-color: #eee;
+        border-color: #ccc;
         /*box-shadow: 0 0 3px #0000004d;*/
 
-        /*border-radius: 5px;*/
         position: relative;
+        /*border-radius: 5px;*/
         /*border-bottom-style: solid;*/
         /*border-bottom-width: 5px;*/
         /*border-left-style: solid;*/
