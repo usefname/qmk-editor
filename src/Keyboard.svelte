@@ -11,19 +11,11 @@
 
     export let name = "Unnamed keyboard";
     export let layout;
+
     let keymap = [];
     export let layers;
     let currentLayerIndex = 1;
     const max_layers = 10;
-
-    let largest_y = layout_largest_y(layout);
-    let largest_x = layout_largest_x(layout);
-    let key_x_spacing = 55;
-    let key_y_spacing = 55;
-    let key_width = 50;
-    let key_height = 50;
-    let library_key_width = 40;
-    let library_key_height = 40;
 
     onMount(async () => {
         try {
@@ -96,11 +88,9 @@
      on:mouseup={deselectKey}
      on:dragstart={deselectKey}
      tabindex="0"
-     autofocus
 >
     <div
         class="column keyboard-container is-narrow box"
-        style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height}"
     >
         <div class="keyboard">
             {#each layout as key, i}
@@ -166,7 +156,7 @@
         </div>
     </div>
 </div>
-<div style="--key_width: {library_key_width}; --key_height: {library_key_height};--key_spacing: {key_x_spacing - key_width};">
+<div>
     <KeycodeLibrary/>
 </div>
 <style>

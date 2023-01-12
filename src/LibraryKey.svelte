@@ -95,7 +95,7 @@
         border-radius: 6px;
         border-left: 1px solid rgba(0, 0, 0, 0.1);
         border-right: 1px solid rgba(0, 0, 0, 0.1);
-        margin: calc(var(--key_spacing) - 3px);
+        margin: calc(var(--small_key_spacing) - 3px);
     }
 
     .key-not-selected:hover {
@@ -104,8 +104,8 @@
         border-color: var(--color3);
     }
     .key {
-        height: calc(var(--key_width)*1px);
-        width: calc(var(--key_height)*1px);
+        height: calc(var(--small_key_width)*1px);
+        width: calc(var(--small_key_height)*1px);
         position: relative;
         display: inline-grid;
         align-items: center;

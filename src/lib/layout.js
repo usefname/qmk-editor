@@ -1,4 +1,4 @@
-let layout_largest_y = (layout) => {
+export const layout_largest_y = (layout) => {
     let largest_y = 0;
     for (let i = 0; i < layout.length; i++) {
         let y = layout[i].y + (layout[i].h ? layout[i].h : 1);
@@ -9,7 +9,7 @@ let layout_largest_y = (layout) => {
     return largest_y;
 }
 
-let layout_largest_x = (layout) => {
+export const layout_largest_x = (layout) => {
     let largest_x = 0;
     for (let i = 0; i < layout.length; i++) {
         let x = layout[i].x + (layout[i].w ? layout[i].w : 1);
@@ -20,4 +20,6 @@ let layout_largest_x = (layout) => {
     return largest_x;
 }
 
-export {layout_largest_y, layout_largest_x};
+export const calcLayoutWidth = (layout, keySpacing) => {
+    return layout_largest_x(layout) * keySpacing;
+}
