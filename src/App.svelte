@@ -88,11 +88,6 @@
 	main {
 		margin-left: 2em;
 	}
-	.keyboard-title {
-		font-size: 2.5rem;
-		line-height: 1.5;
-		font-weight: 400;
-	}
 	.header {
 		max-width: var(--app-width);
 		text-align: center;

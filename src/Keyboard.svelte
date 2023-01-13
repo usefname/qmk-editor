@@ -174,7 +174,7 @@
     }
     .keyboard-container {
         height: calc((var(--kb_largest_y) + 0.3) * var(--key_y_spacing) * 1px);
-        width: calc((var(--kb_largest_x) + 0.3) * var(--key_x_spacing) * 1px);
+        width: calc((var(--kb_largest_x) + 0.3)*(var(--key_x_spacing) * 1px));
 
         background-color: #eee;
         border-color: #ccc;

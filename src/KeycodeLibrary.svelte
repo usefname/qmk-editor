@@ -40,8 +40,8 @@
         ["TT(layer)", "Normally acts like MO unless it's tapped multiple times, which toggles layer on"],
     ]);
 
-    let largest_y = layout_largest_y(layout);
-    let largest_x = layout_largest_x(layout);
+    $: largest_y = layout_largest_y(layout);
+    $: largest_x = layout_largest_x(layout);
     let key_x_spacing = 45;
     let key_y_spacing = 45;
     let key_width = 40;
@@ -60,7 +60,6 @@
     {#if currentTab === "Keyboard"}
         <div
                 class="column keyboard is-narrow box"
-                style="--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};"
         >
             {#each layout as key, i}
                 <Key {key} caption={keymap[i]} keyIndex=i selected={false}/>
