@@ -1,6 +1,6 @@
 <script>
 	import ImportKeyboard from "./ImportKeyboard.svelte";
-	import Keyboard from "./Keyboard.svelte";
+	import Keyboard from "./editable-keyboard/KeymapWorkspace.svelte";
 	import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "./lib/layout";
 	let qmk_error = false;
 	let qmk_error_output = "Failed to execute QMK";
@@ -33,6 +33,7 @@
 	$: calculatedLayoutWidth = "calc((" + calcLayoutWidth(keyboardLayout, 55) + "*1px))";
 	$: largest_y = layout_largest_y(keyboardLayout);
 	$: largest_x = layout_largest_x(keyboardLayout);
+	$: keymap = [[]];
 	let key_x_spacing = 55;
 	let key_y_spacing = 55;
 	let key_width = 50;
@@ -55,11 +56,10 @@
 		isLoading = !isLoading;
 	}
 
-
 </script>
 
 <main
-		style="--app-width:{calculatedAppWidth};--layout-width:{calculatedLayoutWidth};kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};--small_key_width: {library_key_width}; --small_key_height: {library_key_height};--small_key_spacing: {key_x_spacing - key_width};"
+		style="--app-width:{calculatedAppWidth};--layout-width:{calculatedLayoutWidth};--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};--small_key_width: {library_key_width}; --small_key_height: {library_key_height};--small_key_spacing: {key_x_spacing - key_width};"
 >
 	{#if qmk_error}
 		<h1 class="title has-text-centered has-text-danger is-block">Error while running QMK</h1>
@@ -79,7 +79,7 @@
 			<ImportKeyboard on:QMKError={handleQMKError} on:loadKeyboard={handleLoadKeyboard}/>
 		{/if}
 		{#if keyboardName}
-			<Keyboard name={keyboardName} layout={keyboardLayout} layers="{[[]]}"/>
+			<Keyboard name={keyboardName} layout={keyboardLayout} keymap="{keymap}"/>
 		{/if}
 	{/if}
 </main>

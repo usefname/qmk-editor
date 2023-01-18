@@ -1,6 +1,6 @@
 <script>
     import {createEventDispatcher} from "svelte";
-    import {hasNoKey} from "./lib/key-info";
+    import {hasNoKey} from "../lib/key-info";
 
     const eventDispatcher = createEventDispatcher();
 

@@ -1,7 +1,7 @@
 <script>
     import {createEventDispatcher} from "svelte";
-    import {captionToLabel, getComposedKeyInnerCaption, isComposedKey, hasNoKey} from "./lib/key-info";
-    import {QKToDescription} from "./lib/qk-keycode-caption"
+    import {captionToLabel, getComposedKeyInnerCaption, isComposedKey, hasNoKey} from "../lib/key-info";
+    import {QKToDescription} from "../lib/qk-keycode-caption"
 
     const eventDispatcher = createEventDispatcher();
 
