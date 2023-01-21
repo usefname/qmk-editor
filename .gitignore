@@ -2,6 +2,7 @@
 /node_modules/
 /public/build/
 .DS_Store
+target
 
 #Editor
 .idea/
