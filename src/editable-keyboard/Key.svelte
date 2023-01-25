@@ -32,7 +32,6 @@
         event.dataTransfer.setData("_qmk/effect", "swap");
         event.dataTransfer.setData("_qmk/source", "keycap");
         event.dataTransfer.setData("_qmk/sourceIndex", keyIndex);
-        dropHover = true;
     };
 
     const onDrop = (event) => {
@@ -49,6 +48,7 @@
         selected = false;
         event.preventDefault();
     };
+
     const onDragEnter = (event) => {
         event.dataTransfer.dropEffect = "copy";
         dropHover = true;
