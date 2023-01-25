@@ -48,14 +48,20 @@
         {:else}<label class="radio is-size-5"><input type="radio" name="layer" disabled />{i}</label>{/if}
     {/each}
 </div>
-<style>
-    .layer-picker {
-        display: inline-block;
-    }
-    label.radio {
-        margin-left: 0.5em;
-    }
-    .label-layer-select {
-        display: block;
-    }
+<style lang="scss">
+  @use "../bulma-override.scss";
+
+  .layer-picker {
+    display: inline-block;
+  }
+  .layer-picker
+  .layer-picker {
+    display: inline-block;
+  }
+  label.radio {
+    margin-left: 0.5em;
+  }
+  .label-layer-select {
+    display: block;
+  }
 </style>
