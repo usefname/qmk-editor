@@ -5,7 +5,7 @@
 ** DONE Create lists of caption types
 ** DONE Create bulma tabs for each caption type
 * DONE Drag and drop
-* STARTED Replace bulma
+* DONE Replace bulma
 * TODO Replace list of key captions with table showing descriptions
 * TODO Save and load files
 ** TODO Load last file on startup
@@ -14,5 +14,4 @@
 ** TODO Make keycap parts clickable seperatly
 ** TODO Caption only works for last part of multifunction key
 ** TODO Handle more than two caption parts
-* TODO Bulma colors
-* TODO Bulma layout
+* TODO Keycap text overflowing keycap

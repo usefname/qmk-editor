@@ -42,12 +42,8 @@
 
     $: largest_y = layout_largest_y(layout);
     $: largest_x = layout_largest_x(layout);
-    let key_x_spacing = 45;
-    let key_y_spacing = 45;
-    let key_width = 40;
-    let key_height = 40;
 </script>
-<div class="inventory">
+<div class="inventory"  >
     <div class="tabs is-centered is-boxed is-toggle">
         <ul>
             <li class:is-active={currentTab==="Keyboard"} on:click={() => currentTab = "Keyboard"}><a>Keyboard</a></li>
@@ -57,7 +53,7 @@
             <li class:is-active={currentTab==="System"} on:click={() => currentTab = "System"}><a>System</a></li>
         </ul>
     </div>
-    <div>
+    <div class="keycap-area" style="--sample-kb-largest_y:{largest_y}; --sample-kb-largest_x:{largest_x};">
         {#if currentTab === "Keyboard"}
             <div
                     class="column keyboard is-narrow box"
@@ -68,27 +64,27 @@
             </div>
         {:else if currentTab === "Basic"}
             {#each [...basicKeycodeMap] as [topic, keyList]}
-                <section class="container">
+                <div class="keycap-listing">
                     <h6 class="is-size-4">
                         {topic}
                     </h6>
                     {#each keyList as key}
                         <LibraryKey caption={key}/>
                     {/each}
-                </section>
+                </div>
             {/each}
         {:else if currentTab === "Layer"}
             Layer
         {:else if currentTab === "Media"}
             {#each [...mediaKeycodeMap] as [topic, keyList]}
-                <section class="container">
+                <div class="keycal-listing">
                     <h6 class="is-size-4">
                         {topic}
                     </h6>
                     {#each keyList as key}
                         <LibraryKey caption={key}/>
                     {/each}
-                </section>
+                </div>
             {/each}
         {:else if currentTab === "System"}
             System
@@ -99,9 +95,16 @@
 <style>
     .inventory {
         /*display: flex;*/
-        /*flex-flow: column;*/
+        /*flex-flow: row;*/
         /*justify-content: center;*/
         /*align-items: center;*/
+    }
+    .keycap-area {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /*height: calc((var(--sample-kb-largest_y) + 0.2) * var(--key_y_spacing) * 1px);*/
+        /*width: calc((var(--sample-kb-largest_x) + 0.2) * var(--key_x_spacing) * 1px);*/
     }
     .tabs {
         display: flex;
@@ -118,7 +121,11 @@
         background-color: var(--color3);
         color: #fff;
     }
-    a {
+    .tabs .is-active a:hover {
+        background-color: var(--color3);
+        color: #fff;
+    }
+    .tabs a {
         display: flex;
         border-style: solid;
         border-width: 1px;
@@ -126,11 +133,17 @@
         border-radius: 4px;
         line-height: 1.5rem;
         padding: 0.5rem 1rem;
+        cursor: pointer;
     }
+    .tabs a:hover {
+        background-color: var(--color2);
+    }
+
     .keyboard {
-        display: flex;
-        height: calc((var(--kb_largest_y) + 0.2) * var(--key_y_spacing) * 1px);
-        width: calc((var(--kb_largest_x) + 0.2) * var(--key_x_spacing) * 1px);
+        /*display: flex;*/
+        /*flex-grow: 1;*/
+        height: calc((var(--sample-kb-largest_y) + 0.2) * var(--key_y_spacing) * 1px);
+        width: calc((var(--sample-kb-largest_x) + 0.2) * var(--key_x_spacing) * 1px);
 
         background: #fff;
         border-color: #fff;
@@ -138,5 +151,12 @@
 
         /*border-radius: 5px;*/
         position: relative;
+    }
+    .keycap-listing {
+        display: flex;
+        justify-content: center;
+    }
+    .keycap-listing h6 {
+        display: block;
     }
 </style>
