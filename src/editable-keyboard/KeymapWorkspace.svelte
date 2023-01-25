@@ -38,7 +38,7 @@
 
     $: currentLayer = keymap[currentLayerIndex];
     $: keyClass = keymap[currentLayerIndex].map((val) => classifyKey(val));
-    $: selectedKey = 3;
+    $: selectedKey = null;
 
     let keycapMode = keyEditStandard;
 
