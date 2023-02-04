@@ -25,43 +25,28 @@
     }
 </script>
 
-<div class="layer-picker">
+<div class="">
     <h4 class="is-size-3">Layers</h4>
-    <div class="is-size-5">
+    <div class="is-size-4">
         {#if keymap.length >= maxLayers}
-            <button on:click={addLayer} disabled>Add layer</button>
+            <button class="button is-primary" on:click={addLayer} disabled>Add layer</button>
         {:else}
-            <button on:click={addLayer}>Add layer</button>
+            <button class="button is-primary" on:click={addLayer}>Add layer</button>
         {/if}
 
         {#if keymap.length == 1}
-            <button on:click={deleteLayer} disabled>Delete selected layer</button>
+            <button class="button is-primary" on:click={deleteLayer} disabled>Delete selected layer</button>
         {:else}
-            <button on:click={deleteLayer }>Delete selected layer</button>
+            <button class="button is-primary" on:click={deleteLayer }>Delete selected layer</button>
         {/if}
 
     </div>
-    {#each keymap as layer, i}
-        {#if !isLayerEmpty(layer)}
-            <label class="label-layer-select radio is-size-5">
-                <input value={i} on:change={changeLayer} type="radio" name="layer" checked={currentLayerIndex === i ? "checked" : ""}/>{i}</label>
-        {:else}<label class="radio is-size-5"><input type="radio" name="layer" disabled />{i}</label>{/if}
-    {/each}
+    <div class="">
+        {#each keymap as layer, i}
+            {#if !isLayerEmpty(layer)}
+                <label class="radio is-size-4 is-block ml-2">
+                    <input value={i} on:change={changeLayer} type="radio" name="layer" checked={currentLayerIndex === i ? "checked" : ""}/> {i}</label>
+            {:else}<label class="radio is-size-4 is-block"><input type="radio" name="layer" disabled />  {i}</label>{/if}
+        {/each}
+    </div>
 </div>
-<style lang="scss">
-  @use "../../src-sass/bulma-override";
-
-  .layer-picker {
-    display: inline-block;
-  }
-  .layer-picker
-  .layer-picker {
-    display: inline-block;
-  }
-  label.radio {
-    margin-left: 0.5em;
-  }
-  .label-layer-select {
-    display: block;
-  }
-</style>

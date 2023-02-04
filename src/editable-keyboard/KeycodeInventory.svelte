@@ -13,17 +13,17 @@
 
     let layout = layouts.layouts.LAYOUT_fullsize_iso.layout;
     let keymap = ["KC_ESCAPE", "KC_F1", "KC_F2", "KC_F3", "KC_F4", "KC_F5", "KC_F6", "KC_F7", "KC_F8", "KC_F9", "KC_F10", "KC_F11", "KC_F12", "KC_PRINT_SCREEN", "KC_SCROLL_LOCK", "KC_PAUSE", "KC_GRAVE", "KC_1", "KC_2", "KC_3", "KC_4", "KC_5", "KC_6", "KC_7", "KC_8", "KC_9", "KC_0", "KC_MINUS", "KC_EQUAL", "KC_BACKSPACE", "KC_INSERT", "KC_HOME", "KC_PAGE_UP", "KC_NUM_LOCK", "KC_KP_SLASH", "KC_KP_ASTERISK", "KC_KP_MINUS", "KC_TAB", "KC_Q", "KC_W", "KC_E", "KC_R", "KC_T", "KC_Y", "KC_U", "KC_I", "KC_O", "KC_P", "KC_LEFT_BRACKET", "KC_RIGHT_BRACKET", "KC_DELETE", "KC_END", "KC_PAGE_DOWN", "KC_KP_7", "KC_KP_8", "KC_KP_9", "KC_KP_PLUS", "KC_CAPS_LOCK", "KC_A", "KC_S", "KC_D", "KC_F", "KC_G", "KC_H", "KC_J", "KC_K", "KC_L", "KC_SEMICOLON", "KC_QUOTE", "KC_BACKSLASH", "KC_RETURN", "KC_KP_4", "KC_KP_5", "KC_KP_6", "KC_LEFT_SHIFT", "KC_LT", "KC_Z", "KC_X", "KC_C", "KC_V", "KC_B", "KC_N", "KC_M", "KC_COMMA", "KC_DOT", "KC_SLASH", "KC_RIGHT_SHIFT", "KC_UP", "KC_KP_1", "KC_KP_2", "KC_KP_3", "KC_KP_ENTER", "KC_LEFT_CTRL", "KC_LEFT_GUI", "KC_LEFT_ALT", "KC_SPACE", "KC_RIGHT_ALT", "KC_RIGHT_GUI", "KC_APPLICATION", "KC_RIGHT_CTRL", "KC_LEFT", "KC_DOWN", "KC_RIGHT", "KC_0", "KC_KP_DOT",]
-    $: currentTab = "Basic";
+    $: currentTab = "Commands";
 
     let basicKeycodeMap = new Map([
         ["Function keys", QMK_FKeys],
         ["Punctuation", QMK_Punctuation],
         ["Lock keys", QMK_LockKeys],
         ["Modifiers", QMK_Modifiers],
-        ["Commands", QMK_Commands],
         ["Number pad", QMK_NumberPad],
         ["SpecialKeys", QMK_SpecialKeys],
     ]);
+
 
     let mediaKeycodeMap = new Map([
         ["Media keys", QMK_MediaKeys],
@@ -44,17 +44,18 @@
     $: largest_y = layout_largest_y(layout);
     $: largest_x = layout_largest_x(layout);
 </script>
-<div class="inventory">
+<div>
     <div class="tabs is-centered is-boxed is-toggle">
         <ul>
             <li class:is-active={currentTab==="Keyboard"} on:click={() => currentTab = "Keyboard"}><a>Keyboard</a></li>
             <li class:is-active={currentTab==="Basic"} on:click={() => currentTab = "Basic"}><a>Basic</a></li>
+            <li class:is-active={currentTab==="Commands"} on:click={() => currentTab = "Commands"}><a>Commands</a></li>
             <li class:is-active={currentTab==="Layer"} on:click={() => currentTab = "Layer"}><a>Layer</a></li>
             <li class:is-active={currentTab==="Media"} on:click={() => currentTab = "Media"}><a>Mouse/Media</a></li>
             <li class:is-active={currentTab==="System"} on:click={() => currentTab = "System"}><a>System</a></li>
         </ul>
     </div>
-    <div class="keycap-area" style="--sample-kb-largest_y:{largest_y}; --sample-kb-largest_x:{largest_x};">
+    <div class="is-flex is-justify-content-center" style="--sample-kb-largest_y:{largest_y}; --sample-kb-largest_x:{largest_x};">
         {#if currentTab === "Keyboard"}
             <div
                     class="column keyboard is-narrow box"
@@ -63,18 +64,17 @@
                     <Key {key} caption={keymap[i]} keyIndex=i selected={false}/>
                 {/each}
             </div>
-        {:else if currentTab === "Basic"}
-            {#each [...basicKeycodeMap] as [topic, keyList]}
-                <div class="table-container">
-                <table class="table">
-                    <caption>{topic}</caption>
+        {:else if currentTab === "Commands"}
+            <div class="table_wrapper">
+                <table class="table is-bordered is-striped is-widescreen is-hoverable">
+                    <caption class="is-size-4">Commands</caption>
                     <thead>
                     <tr>
                         <th>Key</th>
                         <th>Description</th>
                     </tr>
                     </thead>
-                    {#each keyList as key}
+                    {#each QMK_Commands as key}
                         <tr>
                             <td>
                                 <LibraryKey caption={key}/>
@@ -85,9 +85,32 @@
                         </tr>
                     {/each}
                 </table>
+            </div>
+        {:else if currentTab === "Basic"}
+            {#each [...basicKeycodeMap] as [topic, keyList]}
+                <div class="">
+                    <table class="table is-bordered is-striped is-widescreen is-hoverable">
+                        <caption class="is-size-4">{topic}</caption>
+                        <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        {#each keyList as key}
+                            <tr>
+                                <td>
+                                    <LibraryKey caption={key}/>
+                                </td>
+                                <td>
+                                    {QKToDescription.has(key) ? QKToDescription.get(key) : ""}
+                                </td>
+                            </tr>
+                        {/each}
+                    </table>
                 </div>
-<!--                <div class="keycap-listing">-->
-<!--                    <h6 class="is-size-4">-->
+                <!--                <div class="keycap-listing">-->
+                <!--                    <h6 class="is-size-4">-->
 <!--                        {topic}-->
 <!--                    </h6>-->
 <!--                    {#each keyList as key}-->
@@ -99,7 +122,7 @@
             Layer
         {:else if currentTab === "Media"}
             {#each [...mediaKeycodeMap] as [topic, keyList]}
-                <div class="keycal-listing">
+                <div>
                     <h6 class="is-size-4">
                         {topic}
                     </h6>
@@ -115,92 +138,14 @@
 </div>
 
 <style>
-    .inventory {
-        /*display: flex;*/
-        /*flex-flow: row;*/
-        /*justify-content: center;*/
-        /*align-items: center;*/
-    }
-    .keycap-area {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        /*height: calc((var(--sample-kb-largest_y) + 0.2) * var(--key_y_spacing) * 1px);*/
-        /*width: calc((var(--sample-kb-largest_x) + 0.2) * var(--key_x_spacing) * 1px);*/
-    }
-    .tabs {
-        display: flex;
-        margin: 3rem;
-        flex-grow: 1;
-        justify-content: center;
-    }
-    ul {
-        display: inherit;
-        display: flex;
-        justify-content: center;
-    }
-    .is-active a {
-        background-color: var(--color3);
-        color: #fff;
-    }
-    .tabs .is-active a:hover {
-        background-color: var(--color3);
-        color: #fff;
-    }
     .tabs a {
-        display: flex;
-        border-style: solid;
-        border-width: 1px;
-        border-color: #dbdbdb;
-        border-radius: 4px;
-        line-height: 1.5rem;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
     }
-    .tabs a:hover {
-        background-color: var(--color2);
-    }
-
     .keyboard {
-        /*display: flex;*/
-        /*flex-grow: 1;*/
         height: calc((var(--sample-kb-largest_y) + 0.2) * var(--key_y_spacing) * 1px);
         width: calc((var(--sample-kb-largest_x) + 0.2) * var(--key_x_spacing) * 1px);
 
         background: #fff;
         border-color: #fff;
-        /*box-shadow: 0 0 3px #0000004d;*/
-
-        /*border-radius: 5px;*/
         position: relative;
-    }
-    .keycap-listing {
-        display: flex;
-        justify-content: center;
-    }
-    .keycap-listing h6 {
-        display: block;
-    }
-    .table {
-        line-height: 1.5;
-
-    }
-    .table th {
-        border-width: 0 0 2px;
-        border: 1px solid #dbdbdb;
-        border-width: 0 0 1px;
-
-        color: #363636;
-        padding: .5em .75em;
-        vertical-align: top;
-    }
-    .table td {
-        border-width: 0 0 2px;
-        border: 1px solid #dbdbdb;
-        border-width: 0 0 1px;
-
-        color: #363636;
-        padding: .5em .75em;
-        vertical-align: top;
     }
 </style>

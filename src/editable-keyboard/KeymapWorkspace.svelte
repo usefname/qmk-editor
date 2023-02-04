@@ -11,7 +11,7 @@
     import {keyEditRaw, keyEditStandard} from "./keymapWorkspace";
     import KeyEditMode from "./KeyEditMode.svelte";
 
-    const maxLayers = 10;
+    const maxLayers = 9;
 
     export let name = "Unnamed keyboard";
     export let layout;
@@ -86,7 +86,7 @@
                 {/each}
             </div>
         </div>
-        <div class="keymap-sidebar">
+        <div class="is-flex is-flex-direction-column is-justify-content-space-between ml-5">
             <LayerPicker {keymap} {currentLayerIndex} {maxLayers} layoutKeyCount={layout.length}/>
             <KeyEditMode {keycapMode}/>
         </div>
@@ -115,10 +115,5 @@
         border-style: none;
         /*background-color: #eee;*/
     }
-    .keymap-sidebar {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin-left: 2rem;
-    }
+
 </style>
