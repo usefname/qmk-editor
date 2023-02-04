@@ -67,13 +67,13 @@
 			{qmk_error_output}
 		</code>
 	{:else}
-		<div class="header">
-			<div class="header-content">
-				<h2>{keyboardName ? keyboardName : "Import QMK keyboard"}</h2>
-				<nav class="header-navigation">
-					<button class="import-button button is-primary" on:click={showLoadKeyboard} style="visibility: {!keyboardName && isLoading ? 'hidden' : 'visible'}" >Change Keyboard</button>
-				</nav>
-			</div>
+		<div class="container is-widescreen is-justify-content-space-between is-flex">
+			<div class="is-size-1">{keyboardName ? keyboardName : "Import QMK keyboard"}</div>
+			<button class="button is-primary"
+					class:is-invisible={!keyboardName && isLoading}
+					on:click={showLoadKeyboard}>
+				Change Keyboard
+			</button>
 		</div>
 		{#if isLoading}
 			<ImportKeyboard on:QMKError={handleQMKError} on:loadKeyboard={handleLoadKeyboard}/>
@@ -84,18 +84,6 @@
 	{/if}
 </main>
 
-<style>
-	main {
-		margin-left: 2em;
-	}
-	.header {
-		max-width: var(--app-width);
-		text-align: center;
-		margin: 0 auto;
-	}
-	.header-content {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
+<style lang="scss">
+@use "src-sass/bulma-override" as *;
 </style>

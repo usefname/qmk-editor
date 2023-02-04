@@ -1,30 +1,24 @@
 {
   "name": "qmk-editor",
-  "version": "1.0.0",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public --no-clear",
+    "dev": "vite",
+    "css-build": "node-sass --omit-source-map-url src-sass/bulma-override.scss src/bulma-custom.css",
+    "build": "vite build",
+    "preview": "vite preview",
     "tauri": "tauri"
   },
+  "dependencies": {
+    "@tauri-apps/api": "^1.2.0"
+  },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^17.1.0",
-    "@rollup/plugin-node-resolve": "^11.2.1",
-    "@tauri-apps/cli": "^1.1.1",
+    "@sveltejs/vite-plugin-svelte": "^2.0.0",
+    "@tauri-apps/cli": "^1.2.2",
     "bulma": "^0.9.4",
     "node-sass": "^8.0.0",
-    "rollup": "^2.3.4",
-    "rollup-plugin-css-only": "^3.1.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-sass": "^1.12.17",
-    "rollup-plugin-svelte": "^7.0.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "svelte": "^3.0.0"
-  },
-  "dependencies": {
-    "@rollup/plugin-json": "^6.0.0",
-    "@tauri-apps/api": "^1.0.2",
-    "sirv-cli": "^2.0.0"
+    "svelte": "^3.54.0",
+    "vite": "^4.0.0"
   }
 }

@@ -6,6 +6,7 @@
 ** DONE Create bulma tabs for each caption type
 * DONE Drag and drop
 * DONE Replace bulma
+* STARTED Readd bulma
 * STARTED Replace list of key captions with table showing descriptions
 * TODO Save and load files
 ** TODO Load last file on startup

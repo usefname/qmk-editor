@@ -49,7 +49,7 @@
     {/each}
 </div>
 <style lang="scss">
-  @use "../bulma-override.scss";
+  @use "../../src-sass/bulma-override";
 
   .layer-picker {
     display: inline-block;

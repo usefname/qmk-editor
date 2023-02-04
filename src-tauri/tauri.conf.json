@@ -1,9 +1,8 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
     "beforeBuildCommand": "yarn build",
     "beforeDevCommand": "yarn dev",
-    "devPath": "http://localhost:8080",
+    "devPath": "http://localhost:1420",
     "distDir": "../public"
   },
   "package": {
@@ -12,7 +11,11 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "shell":{
+        "all": false,
+        "open": false
+      }
     },
     "bundle": {
       "active": true,
@@ -30,7 +33,7 @@
         "icons/icon.ico"
       ],
       "identifier": "net.threefs",
-      "longDescription": "",
+      "longDescription": "QMK keyboard layout editor",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -56,10 +59,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 720,
         "resizable": true,
         "title": "QMK Editor",
-        "width": 800
+        "width": 1280
       }
     ]
   }

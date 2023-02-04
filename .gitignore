@@ -3,6 +3,8 @@
 /public/build/
 .DS_Store
 target
+build
+dist
 
 #Editor
 .idea/
