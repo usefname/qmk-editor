@@ -1,6 +1,6 @@
 import App from './App.svelte';
-import './minireset.min.css';
-import './bulma-custom.css';
+import './css/minireset.min.css';
+import './css/bulma-custom.css';
 
 const app = new App({
 	target: document.body,
