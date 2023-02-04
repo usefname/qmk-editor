@@ -83,7 +83,3 @@
 		{/if}
 	{/if}
 </main>
-
-<style lang="scss">
-@use "src-sass/bulma-override" as *;
-</style>
