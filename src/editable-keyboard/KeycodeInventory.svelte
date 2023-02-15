@@ -44,7 +44,7 @@
     $: largest_y = layout_largest_y(layout);
     $: largest_x = layout_largest_x(layout);
 </script>
-<div style="--key_w:1; --key_h:1;">
+<div class="inventory" style="--key_w:1; --key_h:1;">
     <div class="tabs is-centered is-boxed is-toggle">
         <ul>
             <li class:is-active={currentTab==="Keyboard"} on:click={() => currentTab = "Keyboard"}><a>Keyboard</a></li>

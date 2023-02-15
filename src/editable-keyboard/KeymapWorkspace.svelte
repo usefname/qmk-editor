@@ -66,14 +66,12 @@
 </script>
 
 <div class="workspace">
-    <div
-            class="edit-workspace"
+    <div class="edit-workspace"
             on:keydown={setCaption}
             on:mouseup={deselectKey}
             on:dragstart={deselectKey}
             tabindex="0">
-        <div
-                class="keyboard-container is-narrow box">
+        <div class="keyboard-container is-narrow">
             <div class="keymap-layout">
                 {#each layout as key, i}
                     {#if keyEditStandard === keycapMode}
@@ -98,20 +96,22 @@
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background-color: #fff;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
     }
     .keyboard-container {
         padding-left: 5px;
         padding-top: 5px;
-        /*box-shadow: 0 0 3px #0000004d;*/
-        /*background-color: #eee;*/
-        border-color: #ccc;
         height: calc((var(--kb_largest_y) + 0.0) * (var(--key_y_spacing) * 1px));
         width: calc((var(--kb_largest_x) + 0.0) * (var(--key_x_spacing) * 1px));
     }
     .keymap-layout {
         position: absolute;
         border-style: none;
-        /*background-color: #eee;*/
     }
 
 </style>

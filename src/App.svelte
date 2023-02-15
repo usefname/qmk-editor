@@ -29,18 +29,16 @@
 		{ "x": 7, "y": 6 }, { "x": 9, "y": 6 },
 		{ "x": 5, "y": 6, "h": 2 }, { "x": 6, "y": 6, "h": 2 }, { "x": 7, "y": 7 }, { "x": 9, "y": 7 }, { "x": 10, "y": 6, "h": 2 }, { "x": 11, "y": 6, "h": 2 }
 	];
-	$: calculatedAppWidth = "calc(((" + calcLayoutWidth(keyboardLayout, 55) + "*1px)) + 20rem)";
-	$: calculatedLayoutWidth = "calc((" + calcLayoutWidth(keyboardLayout, 55) + "*1px))";
-	$: largest_y = layout_largest_y(keyboardLayout);
-	$: largest_x = layout_largest_x(keyboardLayout);
-	$: keymap = [[]];
+
 	let key_x_spacing = 55;
 	let key_y_spacing = 55;
 	let key_width = 50;
 	let key_height = 50;
-	let library_key_width = 40;
-	let library_key_height = 40;
-
+	$: calculatedAppWidth = "calc(((" + calcLayoutWidth(keyboardLayout, key_x_spacing) + "*1px)) + 20rem)";
+	$: calculatedLayoutWidth = "calc((" + calcLayoutWidth(keyboardLayout, key_x_spacing) + "*1px))";
+	$: largest_y = layout_largest_y(keyboardLayout);
+	$: largest_x = layout_largest_x(keyboardLayout);
+	$: keymap = [[]];
 	const handleLoadKeyboard = (event) => {
 		keyboardName = event.detail.keyboardName;
 		keyboardLayoutName = event.detail.layoutName;
@@ -59,8 +57,7 @@
 </script>
 
 <main
-		style="--app-width:{calculatedAppWidth};--layout-width:{calculatedLayoutWidth};--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};--small_key_width: {library_key_width}; --small_key_height: {library_key_height};--small_key_spacing: {key_x_spacing - key_width};"
->
+		style="--app-width:{calculatedAppWidth};--layout-width:{calculatedLayoutWidth};--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};">
 	{#if qmk_error}
 		<h1 class="title has-text-centered has-text-danger is-block">Error while running QMK</h1>
 		<code class="is-size-6 has-text-black">
