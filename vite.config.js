@@ -1,21 +1,24 @@
-import {defineConfig} from "vite";
-import {svelte} from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from "vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 import path from "path";
+
+const disabledWarnings = [
+  "a11y-click-events-have-key-events",
+  'A11y: <a> element should have an href attribute',
+  'A11y: Avoid using autofocus'
+]
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [svelte(
-      {
-        onwarn(warning, handler) {
-          if (warning.message === 'A11y: <a> element should have an href attribute'
-              || warning.message === 'A11y: Avoid using autofocus'
-              // || warning.message.indexOf("Unused CSS selector ") != -1
-          ) {
-            return;
-          }
-          handler(warning);
-        },
-      }
+    {
+      onwarn(warning, handler) {
+        if (disabledWarnings.includes(warning.message)) {
+          return;
+        }
+        handler(warning);
+      },
+    }
   )],
   resolve: {
     alias: {
