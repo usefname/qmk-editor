@@ -2,7 +2,6 @@
     import {layout_largest_x, layout_largest_y} from "../lib/layout";
     import {insertEmptyLayer, isLayerEmpty, padLayerSize} from "../lib/layers";
     import {onMount} from "svelte";
-    import Key from "./Key.svelte";
     import {classifyKey, LAYERED_KEY, LAYERED_WHEN_HELD_KEY, NORMAL_KEY} from "../lib/key-info.js";
     import {eventKeyCodeToQMKKeyCode} from "../lib/js-qk-keycode";
     import RawKey from "./RawKey.svelte";
@@ -10,6 +9,7 @@
     import LayerPicker from "./LayerPicker.svelte";
     import {keyEditRaw, keyEditStandard} from "./keymapWorkspace";
     import KeyEditMode from "./KeyEditMode.svelte";
+    import PositionalKey from "./PositionalKey.svelte";
 
     const maxLayers = 9;
 
@@ -71,15 +71,13 @@
             on:keydown={setCaption}
             on:mouseup={deselectKey}
             on:dragstart={deselectKey}
-            tabindex="0"
-    >
+            tabindex="0">
         <div
-                class="keyboard-container is-narrow box"
-        >
+                class="keyboard-container is-narrow box">
             <div class="keymap-layout">
                 {#each layout as key, i}
                     {#if keyEditStandard === keycapMode}
-                        <Key {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
+                        <PositionalKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
                     {:else if keyEditRaw === keycapMode }
                         <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
                     {/if}

@@ -1,6 +1,6 @@
 <script>
 	import ImportKeyboard from "./ImportKeyboard.svelte";
-	import Keyboard from "./editable-keyboard/KeymapWorkspace.svelte";
+	import KeymapWorkspace from "./editable-keyboard/KeymapWorkspace.svelte";
 	import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "./lib/layout";
 	let qmk_error = false;
 	let qmk_error_output = "Failed to execute QMK";
@@ -79,7 +79,7 @@
 			<ImportKeyboard on:QMKError={handleQMKError} on:loadKeyboard={handleLoadKeyboard}/>
 		{/if}
 		{#if keyboardName}
-			<Keyboard name={keyboardName} layout={keyboardLayout} keymap="{keymap}"/>
+			<KeymapWorkspace name={keyboardName} layout={keyboardLayout} keymap="{keymap}"/>
 		{/if}
 	{/if}
 </main>

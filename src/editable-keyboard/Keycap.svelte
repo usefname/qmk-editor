@@ -8,7 +8,7 @@
     export let caption;
     export let key;
     export let keyIndex;
-    export let selected;
+    export let selected = false;
 
     $: captionDescription = QKToDescription.has(caption) ? QKToDescription.get(caption) : null;
     $: calculatedCaption = captionToLabel(caption);
@@ -82,7 +82,7 @@
         on:dragover={onDragOver}
         on:dragleave={onDragLeave}
         draggable="true"
-        style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
+        >
     <div class="key-caption">
         {#if calculatedIsComposedKey}
             <div class="outer-key">
@@ -97,44 +97,7 @@
     </div>
 </div>
 
-<div
-        class="key-info-popup notification message is-info is-size-7"
-        style="--key_x:{key.x}; --key_y:{key.y}; --key_w:1; --key_h:1;">
-        <div class="key-info-message message-body">
-            <h6 class="is-size-6">
-                {caption}
-            </h6>
-            {#if captionDescription}
-                {captionDescription}
-            {/if}
-        </div>
-</div>
-
 <style>
-    .key-info-popup {
-        display: none;
-        position: absolute;
-        padding: 5px;
-        top: calc((var(--key_y)*var(--key_y_spacing)) * 1px);
-        left: calc((var(--key_x)*var(--key_x_spacing) * 1px) + (var(--key_w)*var(--key_width)) * 1px);
-        z-index: 2000;
-    }
-    .key-info-message {
-        padding: 1em 1.25em;
-        margin: 0 0;
-    }
-
-    @keyframes fadeTooltip {
-        0%   { opacity: 0; }
-        30%   { opacity: 0; }
-        100% { opacity: 1; }
-    }
-    .key:hover + .key-info-popup {
-        display: block;
-        opacity: 1;
-        animation: fadeTooltip 1s ease-in-out;
-    }
-
     .key-small-caption {
         font-size: small;
     }
@@ -180,11 +143,9 @@
     }
 
     .key {
-        top: calc(var(--key_y)*var(--key_y_spacing)*1px);
-        left: calc(var(--key_x)*var(--key_x_spacing)*1px);
         width: calc(var(--key_w)*var(--key_width)*1px);
         height: calc(var(--key_h)*var(--key_height)*1px);
-        position: absolute;
+        position: relative;
 
         box-sizing: border-box;
         white-space: pre-line;
@@ -195,6 +156,7 @@
         font-family: 'Montserrat', sans-serif;
         box-shadow: 0px -1px 0px 3px inset rgba(0, 0, 0, 0.1),
         0px 0px 0px 1px rgba(0, 0, 0, 0.3);
+        text-align: center;
     }
     .key-caption {
         position: absolute;
@@ -226,3 +188,4 @@
         /*text-shadow: 2px 2px 3px rgba(255,255,255,0.1);*/
     }
 </style>
+

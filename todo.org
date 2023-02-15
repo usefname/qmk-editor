@@ -7,6 +7,7 @@
 * DONE Drag and drop
 * DONE Replace bulma
 * DONE Readd bulma
+* DONE Split key into positional and display part
 * STARTED Key library table layout
 Stack tables together
 * STARTED Replace list of key captions with table showing descriptions
