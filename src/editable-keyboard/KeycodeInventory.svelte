@@ -1,6 +1,7 @@
 <script>
     import {
-        QMK_Commands, QMK_FKeys,
+        QMK_CommandsLinux,
+        QMK_CommandsNavigation, QMK_CommandsOps, QMK_FKeys,
         QMK_LockKeys, QMK_MediaKeys,
         QMK_Modifiers, QMK_MouseKeys, QMK_NumberPad,
         QMK_Punctuation, QMK_SpecialKeys
@@ -13,7 +14,7 @@
 
     let layout = layouts.layouts.LAYOUT_fullsize_iso.layout;
     let keymap = ["KC_ESCAPE", "KC_F1", "KC_F2", "KC_F3", "KC_F4", "KC_F5", "KC_F6", "KC_F7", "KC_F8", "KC_F9", "KC_F10", "KC_F11", "KC_F12", "KC_PRINT_SCREEN", "KC_SCROLL_LOCK", "KC_PAUSE", "KC_GRAVE", "KC_1", "KC_2", "KC_3", "KC_4", "KC_5", "KC_6", "KC_7", "KC_8", "KC_9", "KC_0", "KC_MINUS", "KC_EQUAL", "KC_BACKSPACE", "KC_INSERT", "KC_HOME", "KC_PAGE_UP", "KC_NUM_LOCK", "KC_KP_SLASH", "KC_KP_ASTERISK", "KC_KP_MINUS", "KC_TAB", "KC_Q", "KC_W", "KC_E", "KC_R", "KC_T", "KC_Y", "KC_U", "KC_I", "KC_O", "KC_P", "KC_LEFT_BRACKET", "KC_RIGHT_BRACKET", "KC_DELETE", "KC_END", "KC_PAGE_DOWN", "KC_KP_7", "KC_KP_8", "KC_KP_9", "KC_KP_PLUS", "KC_CAPS_LOCK", "KC_A", "KC_S", "KC_D", "KC_F", "KC_G", "KC_H", "KC_J", "KC_K", "KC_L", "KC_SEMICOLON", "KC_QUOTE", "KC_BACKSLASH", "KC_RETURN", "KC_KP_4", "KC_KP_5", "KC_KP_6", "KC_LEFT_SHIFT", "KC_LT", "KC_Z", "KC_X", "KC_C", "KC_V", "KC_B", "KC_N", "KC_M", "KC_COMMA", "KC_DOT", "KC_SLASH", "KC_RIGHT_SHIFT", "KC_UP", "KC_KP_1", "KC_KP_2", "KC_KP_3", "KC_KP_ENTER", "KC_LEFT_CTRL", "KC_LEFT_GUI", "KC_LEFT_ALT", "KC_SPACE", "KC_RIGHT_ALT", "KC_RIGHT_GUI", "KC_APPLICATION", "KC_RIGHT_CTRL", "KC_LEFT", "KC_DOWN", "KC_RIGHT", "KC_0", "KC_KP_DOT",]
-    $: currentTab = "Basic";
+    $: currentTab = "Commands";
 
     let basicKeycodeMap = new Map([
         ["Function keys", QMK_FKeys],
@@ -29,6 +30,12 @@
         ["Media keys", QMK_MediaKeys],
         ["Mouse keys", QMK_MouseKeys],
     ]);
+
+   let commandsKeycodeMap = new Map([
+       ["Navigation", QMK_CommandsNavigation],
+       ["Operation", QMK_CommandsOps],
+       ["Linux", QMK_CommandsLinux]
+   ])
 
     let layerKeycodeMap = new Map([
         ["DF(layer)", "Set the base (default) layer"],
@@ -65,27 +72,29 @@
                 {/each}
             </div>
         {:else if currentTab === "Commands"}
-            <div class="table_wrapper">
-                <table class="table is-bordered is-striped is-widescreen is-hoverable">
-                    <caption class="is-size-4">Commands</caption>
-                    <thead>
-                    <tr>
-                        <th>Key</th>
-                        <th>Description</th>
-                    </tr>
-                    </thead>
-                    {#each QMK_Commands as key}
+            {#each [...commandsKeycodeMap] as [topic, keyList]}
+                <div class="">
+                    <table class="table is-bordered is-striped is-widescreen is-hoverable">
+                        <caption class="is-size-4">{topic}</caption>
+                        <thead>
                         <tr>
-                            <td>
-                                <Keycap caption={key}/>
-                            </td>
-                            <td>
-                                {QKToDescription.has(key) ? QKToDescription.get(key) : ""}
-                            </td>
+                            <th>Key</th>
+                            <th>Description</th>
                         </tr>
-                    {/each}
-                </table>
-            </div>
+                        </thead>
+                        {#each keyList as key}
+                            <tr>
+                                <td>
+                                    <Keycap caption={key}/>
+                                </td>
+                                <td>
+                                    {QKToDescription.has(key) ? QKToDescription.get(key) : ""}
+                                </td>
+                            </tr>
+                        {/each}
+                    </table>
+                </div>
+            {/each}
         {:else if currentTab === "Basic"}
             {#each [...basicKeycodeMap] as [topic, keyList]}
                 <div class="">
@@ -109,14 +118,6 @@
                         {/each}
                     </table>
                 </div>
-                <!--                <div class="keycap-listing">-->
-                <!--                    <h6 class="is-size-4">-->
-<!--                        {topic}-->
-<!--                    </h6>-->
-<!--                    {#each keyList as key}-->
-<!--                        <LibraryKey caption={key}/>-->
-<!--                    {/each}-->
-<!--                </div>-->
             {/each}
         {:else if currentTab === "Layer"}
             Layer
