@@ -59,7 +59,7 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 720,
+        "height": 1100,
         "resizable": true,
         "title": "QMK Editor",
         "width": 1280
