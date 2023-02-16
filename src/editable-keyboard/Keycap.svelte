@@ -82,8 +82,11 @@
         on:dragover={onDragOver}
         on:dragleave={onDragLeave}
         draggable="true"
-        >
-    <div class="key-caption">
+>
+    <div
+            class:key-caption-single-letter={calculatedCaption.length === 1}
+            class:key-caption={calculatedCaption.length !== 1}
+    >
         {#if calculatedIsComposedKey}
             <div class="outer-key">
                 {calculatedCaption}
@@ -92,9 +95,12 @@
                 {calculatedInnerCaption}
             </div>
         {:else }
-            {calculatedCaption}
+            <div class="inner-key">
+                {calculatedCaption}
+            </div>
         {/if}
     </div>
+
 </div>
 
 <style>
@@ -158,15 +164,31 @@
         0px 0px 0px 1px rgba(0, 0, 0, 0.3);
         text-align: center;
     }
-    .key-caption {
+
+    @font-face {
+        font-family: 'notoemoji';
+        src: url('/notoemoji.ttf');
+    }
+
+    .key-caption-single-letter {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        font-family: notoemoji;
     }
+    .key-caption {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-60%, -50%);
+    }
+
     .inner-key {
         text-align: center;
+        width: 30px;
     }
+
     .outer-key {
         width: 30px;
         height: 25px;
