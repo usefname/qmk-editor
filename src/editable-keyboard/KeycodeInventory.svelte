@@ -12,11 +12,11 @@
     import PositionalKey from "./PositionalKey.svelte";
     import Keycap from "./Keycap.svelte";
 
-    let layout = layouts.layouts.LAYOUT_fullsize_iso.layout;
-    let keymap = ["KC_ESCAPE", "KC_F1", "KC_F2", "KC_F3", "KC_F4", "KC_F5", "KC_F6", "KC_F7", "KC_F8", "KC_F9", "KC_F10", "KC_F11", "KC_F12", "KC_PRINT_SCREEN", "KC_SCROLL_LOCK", "KC_PAUSE", "KC_GRAVE", "KC_1", "KC_2", "KC_3", "KC_4", "KC_5", "KC_6", "KC_7", "KC_8", "KC_9", "KC_0", "KC_MINUS", "KC_EQUAL", "KC_BACKSPACE", "KC_INSERT", "KC_HOME", "KC_PAGE_UP", "KC_NUM_LOCK", "KC_KP_SLASH", "KC_KP_ASTERISK", "KC_KP_MINUS", "KC_TAB", "KC_Q", "KC_W", "KC_E", "KC_R", "KC_T", "KC_Y", "KC_U", "KC_I", "KC_O", "KC_P", "KC_LEFT_BRACKET", "KC_RIGHT_BRACKET", "KC_DELETE", "KC_END", "KC_PAGE_DOWN", "KC_KP_7", "KC_KP_8", "KC_KP_9", "KC_KP_PLUS", "KC_CAPS_LOCK", "KC_A", "KC_S", "KC_D", "KC_F", "KC_G", "KC_H", "KC_J", "KC_K", "KC_L", "KC_SEMICOLON", "KC_QUOTE", "KC_BACKSLASH", "KC_RETURN", "KC_KP_4", "KC_KP_5", "KC_KP_6", "KC_LEFT_SHIFT", "KC_LT", "KC_Z", "KC_X", "KC_C", "KC_V", "KC_B", "KC_N", "KC_M", "KC_COMMA", "KC_DOT", "KC_SLASH", "KC_RIGHT_SHIFT", "KC_UP", "KC_KP_1", "KC_KP_2", "KC_KP_3", "KC_KP_ENTER", "KC_LEFT_CTRL", "KC_LEFT_GUI", "KC_LEFT_ALT", "KC_SPACE", "KC_RIGHT_ALT", "KC_RIGHT_GUI", "KC_APPLICATION", "KC_RIGHT_CTRL", "KC_LEFT", "KC_DOWN", "KC_RIGHT", "KC_0", "KC_KP_DOT",]
+    const layout = layouts.layouts.LAYOUT_fullsize_iso.layout;
+    const keymap = ["KC_ESCAPE", "KC_F1", "KC_F2", "KC_F3", "KC_F4", "KC_F5", "KC_F6", "KC_F7", "KC_F8", "KC_F9", "KC_F10", "KC_F11", "KC_F12", "KC_PRINT_SCREEN", "KC_SCROLL_LOCK", "KC_PAUSE", "KC_GRAVE", "KC_1", "KC_2", "KC_3", "KC_4", "KC_5", "KC_6", "KC_7", "KC_8", "KC_9", "KC_0", "KC_MINUS", "KC_EQUAL", "KC_BACKSPACE", "KC_INSERT", "KC_HOME", "KC_PAGE_UP", "KC_NUM_LOCK", "KC_KP_SLASH", "KC_KP_ASTERISK", "KC_KP_MINUS", "KC_TAB", "KC_Q", "KC_W", "KC_E", "KC_R", "KC_T", "KC_Y", "KC_U", "KC_I", "KC_O", "KC_P", "KC_LEFT_BRACKET", "KC_RIGHT_BRACKET", "KC_DELETE", "KC_END", "KC_PAGE_DOWN", "KC_KP_7", "KC_KP_8", "KC_KP_9", "KC_KP_PLUS", "KC_CAPS_LOCK", "KC_A", "KC_S", "KC_D", "KC_F", "KC_G", "KC_H", "KC_J", "KC_K", "KC_L", "KC_SEMICOLON", "KC_QUOTE", "KC_BACKSLASH", "KC_RETURN", "KC_KP_4", "KC_KP_5", "KC_KP_6", "KC_LEFT_SHIFT", "KC_LT", "KC_Z", "KC_X", "KC_C", "KC_V", "KC_B", "KC_N", "KC_M", "KC_COMMA", "KC_DOT", "KC_SLASH", "KC_RIGHT_SHIFT", "KC_UP", "KC_KP_1", "KC_KP_2", "KC_KP_3", "KC_KP_ENTER", "KC_LEFT_CTRL", "KC_LEFT_GUI", "KC_LEFT_ALT", "KC_SPACE", "KC_RIGHT_ALT", "KC_RIGHT_GUI", "KC_APPLICATION", "KC_RIGHT_CTRL", "KC_LEFT", "KC_DOWN", "KC_RIGHT", "KC_0", "KC_KP_DOT",]
     $: currentTab = "Commands";
 
-    let basicKeycodeMap = new Map([
+    const basicKeycodeMap = new Map([
         ["Function keys", QMK_FKeys],
         ["Punctuation", QMK_Punctuation],
         ["Lock keys", QMK_LockKeys],
@@ -26,18 +26,18 @@
     ]);
 
 
-    let mediaKeycodeMap = new Map([
+    const mediaKeycodeMap = new Map([
         ["Media keys", QMK_MediaKeys],
         ["Mouse keys", QMK_MouseKeys],
     ]);
 
-   let commandsKeycodeMap = new Map([
+   const commandsKeycodeMap = new Map([
        ["Navigation", QMK_CommandsNavigation],
        ["Operation", QMK_CommandsOps],
        ["Linux", QMK_CommandsLinux]
    ])
 
-    let layerKeycodeMap = new Map([
+    const layerKeycodeMap = new Map([
         ["DF(layer)", "Set the base (default) layer"],
         ["MO(layer)", "Momentarily turn on layer when pressed (requires KC_TRNS on destination layer)"],
         ["OSL(layer)", "Momentarily activates layer until a key is pressed. See One Shot Keys for details."],
@@ -48,6 +48,13 @@
         ["TT(layer)", "Normally acts like MO unless it's tapped multiple times, which toggles layer on"],
     ]);
 
+    const sections = new Map([
+        ["Basic", basicKeycodeMap],
+        ["Commands", commandsKeycodeMap],
+        ["Media", mediaKeycodeMap],
+        ["System", mediaKeycodeMap]
+    ])
+
     $: largest_y = layout_largest_y(layout);
     $: largest_x = layout_largest_x(layout);
 </script>
@@ -55,85 +62,42 @@
     <div class="tabs is-centered is-boxed is-toggle">
         <ul>
             <li class:is-active={currentTab==="Keyboard"} on:click={() => currentTab = "Keyboard"}><a>Keyboard</a></li>
-            <li class:is-active={currentTab==="Basic"} on:click={() => currentTab = "Basic"}><a>Basic</a></li>
-            <li class:is-active={currentTab==="Commands"} on:click={() => currentTab = "Commands"}><a>Commands</a></li>
-            <li class:is-active={currentTab==="Layer"} on:click={() => currentTab = "Layer"}><a>Layer</a></li>
-            <li class:is-active={currentTab==="Media"} on:click={() => currentTab = "Media"}><a>Mouse/Media</a></li>
-            <li class:is-active={currentTab==="System"} on:click={() => currentTab = "System"}><a>System</a></li>
+            {#each [...sections.keys()] as section}
+                <li class:is-active={currentTab===section} on:click={() => currentTab = section}><a>{section}</a></li>
+            {/each}
         </ul>
     </div>
     <div class="is-flex is-justify-content-center" style="--sample-kb-largest_y:{largest_y}; --sample-kb-largest_x:{largest_x};">
         {#if currentTab === "Keyboard"}
-            <div
-                    class="column keyboard is-narrow box"
-            >
+            <div class="column keyboard is-narrow box">
                 {#each layout as key, i}
                     <PositionalKey {key} caption={keymap[i]} keyIndex=i selected={false}/>
                 {/each}
             </div>
-        {:else if currentTab === "Commands"}
-            {#each [...commandsKeycodeMap] as [topic, keyList]}
-                <div class="">
-                    <table class="table is-bordered is-striped is-widescreen is-hoverable">
-                        <caption class="is-size-4">{topic}</caption>
-                        <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>Description</th>
-                        </tr>
-                        </thead>
-                        {#each keyList as key}
-                            <tr>
-                                <td>
-                                    <Keycap caption={key}/>
-                                </td>
-                                <td>
-                                    {QKToDescription.has(key) ? QKToDescription.get(key) : ""}
-                                </td>
-                            </tr>
-                        {/each}
-                    </table>
-                </div>
-            {/each}
-        {:else if currentTab === "Basic"}
-            {#each [...basicKeycodeMap] as [topic, keyList]}
-                <div class="">
-                    <table class="table is-bordered is-striped is-widescreen is-hoverable">
-                        <caption class="is-size-4">{topic}</caption>
-                        <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>Description</th>
-                        </tr>
-                        </thead>
-                        {#each keyList as key}
-                            <tr>
-                                <td>
-                                    <Keycap caption={key}/>
-                                </td>
-                                <td>
-                                    {QKToDescription.has(key) ? QKToDescription.get(key) : ""}
-                                </td>
-                            </tr>
-                        {/each}
-                    </table>
-                </div>
-            {/each}
-        {:else if currentTab === "Layer"}
-            Layer
-        {:else if currentTab === "Media"}
-            {#each [...mediaKeycodeMap] as [topic, keyList]}
+        {:else if sections.has(currentTab)}
+            {#each [...sections.get(currentTab)] as [topic, keyList]}
                 <div>
-                    <h6 class="is-size-4">
-                        {topic}
-                    </h6>
-                    {#each keyList as key}
-                        <Keycap caption={key}/>
-                    {/each}
+                    <table class="table is-bordered is-striped is-widescreen is-hoverable">
+                        <caption class="is-size-4">{topic}</caption>
+                        <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        {#each keyList as key}
+                            <tr>
+                                <td>
+                                    <Keycap caption={key}/>
+                                </td>
+                                <td>
+                                    {QKToDescription.has(key) ? QKToDescription.get(key) : ""}
+                                </td>
+                            </tr>
+                        {/each}
+                    </table>
                 </div>
             {/each}
-        {:else if currentTab === "System"}
-            System
         {/if}
     </div>
 </div>
