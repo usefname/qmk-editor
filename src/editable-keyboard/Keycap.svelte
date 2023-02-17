@@ -64,7 +64,7 @@
         event.preventDefault();
     };
 
-
+    const unicodeRegex =/[^\u0000-\u00ff]/;
 </script>
 <div
         class="key"
@@ -95,7 +95,8 @@
                 {calculatedInnerCaption}
             </div>
         {:else }
-            <div class="inner-key">
+            <div class="inner-key"
+            class:inner-key-emoji={unicodeRegex.test(calculatedCaption)}>
                 {calculatedCaption}
             </div>
         {/if}
@@ -175,7 +176,6 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-family: notoemoji;
     }
     .key-caption {
         position: absolute;
@@ -187,6 +187,10 @@
     .inner-key {
         text-align: center;
         width: 30px;
+    }
+
+    .inner-key-emoji {
+        font-family: notoemoji;
     }
 
     .outer-key {
