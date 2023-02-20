@@ -3,7 +3,8 @@
     "beforeBuildCommand": "yarn build",
     "beforeDevCommand": "yarn dev",
     "devPath": "http://localhost:1420",
-    "distDir": "../public"
+    "distDir": "../dist",
+    "withGlobalTauri": false
   },
   "package": {
     "productName": "qmk-editor",

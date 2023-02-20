@@ -6,4 +6,4 @@ Desktop GUI for editing QMK layouts, relies on qmk toolchain for building and fl
 ### Build locally
 `yarn run tauri build`
 ### Build using docker
-`DOCKER_BUILDKIT=1 docker build --no-cache --file Dockerfile --output target .`
+docker build --no-cache --file Dockerfile --output target .`
