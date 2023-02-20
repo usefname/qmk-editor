@@ -26,21 +26,21 @@
 </script>
 
 <div class="">
-    <h4 class="is-size-3">Layers</h4>
-    <div class="is-size-4">
-        {#if keymap.length >= maxLayers}
-            <button class="button is-primary" on:click={addLayer} disabled>Add layer</button>
-        {:else}
-            <button class="button is-primary" on:click={addLayer}>Add layer</button>
-        {/if}
+    <div class="is-flex is-align-items-baseline is-justify-content-space-between">
+        <span class="is-size-3"> Layers</span>
+            {#if keymap.length >= maxLayers}
+                <button class="button is-primary is-size-7" on:click={addLayer} disabled>Add</button>
+            {:else}
+                <button class="button is-primary is-size-7" on:click={addLayer}>Add</button>
+            {/if}
 
-        {#if keymap.length == 1}
-            <button class="button is-primary" on:click={deleteLayer} disabled>Delete selected layer</button>
-        {:else}
-            <button class="button is-primary" on:click={deleteLayer }>Delete selected layer</button>
-        {/if}
-
+            {#if keymap.length == 1}
+                <button class="button is-primary is-size-7" on:click={deleteLayer} disabled>Delete</button>
+            {:else}
+                <button class="button is-primary is-size-7" on:click={deleteLayer }>Delete</button>
+            {/if}
     </div>
+
     <div class="">
         {#each keymap as layer, i}
             {#if !isLayerEmpty(layer)}

@@ -37,6 +37,7 @@
        ["Linux", QMK_CommandsLinux]
    ])
 
+
     const layerKeycodeMap = new Map([
         ["DF(layer)", "Set the base (default) layer"],
         ["MO(layer)", "Momentarily turn on layer when pressed (requires KC_TRNS on destination layer)"],
@@ -48,11 +49,16 @@
         ["TT(layer)", "Normally acts like MO unless it's tapped multiple times, which toggles layer on"],
     ]);
 
+    const layerAndComboKeycodeMap = new Map([
+        ["Layer", []],
+        ["Combo", []]
+    ])
+
     const sections = new Map([
         ["Basic", basicKeycodeMap],
         ["Commands", commandsKeycodeMap],
         ["Media", mediaKeycodeMap],
-        ["System", mediaKeycodeMap]
+        ["Layer & Combo", layerAndComboKeycodeMap]
     ])
 
     $: largest_y = layout_largest_y(layout);
