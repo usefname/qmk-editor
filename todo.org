@@ -8,9 +8,13 @@
 * DONE Replace bulma
 * DONE Readd bulma
 * DONE Split key into positional and display part
-* STARTED Key library table layout
+* DONE Key library table layout
 Stack tables together
-* STARTED Replace list of key captions with table showing descriptions
+* DONE Replace list of key captions with table showing descriptions
+* STARTED Combo keys visual
+* TODO Edit combo keys
+* TODO Combo keys descriptions
+* TODO Combo keys inventory table
 * TODO Save and load files
 ** TODO Load last file on startup
 ** TODO Settingsfile
