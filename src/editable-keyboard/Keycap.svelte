@@ -6,8 +6,7 @@
     const eventDispatcher = createEventDispatcher();
 
     export let caption;
-    export let key;
-    export let keyIndex;
+    export let keyIndex = -1;
     export let selected = false;
 
     $: captionDescription = QKToDescription.has(caption) ? QKToDescription.get(caption) : null;

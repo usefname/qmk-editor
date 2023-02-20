@@ -1,5 +1,6 @@
 <script>
     import {insertEmptyLayer, isLayerEmpty} from "../lib/layers";
+    import Keycap from "./Keycap.svelte";
 
     export let keymap;
     export let currentLayerIndex;
@@ -12,6 +13,7 @@
             keymap = insertEmptyLayer(keymap, layoutKeyCount);
         }
         currentLayerIndex++;
+        return false;
     }
     const deleteLayer = () => {
         if (keymap.length > 1) {
@@ -25,28 +27,37 @@
     }
 </script>
 
-<div class="">
-    <div class="is-flex is-align-items-baseline is-justify-content-space-between">
-        <span class="is-size-3"> Layers</span>
-            {#if keymap.length >= maxLayers}
-                <button class="button is-primary is-size-7" on:click={addLayer} disabled>Add</button>
-            {:else}
-                <button class="button is-primary is-size-7" on:click={addLayer}>Add</button>
-            {/if}
+<div class="is-flex is-flex-direction-column layers">
+    <div class="is-size-3"> Layers</div>
+    <div class="mt-1">
+        {#if keymap.length >= maxLayers}
+            <button class="button is-primary is-size-7" on:click={addLayer} disabled>Add</button>
+        {:else}
+            <button class="button is-primary is-size-7" on:click={addLayer}>Add</button>
+        {/if}
 
-            {#if keymap.length == 1}
-                <button class="button is-primary is-size-7" on:click={deleteLayer} disabled>Delete</button>
-            {:else}
-                <button class="button is-primary is-size-7" on:click={deleteLayer }>Delete</button>
-            {/if}
+        {#if keymap.length == 1}
+            <button class="button is-primary is-size-7" on:click={deleteLayer} disabled>Delete</button>
+        {:else}
+            <button class="button is-primary is-size-7" on:click={deleteLayer }>Delete</button>
+        {/if}
     </div>
-
-    <div class="">
-        {#each keymap as layer, i}
-            {#if !isLayerEmpty(layer)}
-                <label class="radio is-size-4 is-block ml-2">
-                    <input value={i} on:change={changeLayer} type="radio" name="layer" checked={currentLayerIndex === i ? "checked" : ""}/> {i}</label>
-            {:else}<label class="radio is-size-4 is-block"><input type="radio" name="layer" disabled />  {i}</label>{/if}
-        {/each}
+    <div class="mt-4">
+        <nav class="pagination is-small is-flex-direction-row" role="navigation" aria-label="pagination">
+            <ul class="pagination-list">
+                {#each keymap as layer, i}
+                    {#if currentLayerIndex === i}
+                        <li><a class="pagination-link is-current" target="_blank" on:click={() => changeLayer(i)}>{i}</a></li>
+                    {:else}
+                        <li><a class="pagination-link" target="_blank" on:click={() => changeLayer(i)}>{i}</a></li>
+                    {/if}
+                {/each}
+            </ul>
+        </nav>
     </div>
 </div>
+<style>
+    .layers {
+        width: 220px;
+    }
+</style>

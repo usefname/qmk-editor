@@ -11,7 +11,7 @@
     import KeyEditMode from "./KeyEditMode.svelte";
     import PositionalKey from "./PositionalKey.svelte";
 
-    const maxLayers = 9;
+    const maxLayers = 18;
 
     export let name = "Unnamed keyboard";
     export let layout;
@@ -83,7 +83,7 @@
             </div>
         </div>
         <div class="is-flex is-flex-direction-column is-justify-content-space-between ml-5">
-            <LayerPicker {keymap} {currentLayerIndex} {maxLayers} layoutKeyCount={layout.length}/>
+            <LayerPicker bind:keymap bind:currentLayerIndex {maxLayers} layoutKeyCount={layout.length}/>
             <KeyEditMode {keycapMode}/>
         </div>
     </div>

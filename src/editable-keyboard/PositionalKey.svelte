@@ -21,7 +21,7 @@
 <div
         class="key-position"
         style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
-        <Keycap {key} {caption} {keyIndex} {selected}
+        <Keycap {caption} {keyIndex} {selected}
                 on:selectedKey={forwardEvent("selectedKey")}
                 on:updateCaption={forwardEvent("updateCaption")}/>
 </div>
