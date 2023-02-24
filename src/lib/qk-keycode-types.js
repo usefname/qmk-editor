@@ -11,4 +11,6 @@ export const QMK_MediaKeys=["KC_AUDIO_MUTE","KC_AUDIO_VOL_UP","KC_AUDIO_VOL_DOWN
 export const QMK_NumberPad=["KC_KP_SLASH","KC_KP_ASTERISK","KC_KP_MINUS","KC_KP_PLUS","KC_KP_ENTER","KC_KP_1","KC_KP_2","KC_KP_3","KC_KP_4","KC_KP_5","KC_KP_6","KC_KP_7","KC_KP_8","KC_KP_9","KC_KP_0","KC_KP_DOT","KC_KP_EQUAL","KC_KP_COMMA"];
 export const QMK_SpecialKeys=["KC_NO","KC_TRANSPARENT",];
 export const QMK_MouseKeys=["KC_MS_UP","KC_MS_DOWN","KC_MS_LEFT","KC_MS_RIGHT","KC_MS_BTN1","KC_MS_BTN2","KC_MS_BTN3","KC_MS_BTN4","KC_MS_BTN5","KC_MS_WH_UP","KC_MS_WH_DOWN","KC_MS_WH_LEFT","KC_MS_WH_RIGHT","KC_MS_ACCEL0","KC_MS_ACCEL1","KC_MS_ACCEL2",];
-export const QMK_Layers=["DF(layer)","MO(layer)","OSL(layer)","LM(layer","LT(layer","TG(layer)","TO(layer)","TT(layer)"];
+export const QMK_Layers=["DF", "MO", "OSL", "TG", "TO", "TT"];
+export const QMK_MultiFunctionLayers=["LM", "LT"];
+export const QMK_ModTap=["LCTL_T", "CTL_T", "LSFT_T", "SFT_T", "LALT_T", "LOPT_T", "ALT_T", "OPT_T", "LGUI_T", "LCMD_T", "LWIN_T", "GUI_T", "CMD_T", "WIN_T", "RCTL_T", "RSFT_T", "RALT_T", "ROPT_T", "ALGR_T", "RGUI_T", "RCMD_T", "RWIN_T", "LSG_T", "SGUI_T", "SCMD_T", "SWIN_T", "LAG_T", "RSG_T", "RAG_T", "LCA_T", "LSA_T", "RSA_T", "SAGR_T", "RCS_T", "LCAG_T", "RCAG_T", "C_S_T", "MEH_T", "HYPR_T", "ALL_T",];

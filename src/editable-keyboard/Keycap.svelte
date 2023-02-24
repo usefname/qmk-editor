@@ -16,11 +16,15 @@
     $: calculatedHasKey = !hasNoKey(caption);
     $: dropHover = false;
 
-    let dispatchSelectedKey = (event) => {
+    const dispatchSelectedKey = (event) => {
         event.stopImmediatePropagation();
         event.preventDefault();
         if (selected === false) {
-            eventDispatcher("selectedKey", {key: keyIndex});
+            if (calculatedIsComposedKey) {
+                eventDispatcher("editCompositeKey", {key: keyIndex});
+            } else {
+                eventDispatcher("selectedKey", {key: keyIndex});
+            }
         } else {
             eventDispatcher("selectedKey", {key: null});
         }
@@ -40,8 +44,15 @@
             let sourceKeyIndex = event.dataTransfer.getData("_qmk/sourceIndex");
             if (type === "swap" && !isNaN(sourceKeyIndex)) {
                 eventDispatcher("updateCaption", {key: sourceKeyIndex, caption: caption});
+                eventDispatcher("updateCaption", {key: keyIndex, caption: data});
+            } else {
+                if (calculatedIsComposedKey) {
+                    console.log("Composite key");
+                    eventDispatcher("editCompositeKey", {key: keyIndex, caption: data});
+                } else {
+                    eventDispatcher("updateCaption", {key: keyIndex, caption: data});
+                }
             }
-            eventDispatcher("updateCaption", {key: keyIndex, caption: data});
         }
         dropHover = false;
         selected = false;

@@ -23,7 +23,9 @@
         style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
         <Keycap {caption} {keyIndex} {selected}
                 on:selectedKey={forwardEvent("selectedKey")}
-                on:updateCaption={forwardEvent("updateCaption")}/>
+                on:updateCaption={forwardEvent("updateCaption")}
+                on:editCompositeKey={forwardEvent("editCompositeKey")}
+        />
 </div>
 <div
         class="key-info-popup notification message is-info is-size-7"
