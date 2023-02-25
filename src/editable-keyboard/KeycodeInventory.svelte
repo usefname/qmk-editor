@@ -120,6 +120,6 @@
         position: relative;
     }
     td {
-        max-width: 50em;
+        max-width: 40em;
     }
 </style>
