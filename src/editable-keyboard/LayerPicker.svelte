@@ -1,6 +1,5 @@
 <script>
-    import {insertEmptyLayer, isLayerEmpty} from "../lib/layers";
-    import Keycap from "./Keycap.svelte";
+    import {insertEmptyLayer} from "../lib/layers";
 
     export let keymap;
     export let currentLayerIndex;

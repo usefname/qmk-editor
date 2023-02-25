@@ -13,4 +13,4 @@ export const QMK_SpecialKeys=["KC_NO","KC_TRANSPARENT",];
 export const QMK_MouseKeys=["KC_MS_UP","KC_MS_DOWN","KC_MS_LEFT","KC_MS_RIGHT","KC_MS_BTN1","KC_MS_BTN2","KC_MS_BTN3","KC_MS_BTN4","KC_MS_BTN5","KC_MS_WH_UP","KC_MS_WH_DOWN","KC_MS_WH_LEFT","KC_MS_WH_RIGHT","KC_MS_ACCEL0","KC_MS_ACCEL1","KC_MS_ACCEL2",];
 export const QMK_Layers=["DF", "MO", "OSL", "TG", "TO", "TT"];
 export const QMK_MultiFunctionLayers=["LM", "LT"];
-export const QMK_ModTap=["LCTL_T", "CTL_T", "LSFT_T", "SFT_T", "LALT_T", "LOPT_T", "ALT_T", "OPT_T", "LGUI_T", "LCMD_T", "LWIN_T", "GUI_T", "CMD_T", "WIN_T", "RCTL_T", "RSFT_T", "RALT_T", "ROPT_T", "ALGR_T", "RGUI_T", "RCMD_T", "RWIN_T", "LSG_T", "SGUI_T", "SCMD_T", "SWIN_T", "LAG_T", "RSG_T", "RAG_T", "LCA_T", "LSA_T", "RSA_T", "SAGR_T", "RCS_T", "LCAG_T", "RCAG_T", "C_S_T", "MEH_T", "HYPR_T", "ALL_T",];
+export const QMK_ModTap=["LCTL_T", "LSFT_T", "LALT_T", "LGUI_T", "GUI_T", "RCTL_T", "RSFT_T", "RALT_T", "RGUI_T", "LSG_T", "LAG_T", "RSG_T", "RAG_T", "LCA_T", "LSA_T", "RSA_T", "RCS_T", "LCAG_T", "RCAG_T", "C_S_T", "MEH_T", "HYPR_T", ];

@@ -2,7 +2,6 @@
     import {layout_largest_x, layout_largest_y} from "../lib/layout";
     import {insertEmptyLayer, isLayerEmpty, padLayerSize} from "../lib/layers";
     import {onMount} from "svelte";
-    import {classifyKey, LAYERED_KEY, LAYERED_WHEN_HELD_KEY, NORMAL_KEY} from "../lib/key-info.js";
     import {eventKeyCodeToQMKKeyCode} from "../lib/js-qk-keycode";
     import RawKey from "./RawKey.svelte";
     import KeycodeLibrary from "./KeycodeInventory.svelte";
@@ -12,7 +11,7 @@
     import PositionalKey from "./PositionalKey.svelte";
     import Keycap from "./Keycap.svelte";
 
-    const maxLayers = 18;
+    const maxLayers = 16;
 
     export let name = "Unnamed keyboard";
     export let layout;
@@ -29,19 +28,19 @@
 
     $: currentLayerIndex = 1;
     $: currentLayer = keymap[currentLayerIndex];
-    $: keyClass = keymap[currentLayerIndex].map((val) => classifyKey(val));
     $: showKeyModal = false;
     $: selectedKey = null;
     $: selectedModalKey = null;
-    $: compositeCaption1 = "MO(";
+    $: compositeCaption1 = "MO";
     $: compositeCaption2 = "KC_A";
 
     let keycapMode = keyEditStandard;
 
     let generatedLayer = [];
     for (let i = 0; i < layout.length; i++) {
-        generatedLayer.push("LM(KC_" + i + ")");
+        generatedLayer.push("LALT_T(KC_" + i + ")");
     }
+    generatedLayer[69] = "MO(1)";
     generatedLayer[70] = "KC_A";
     generatedLayer[71] = "KC_ENTER";
     keymap.push(generatedLayer);

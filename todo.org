@@ -15,7 +15,6 @@ Stack tables together
 ** DONE Show combo box interactive area on click
 ** TODO Keycap need input area for multiaction keys
 ** TODO Mark combo key with background or border outline
-** TODO Comboable keys default to N/A or layer 1 on creation
 * TODO Edit combo keys
 * TODO Combo keys descriptions
 * TODO Combo keys inventory table

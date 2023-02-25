@@ -1,26 +1,33 @@
 <script>
     import {createEventDispatcher} from "svelte";
-    import {captionToLabel, getComposedKeyInnerCaption, isComposedKey, hasNoKey} from "../lib/key-info";
-    import {QKToDescription} from "../lib/qk-keycode-caption"
+    import {
+        captionToLabel,
+        getInnerCaption,
+        isMultiActionKey,
+        hasNoKey,
+        getOuterCaption, hasSplitCaption,
+    } from "../lib/key-info";
 
     const eventDispatcher = createEventDispatcher();
 
     export let caption;
     export let keyIndex = -1;
     export let selected = false;
+    export let exposeInner = false;
 
-    $: captionDescription = QKToDescription.has(caption) ? QKToDescription.get(caption) : null;
-    $: calculatedCaption = captionToLabel(caption);
-    $: calculatedIsComposedKey = isComposedKey(caption);
-    $: calculatedInnerCaption = getComposedKeyInnerCaption(caption);
+    $: calculatedIsMultiActionKey = isMultiActionKey(caption);
+    $: calculatedSplitCaption = hasSplitCaption(caption);
+    $: calculatedOuterCaption = getOuterCaption(caption);
+    $: calculatedInnerCaption = getInnerCaption(caption);
     $: calculatedHasKey = !hasNoKey(caption);
+    $: calculatedCaption = captionToLabel(caption);
     $: dropHover = false;
 
     const dispatchSelectedKey = (event) => {
         event.stopImmediatePropagation();
         event.preventDefault();
         if (selected === false) {
-            if (calculatedIsComposedKey) {
+            if (calculatedIsMultiActionKey) {
                 eventDispatcher("editCompositeKey", {key: keyIndex});
             } else {
                 eventDispatcher("selectedKey", {key: keyIndex});
@@ -46,7 +53,7 @@
                 eventDispatcher("updateCaption", {key: sourceKeyIndex, caption: caption});
                 eventDispatcher("updateCaption", {key: keyIndex, caption: data});
             } else {
-                if (calculatedIsComposedKey) {
+                if (calculatedIsMultiActionKey) {
                     console.log("Composite key");
                     eventDispatcher("editCompositeKey", {key: keyIndex, caption: data});
                 } else {
@@ -77,15 +84,6 @@
     const unicodeRegex =/[^\u0000-\u00ff]/;
 </script>
 <div
-        class="key"
-        class:key-not-selected={selected === false && dropHover === false}
-        class:key-drop-hover={dropHover}
-        class:key-selected={selected}
-        class:key-with-caption={calculatedHasKey}
-        class:key-without-caption={!calculatedHasKey}
-        class:key-small-caption={calculatedCaption.length > 3}
-        class:key-large-caption={calculatedCaption.length <= 3}
-        on:mouseup={dispatchSelectedKey}
         on:dragstart={onDragStart}
         on:drop={onDrop}
         on:dragenter={onDragEnter}
@@ -94,27 +92,66 @@
         draggable="true"
 >
     <div
-            class:key-caption-single-letter={calculatedCaption.length === 1}
-            class:key-caption={calculatedCaption.length !== 1}
+            class="key"
+            class:key-not-selected={selected === false && dropHover === false}
+            class:key-drop-hover={dropHover}
+            class:key-selected={selected}
+
+            class:key-with-caption={calculatedHasKey}
+            class:key-without-caption={!calculatedHasKey}
+
+            class:key-small-caption={calculatedCaption.length > 3}
+            class:key-large-caption={calculatedCaption.length <= 3}
+            on:mouseup={dispatchSelectedKey}
     >
-        {#if calculatedIsComposedKey}
-            <div class="outer-key">
-                {calculatedCaption}
-            </div>
-            <div class="inner-key">
+        <div
+                class:key-caption-single-letter={calculatedCaption.length === 1}
+                class:key-caption={calculatedCaption.length !== 1}
+        >
+            {#if calculatedSplitCaption}
+                <div class="outer-key">
+                    {calculatedOuterCaption}
+                </div>
+                <div class="inner-key">
+                    {calculatedInnerCaption}
+                </div>
+            {:else }
+                <div class="inner-key"
+                     class:key-nowrap={calculatedInnerCaption.length < 6}
+                     class:inner-key-emoji={unicodeRegex.test(calculatedCaption)}>
+                    {calculatedCaption}
+                </div>
+            {/if}
+        </div>
+
+    </div>
+    {#if exposeInner && calculatedIsMultiActionKey}
+        <div
+                class="key"
+                class:key-not-selected={selected === false && dropHover === false}
+                class:key-drop-hover={dropHover}
+                class:key-selected={selected}
+                class:key-with-caption={calculatedHasKey}
+                class:key-without-caption={!calculatedHasKey}
+                class:key-small-caption={calculatedCaption.length > 3}
+                class:key-large-caption={calculatedCaption.length <= 3}
+        >
+            <div
+                    class:key-caption-single-letter={calculatedInnerCaption.length === 1}
+                    class:key-caption={calculatedInnerCaption.length !== 1}
+                    class:key-nowrap={calculatedInnerCaption.length < 6}
+            >
                 {calculatedInnerCaption}
             </div>
-        {:else }
-            <div class="inner-key"
-            class:inner-key-emoji={unicodeRegex.test(calculatedCaption)}>
-                {calculatedCaption}
-            </div>
-        {/if}
-    </div>
 
+        </div>
+    {/if}
 </div>
-
 <style>
+    .key-nowrap {
+        white-space: nowrap;
+    }
+
     .key-small-caption {
         font-size: small;
     }
@@ -164,6 +201,7 @@
         height: calc(var(--key_h)*var(--key_height)*1px);
         position: relative;
 
+        display: inline-block;
         box-sizing: border-box;
         white-space: pre-line;
         cursor: pointer;
@@ -224,4 +262,3 @@
         /*text-shadow: 2px 2px 3px rgba(255,255,255,0.1);*/
     }
 </style>
-

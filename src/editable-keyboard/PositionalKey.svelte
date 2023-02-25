@@ -1,7 +1,7 @@
 <script>
     import {createEventDispatcher} from "svelte";
     import Keycap from "./Keycap.svelte"
-    import {QKToDescription} from "../lib/qk-keycode-caption.js";
+    import {captionToDescription} from "@/lib/key-info.js";
 
     const eventDispatcher = createEventDispatcher();
 
@@ -15,8 +15,7 @@
                     eventDispatcher(eventMessage, event.detail);
             }
     }
-
-    $: captionDescription = QKToDescription.has(caption) ? QKToDescription.get(caption) : null;
+    $: captionDescription = captionToDescription(caption);
 </script>
 <div
         class="key-position"
@@ -35,12 +34,17 @@
                         {caption}
                 </h6>
                 {#if captionDescription}
-                        {captionDescription}
+                        <div class="description">
+                                {captionDescription}
+                        </div>
                 {/if}
         </div>
 </div>
 
 <style>
+        .description {
+                min-width: 10em;
+        }
     .key-position {
         top: calc(var(--key_y)*var(--key_y_spacing)*1px);
         left: calc(var(--key_x)*var(--key_x_spacing)*1px);

@@ -1,77 +1,104 @@
-import {QKToCaption} from "./qk-keycode-caption";
+import {QKToCaption, QKToDescription} from "./qk-keycode-caption";
 
-export const NORMAL_KEY = "NormalKey";
-export const LAYERED_KEY = "LayeredKey";
-export const LAYERED_WHEN_HELD_KEY = "LayeredWhenHeldKey";
+export const LAYER_ARG = "Layer";
+export const BASIC_ARG = "Basic";
+export const MOD_ARG = "Basic";
 
-export const classifyKey = (caption) => {
-    if (isKeyLayeredWhenHeld(caption)) {
-        return LAYERED_WHEN_HELD_KEY;
-    } else if (isKeyLayered(caption)) {
-        return LAYERED_KEY;
-    } else {
-        return NORMAL_KEY;
+const mKeyes2Args = new Set(["LM", "LT"]);
+const mKeyes1Arg = new Set(["DF", "MO", "OSL", "TG", "TO", "TT", "LCTL_T", "CTL_T", "LSFT_T", "SFT_T", "LALT_T", "LOPT_T", "ALT_T", "OPT_T", "LGUI_T", "LCMD_T", "LWIN_T", "GUI_T", "CMD_T", "WIN_T", "RCTL_T", "RSFT_T", "RALT_T", "ROPT_T", "ALGR_T", "RGUI_T", "RCMD_T", "RWIN_T", "LSG_T", "SGUI_T", "SCMD_T", "SWIN_T", "LAG_T", "RSG_T", "RAG_T", "LCA_T", "LSA_T", "RSA_T", "SAGR_T", "RCS_T", "LCAG_T", "RCAG_T", "C_S_T", "MEH_T", "HYPR_T", "ALL_T"]);
+
+let argument1Type = new Map();
+let argument2Type = new Map();
+let arg1Layer = ["DF", "MO", "OSL", "TG", "TO", "TT", "LM", "LT"];
+for (let i in arg1Layer) {
+    let key = arg1Layer[i];
+    argument1Type.set(key, LAYER_ARG);
+}
+for (let i in mKeyes1Arg) {
+    let key = arg1Layer[i];
+    if (!argument1Type.has(key)) {
+        argument1Type.set(key, BASIC_ARG);
+    }
+}
+argument2Type.set("LT", BASIC_ARG);
+argument2Type.set("LM", MOD_ARG);
+
+export const hasNoKey = (caption) => {return caption === "KC_NO" || caption === "XXXXXXX"}
+export const isMultiActionKey = (caption) => {
+    return caption.indexOf('(') > 0;
+}
+
+export const hasSplitCaption = (caption) => {
+    let argStart = caption.indexOf('(');
+    if (argStart > 0) {
+        let outerCaption = caption.substring(0, argStart).toUpperCase();
+        let isSplitCaption = (argument2Type.has(outerCaption) || argument1Type.get(outerCaption) !== LAYER_ARG);
+        return isSplitCaption;
     }
 }
 
-const isKeyLayered = (caption) => {
-    return ["MO(", "DF(", "OSL(","TG(", "TO(", "TT("]
-        .filter((match) => caption.startsWith(match)).length > 0;
+export const getOuterCaption = (caption) => {
+    let argStart = caption.indexOf('(');
+    let outerCaption = caption.substring(0, argStart).toUpperCase();
+    let label = captionToLabel(outerCaption);
+    if (argument1Type.get(label) === LAYER_ARG) {
+       let innerString = caption.substring(argStart, caption.length);
+       if (innerString.length > 2) {
+           let needle = innerString.search("[,)]");
+           if (needle > 1) {
+               let arg1 = innerString.substring(1, needle);
+               return label + " " + arg1;
+           }
+       }
+    }
+    return label;
 }
 
-const isKeyLayeredWhenHeld = (caption) => {
-        return ["LM(", "LT("]
-            .filter((match) => caption.startsWith(match)).length > 0;
-}
-
-export const hasNoKey = (caption) => {return caption === "KC_NO" || caption === "XXXXXXX"}
-export const isNormalKey = (caption) => {return caption.substring(0,3) === "KC_"}
-export const isComposedKey = (caption) => {return caption.indexOf('(') > 0}
-export const getComposedKeyCaption = (caption) => {return caption.substring(0, caption.indexOf('('))}
-export const getComposedKeyInnerCaption = (caption) => {
-    // if (caption.indexOf('(')) {
-    //     return captionToLabel(caption.substring(caption.indexOf('(')+1, caption.length-1));
-    // }
-    // return '';
-    let innerCaption = caption.substring(caption.indexOf('(')+1, caption.length-1);
+export const getInnerCaption = (caption) => {
+    let innerCaption = caption.substring(caption.indexOf('(')+1, caption.length-1).toUpperCase();
     let label = captionToLabel(innerCaption);
     return label;
 }
 
-export const captionToLabelOld = (caption) => {
-    if (hasNoKey(caption)) {
-        return "N/A";
-    } else if (isNormalKey(caption)) {
-        return caption.substring(3);
-    } else if (isComposedKey(caption)) {
-        return getComposedKeyCaption(caption);
+export const captionArity = (caption) => {
+    let outerCaption = caption.substring(0, caption.indexOf('(')).toUpperCase();
+    if (mKeyes1Arg.has(outerCaption)) {
+        return 1;
+    } else if (mKeyes2Args.has(outerCaption)) {
+        return 2;
     }
-    else {
-        return caption;
-    }
-}
-
-for (let number = 0; number < 10; number++) {
-    QKToCaption.set("KC_"+number, number.toString());
-}
-
-for (let functionKey = 1; functionKey <= 12; functionKey++) {
-    QKToCaption.set("KC_F"+functionKey, "F"+functionKey.toString());
-}
-
-for (let i = 'a'.charCodeAt(0); i <= 'z'.charCodeAt(0); i++) {
-    let c = String.fromCharCode(i)
-    QKToCaption.set("KC_"+c, c);
-}
-for (let i = 'A'.charCodeAt(0); i <= 'Z'.charCodeAt(0); i++) {
-    let c = String.fromCharCode(i)
-    QKToCaption.set("KC_"+c, c);
+    return 0;
 }
 
 export const captionToLabel = (caption) => {
-    let upperCaseCaption = caption.toUpperCase();
-    if (QKToCaption.has(upperCaseCaption)) {
-        return QKToCaption.get(upperCaseCaption);
+    if (isMultiActionKey(caption)) {
+        return getOuterCaption(caption);
+    } else {
+        let upperCaseCaption = caption.toUpperCase();
+        if (QKToCaption.has(upperCaseCaption)) {
+            return QKToCaption.get(upperCaseCaption);
+        }
     }
     return caption;
 }
+
+export const captionToDescription = (caption) => {
+    if (isMultiActionKey(caption)) {
+        let argStart = caption.indexOf('(');
+        let outerCaption = caption.substring(0, argStart).toUpperCase();
+        let description = QKToDescription.has(outerCaption) ? QKToDescription.get(outerCaption) : null;
+        return description;
+    } else {
+        return QKToDescription.has(caption) ? QKToDescription.get(caption) : "";
+    }
+}
+
+// export const captionToDescription = (caption) => {
+//     let key;
+//     if (isMultiActionKey(caption)) {
+//         key = getOuterCaption(caption);
+//     } else {
+//         key = caption;
+//     }
+//     return QKToDescription.has(key) ? QKToDescription.get(key) : ""
+// }
