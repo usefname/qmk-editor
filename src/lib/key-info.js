@@ -5,7 +5,7 @@ export const BASIC_ARG = "Basic";
 export const MOD_ARG = "Basic";
 
 const mKeyes2Args = new Set(["LM", "LT"]);
-const mKeyes1Arg = new Set(["DF", "MO", "OSL", "TG", "TO", "TT", "LCTL_T", "CTL_T", "LSFT_T", "SFT_T", "LALT_T", "LOPT_T", "ALT_T", "OPT_T", "LGUI_T", "LCMD_T", "LWIN_T", "GUI_T", "CMD_T", "WIN_T", "RCTL_T", "RSFT_T", "RALT_T", "ROPT_T", "ALGR_T", "RGUI_T", "RCMD_T", "RWIN_T", "LSG_T", "SGUI_T", "SCMD_T", "SWIN_T", "LAG_T", "RSG_T", "RAG_T", "LCA_T", "LSA_T", "RSA_T", "SAGR_T", "RCS_T", "LCAG_T", "RCAG_T", "C_S_T", "MEH_T", "HYPR_T", "ALL_T"]);
+const mKeyes1Args = new Set(["DF", "MO", "OSL", "TG", "TO", "TT", "LCTL_T", "CTL_T", "LSFT_T", "SFT_T", "LALT_T", "LOPT_T", "ALT_T", "OPT_T", "LGUI_T", "LCMD_T", "LWIN_T", "GUI_T", "CMD_T", "WIN_T", "RCTL_T", "RSFT_T", "RALT_T", "ROPT_T", "ALGR_T", "RGUI_T", "RCMD_T", "RWIN_T", "LSG_T", "SGUI_T", "SCMD_T", "SWIN_T", "LAG_T", "RSG_T", "RAG_T", "LCA_T", "LSA_T", "RSA_T", "SAGR_T", "RCS_T", "LCAG_T", "RCAG_T", "C_S_T", "MEH_T", "HYPR_T", "ALL_T"]);
 
 let argument1Type = new Map();
 let argument2Type = new Map();
@@ -14,7 +14,7 @@ for (let i in arg1Layer) {
     let key = arg1Layer[i];
     argument1Type.set(key, LAYER_ARG);
 }
-for (let i in mKeyes1Arg) {
+for (let i in mKeyes1Args) {
     let key = arg1Layer[i];
     if (!argument1Type.has(key)) {
         argument1Type.set(key, BASIC_ARG);
@@ -41,33 +41,90 @@ export const getOuterCaption = (caption) => {
     let argStart = caption.indexOf('(');
     let outerCaption = caption.substring(0, argStart).toUpperCase();
     let label = captionToLabel(outerCaption);
-    if (argument1Type.get(label) === LAYER_ARG) {
-       let innerString = caption.substring(argStart, caption.length);
-       if (innerString.length > 2) {
-           let needle = innerString.search("[,)]");
-           if (needle > 1) {
-               let arg1 = innerString.substring(1, needle);
-               return label + " " + arg1;
-           }
-       }
+    if (argument1Type.get(outerCaption) === LAYER_ARG) {
+        let innerString = caption.substring(argStart, caption.length);
+        if (innerString.length > 2) {
+            let needle = innerString.search("[,)]");
+            if (needle > 1) {
+                let arg1 = innerString.substring(1, needle);
+                return label + " " + arg1;
+            }
+        }
     }
     return label;
 }
 
 export const getInnerCaption = (caption) => {
-    let innerCaption = caption.substring(caption.indexOf('(')+1, caption.length-1).toUpperCase();
-    let label = captionToLabel(innerCaption);
-    return label;
+    let argStart = caption.indexOf('(');
+    let outerCaption = caption.substring(0, argStart).toUpperCase();
+    if (mKeyes2Args.has(outerCaption)) {
+        let innerCaption = caption.substring(caption.indexOf(',')+1, caption.length-1).toUpperCase();
+        let label = captionToLabel(innerCaption);
+        return label;
+    } else {
+        let innerCaption = caption.substring(caption.indexOf('(')+1, caption.length-1).toUpperCase();
+        let label = captionToLabel(innerCaption);
+        return label;
+    }
 }
 
 export const captionArity = (caption) => {
     let outerCaption = caption.substring(0, caption.indexOf('(')).toUpperCase();
-    if (mKeyes1Arg.has(outerCaption)) {
+    if (mKeyes1Args.has(outerCaption)) {
         return 1;
     } else if (mKeyes2Args.has(outerCaption)) {
         return 2;
     }
     return 0;
+}
+
+export const getFirstArgType = (caption) => {
+    let outerCaption = caption.substring(0, caption.indexOf('(')).toUpperCase();
+    if (mKeyes1Args.has(outerCaption)) {
+        return argument1Type.get(outerCaption);
+    }
+    return null;
+}
+
+export const getSecondArgType = (caption) => {
+    let outerCaption = caption.substring(0, caption.indexOf('(')).toUpperCase();
+    if (mKeyes2Args.has(outerCaption)) {
+        return argument2Type.get(outerCaption);
+    }
+    return null;
+}
+
+export const replaceFirstArgInCaption = (caption, arg) => {
+    if (!isMultiActionKey(caption)) {
+        throw("'" + caption + "' does not take any arguments")
+    }
+    let beforeArg = caption.substring(0, caption.indexOf('(')+1, caption.length-1).toUpperCase();
+    let rest = caption.substring(caption.search('[,)]'), caption.length).toUpperCase();
+
+    let newCaption = beforeArg + arg + rest;
+    return newCaption;
+}
+
+export const getFirstArg = (caption) => {
+    if (isMultiActionKey(caption)) {
+        let start = caption.indexOf('(');
+        let end = caption.search('[,)]');
+        if (end > start+1) {
+            return caption.substring(start+1, end);
+        }
+    }
+    return "";
+}
+
+export const getSecondArg = (caption) => {
+    if (isMultiActionKey(caption)) {
+        let start = caption.indexOf(',');
+        let end = caption.indexOf(')');
+        if (end > start+1) {
+            return caption.substring(start+1, end);
+        }
+    }
+    return "";
 }
 
 export const captionToLabel = (caption) => {
@@ -92,13 +149,3 @@ export const captionToDescription = (caption) => {
         return QKToDescription.has(caption) ? QKToDescription.get(caption) : "";
     }
 }
-
-// export const captionToDescription = (caption) => {
-//     let key;
-//     if (isMultiActionKey(caption)) {
-//         key = getOuterCaption(caption);
-//     } else {
-//         key = caption;
-//     }
-//     return QKToDescription.has(key) ? QKToDescription.get(key) : ""
-// }

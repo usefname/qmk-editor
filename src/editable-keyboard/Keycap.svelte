@@ -5,7 +5,13 @@
         getInnerCaption,
         isMultiActionKey,
         hasNoKey,
-        getOuterCaption, hasSplitCaption,
+        getOuterCaption,
+        hasSplitCaption,
+        captionArity,
+        replaceFirstArgInCaption,
+        getFirstArg,
+        getSecondArg,
+        getFirstArgType, getSecondArgType,
     } from "../lib/key-info";
 
     const eventDispatcher = createEventDispatcher();
@@ -16,12 +22,21 @@
     export let exposeInner = false;
 
     $: calculatedIsMultiActionKey = isMultiActionKey(caption);
+    $: calculatedKeyArity = captionArity(caption);
     $: calculatedSplitCaption = hasSplitCaption(caption);
     $: calculatedOuterCaption = getOuterCaption(caption);
     $: calculatedInnerCaption = getInnerCaption(caption);
     $: calculatedHasKey = !hasNoKey(caption);
     $: calculatedCaption = captionToLabel(caption);
     $: dropHover = false;
+    $: largeCaption = calculatedCaption.length <=3 && calculatedIsMultiActionKey === false;
+    let arg1 = getFirstArg(caption);
+    let arg2 = getSecondArg(caption);
+    let arg1Type = getFirstArgType(caption);
+    let arg2Type = getSecondArgType(caption);
+    const updateCaption = (arg) => {
+        caption = replaceFirstArgInCaption(caption, arg);
+    };
 
     const dispatchSelectedKey = (event) => {
         event.stopImmediatePropagation();
@@ -83,14 +98,7 @@
 
     const unicodeRegex =/[^\u0000-\u00ff]/;
 </script>
-<div
-        on:dragstart={onDragStart}
-        on:drop={onDrop}
-        on:dragenter={onDragEnter}
-        on:dragover={onDragOver}
-        on:dragleave={onDragLeave}
-        draggable="true"
->
+<div>
     <div
             class="key"
             class:key-not-selected={selected === false && dropHover === false}
@@ -100,16 +108,24 @@
             class:key-with-caption={calculatedHasKey}
             class:key-without-caption={!calculatedHasKey}
 
-            class:key-small-caption={calculatedCaption.length > 3}
-            class:key-large-caption={calculatedCaption.length <= 3}
+            class:key-small-caption={!largeCaption}
+            class:key-large-caption={largeCaption}
             on:mouseup={dispatchSelectedKey}
+            on:dragstart={onDragStart}
+            on:drop={onDrop}
+            on:dragenter={onDragEnter}
+            on:dragover={onDragOver}
+            on:dragleave={onDragLeave}
+            draggable="true"
     >
         <div
                 class:key-caption-single-letter={calculatedCaption.length === 1}
                 class:key-caption={calculatedCaption.length !== 1}
         >
             {#if calculatedSplitCaption}
-                <div class="outer-key">
+                <div class="outer-key"
+                     class:key-nowrap={calculatedInnerCaption.length < 6}
+                >
                     {calculatedOuterCaption}
                 </div>
                 <div class="inner-key">
@@ -126,25 +142,25 @@
 
     </div>
     {#if exposeInner && calculatedIsMultiActionKey}
-        <div
-                class="key"
-                class:key-not-selected={selected === false && dropHover === false}
-                class:key-drop-hover={dropHover}
-                class:key-selected={selected}
-                class:key-with-caption={calculatedHasKey}
-                class:key-without-caption={!calculatedHasKey}
-                class:key-small-caption={calculatedCaption.length > 3}
-                class:key-large-caption={calculatedCaption.length <= 3}
-        >
-            <div
-                    class:key-caption-single-letter={calculatedInnerCaption.length === 1}
-                    class:key-caption={calculatedInnerCaption.length !== 1}
-                    class:key-nowrap={calculatedInnerCaption.length < 6}
-            >
-                {calculatedInnerCaption}
-            </div>
-
+        {caption}
+        <div class="select">
+            <select bind:value={arg1} onchange={updateCaption(arg1)}>
+                <option selected value=1>Layer 1</option>
+                <option value=2>Layer 2</option>
+            </select>
         </div>
+        {#if calculatedKeyArity > 1}
+            <div class="key key-not-selected key-large-caption key-with-caption">
+                <div
+                        class:key-caption-single-letter={calculatedInnerCaption.length === 1}
+                        class:key-caption={calculatedInnerCaption.length !== 1}
+                        class:key-nowrap={calculatedInnerCaption.length < 6}
+                >
+                    {calculatedInnerCaption}
+                </div>
+
+            </div>
+        {/if}
     {/if}
 </div>
 <style>
