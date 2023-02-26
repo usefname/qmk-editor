@@ -1,4 +1,5 @@
-import {QKToCaption, QKToDescription} from "./qk-keycode-caption";
+import {QKToDescription} from "./qk-keycode-caption";
+import keycodeCaption from './keycodes/qmkCaption.json';
 
 export const LAYER_ARG = "Layer";
 export const BASIC_ARG = "Basic";
@@ -132,8 +133,8 @@ export const captionToLabel = (caption) => {
         return getOuterCaption(caption);
     } else {
         let upperCaseCaption = caption.toUpperCase();
-        if (QKToCaption.has(upperCaseCaption)) {
-            return QKToCaption.get(upperCaseCaption);
+        if (keycodeCaption[upperCaseCaption]) {
+            return keycodeCaption[upperCaseCaption];
         }
     }
     return caption;
