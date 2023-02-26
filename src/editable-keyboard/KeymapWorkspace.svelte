@@ -1,8 +1,7 @@
 <script>
-    import {layout_largest_x, layout_largest_y} from "../lib/layout";
-    import {insertEmptyLayer, isLayerEmpty, padLayerSize} from "../lib/layers";
+    import {padLayerSize} from "../lib/layers";
     import {onMount} from "svelte";
-    import {eventKeyCodeToQMKKeyCode} from "../lib/js-qk-keycode";
+    import jsKeyCodes from '../lib/keycodes/jsKeyCodes.json'
     import RawKey from "./RawKey.svelte";
     import KeycodeLibrary from "./KeycodeInventory.svelte";
     import LayerPicker from "./LayerPicker.svelte";
@@ -64,8 +63,11 @@
     };
 
     const setCaption = (event) => {
-        if (keycapMode === keyEditStandard && event.key && eventKeyCodeToQMKKeyCode.has(event.code)) {
-            currentLayer[selectedKey] = eventKeyCodeToQMKKeyCode.get(event.code);
+        if (keycapMode === keyEditStandard
+            && event.key
+            && jsKeyCodes[event.code]) {
+        // && eventKeyCodeToQMKKeyCode.has(event.code)) {
+            currentLayer[selectedKey] = jsKeyCodes[event.code];
             event.preventDefault();
             deselectKeyboard();
         }

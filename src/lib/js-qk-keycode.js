@@ -1,29 +1,3 @@
-export const eventKeyToQMKKeyCode = new Map (
- [
-         ["~", "KC_TILDE"],
-         ["!", "KC_EXCLAIM"],
-         ["@", "KC_AT"],
-         ["#", "KC_HASH"],
-         ["$", "KC_DOLLAR"],
-         ["%", "KC_PERCENT"],
-         ["^", "KC_CIRCUMFLEX"],
-         ["&", "KC_AMPERSAND"],
-         ["*", "KC_ASTERISK"],
-         ["(", "KC_LEFT_PAREN"],
-         [")", "KC_RIGHT_PAREN"],
-         ["_", "KC_UNDERSCORE"],
-         ["+", "KC_PLUS"],
-         ["{", "KC_LEFT_CURLY_BRACE"],
-         ["}", "KC_RIGHT_CURLY_BRACE"],
-         ["|", "KC_PIPE"],
-         [":", "KC_COLON"],
-         ["\"", "KC_DOUBLE_QUOTE"],
-         ["<", "KC_LEFT_ANGLE_BRACKET"],
-         [">", "KC_RIGHT_ANGLE_BRACKET"],
-         ["?", "KC_QUESTION"],
- ]
-);
-
 export const eventKeyCodeToQMKKeyCode = new Map(
     [
         ["AudioVolumeUp", "KC_KB_VOLUME_UP"],
