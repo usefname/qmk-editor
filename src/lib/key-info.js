@@ -1,5 +1,5 @@
-import {QKToDescription} from "./qk-keycode-caption";
-import keycodeCaption from './keycodes/qmkCaption.json';
+import keycodeCaption from './keycodes/keyCaption.json';
+import keycodeDescription from './keycodes/keyDescription.json';
 
 export const LAYER_ARG = "Layer";
 export const BASIC_ARG = "Basic";
@@ -141,12 +141,15 @@ export const captionToLabel = (caption) => {
 }
 
 export const captionToDescription = (caption) => {
+    let description;
     if (isMultiActionKey(caption)) {
         let argStart = caption.indexOf('(');
         let outerCaption = caption.substring(0, argStart).toUpperCase();
-        let description = QKToDescription.has(outerCaption) ? QKToDescription.get(outerCaption) : null;
-        return description;
+        description = keycodeDescription[outerCaption];
     } else {
-        return QKToDescription.has(caption) ? QKToDescription.get(caption) : "";
+        description = keycodeDescription[caption];
     }
+    if (!description)
+        return "";
+    return description;
 }
