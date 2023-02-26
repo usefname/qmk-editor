@@ -1,11 +1,5 @@
 <script>
-    import {
-        QMK_CommandsLinux,
-        QMK_CommandsNavigation, QMK_CommandsOps, QMK_FKeys, QMK_Layers,
-        QMK_LockKeys, QMK_MediaKeys,
-        QMK_Modifiers, QMK_ModTap, QMK_MouseKeys, QMK_MultiFunctionLayers, QMK_NumberPad,
-        QMK_Punctuation, QMK_SpecialKeys
-    } from "../lib/qk-keycode-types";
+    import keycodes from "../lib/keycodes/keycodes.json";
     import layouts from "../lib/daskeyboard4-info.json";
     import {layout_largest_x, layout_largest_y} from "../lib/layout";
     import PositionalKey from "./PositionalKey.svelte";
@@ -18,34 +12,34 @@
     // $: currentTab = "Layers";
 
     const basicKeycodeMap = new Map([
-        ["Function keys", QMK_FKeys],
-        ["Punctuation", QMK_Punctuation],
-        ["Lock keys", QMK_LockKeys],
-        ["Modifiers", QMK_Modifiers],
-        ["Number pad", QMK_NumberPad],
-        ["SpecialKeys", QMK_SpecialKeys],
+        ["Function keys", keycodes.functionKeys],
+        ["Punctuation", keycodes.punctuation],
+        ["Lock keys", keycodes.lockKeys],
+        ["Modifiers", keycodes.modifiers],
+        ["Number pad", keycodes.numpad],
+        ["SpecialKeys", keycodes.special],
     ]);
 
 
     const mediaKeycodeMap = new Map([
-        ["Media keys", QMK_MediaKeys],
-        ["Mouse keys", QMK_MouseKeys],
+        ["Media keys", keycodes.media],
+        ["Mouse keys", keycodes.mouse],
     ]);
 
    const commandsKeycodeMap = new Map([
-       ["Navigation", QMK_CommandsNavigation],
-       ["Operation", QMK_CommandsOps],
-       ["Linux", QMK_CommandsLinux]
+       ["Navigation", keycodes.navigation],
+       ["Commands", keycodes.commands],
+       ["Linux", keycodes.linux]
    ])
 
 
-    let layersWithNumber = QMK_Layers.map(x => x + "(1)");
+    let layersWithNumber = keycodes.layers.map(x => x + "(1)");
     const layerKeycodeMap = new Map([
         ["Layer", layersWithNumber],
     ])
 
-    let modTapWithInnerKey = QMK_ModTap.map(x => x + "(KC_A)");
-    let layersWithInnerKey = QMK_MultiFunctionLayers.map(x => x + "(1, KC_A)");
+    let modTapWithInnerKey = keycodes.modTap.map(x => x + "(KC_A)");
+    let layersWithInnerKey = keycodes.multiFunctionLayer.map(x => x + "(1, KC_A)");
 
     const multiActionKeycodeMap = new Map([
         ["Mod Tap", modTapWithInnerKey],
