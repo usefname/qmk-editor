@@ -162,6 +162,12 @@
     "MOD_HYPR",
     "MOD_MEH"
   ],
+  "leftMods": [
+    "MOD_LCTL",
+    "MOD_LSFT",
+    "MOD_LALT",
+    "MOD_LGUI"
+  ],
   "lettersAndNumbers": [
     "KC_A",
     "KC_B",
@@ -373,12 +379,15 @@
     "TO",
     "TT"
   ],
-  "multiFunctionLayer": [
-    "LM",
+  "layerTap": [
     "LT"
+  ],
+  "layerMod": [
+    "LM"
   ],
   "modTap": [
     "LCTL_T",
+
     "LSFT_T",
     "LALT_T",
     "LGUI_T",

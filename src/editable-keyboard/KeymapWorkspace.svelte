@@ -24,7 +24,6 @@
         }
     });
 
-
     $: currentLayerIndex = 1;
     $: currentLayer = keymap[currentLayerIndex];
     $: showKeyModal = false;
@@ -37,7 +36,7 @@
 
     let generatedLayer = [];
     for (let i = 0; i < layout.length; i++) {
-        generatedLayer.push("LALT_T(KC_" + i + ")");
+        generatedLayer.push("LALT_T(KC_" + i%10 + ")");
     }
     generatedLayer[69] = "MO(1)";
     generatedLayer[70] = "KC_A";
@@ -154,7 +153,7 @@
             <KeyEditMode {keycapMode}/>
         </div>
     </div>
-    <KeycodeLibrary/>
+    <KeycodeLibrary {currentLayerIndex} layoutCount={keymap.length}/>
 </div>
 
 <style>

@@ -1,17 +1,8 @@
 <script>
     import {createEventDispatcher} from "svelte";
     import {
-        captionToLabel,
-        getInnerCaption,
-        isMultiActionKey,
-        hasNoKey,
-        getOuterCaption,
-        hasSplitCaption,
-        captionArity,
-        replaceFirstArgInCaption,
-        getFirstArg,
-        getSecondArg,
-        getFirstArgType, getSecondArgType,
+        replaceArgsInMultiCaption,
+        parseCaption,
     } from "../lib/key-info";
 
     const eventDispatcher = createEventDispatcher();
@@ -19,30 +10,19 @@
     export let caption;
     export let keyIndex = -1;
     export let selected = false;
-    export let exposeInner = false;
 
-    $: calculatedIsMultiActionKey = isMultiActionKey(caption);
-    $: calculatedKeyArity = captionArity(caption);
-    $: calculatedSplitCaption = hasSplitCaption(caption);
-    $: calculatedOuterCaption = getOuterCaption(caption);
-    $: calculatedInnerCaption = getInnerCaption(caption);
-    $: calculatedHasKey = !hasNoKey(caption);
-    $: calculatedCaption = captionToLabel(caption);
+    $: capInfo = parseCaption(caption);
     $: dropHover = false;
-    $: largeCaption = calculatedCaption.length <=3 && calculatedIsMultiActionKey === false;
-    let arg1 = getFirstArg(caption);
-    let arg2 = getSecondArg(caption);
-    let arg1Type = getFirstArgType(caption);
-    let arg2Type = getSecondArgType(caption);
+
     const updateCaption = (arg) => {
-        caption = replaceFirstArgInCaption(caption, arg);
+        caption = replaceArgsInMultiCaption(caption, arg);
     };
 
     const dispatchSelectedKey = (event) => {
         event.stopImmediatePropagation();
         event.preventDefault();
         if (selected === false) {
-            if (calculatedIsMultiActionKey) {
+            if (capInfo.multiKey) {
                 eventDispatcher("editCompositeKey", {key: keyIndex});
             } else {
                 eventDispatcher("selectedKey", {key: keyIndex});
@@ -68,8 +48,7 @@
                 eventDispatcher("updateCaption", {key: sourceKeyIndex, caption: caption});
                 eventDispatcher("updateCaption", {key: keyIndex, caption: data});
             } else {
-                if (calculatedIsMultiActionKey) {
-                    console.log("Composite key");
+                if (capInfo.multiKey) {
                     eventDispatcher("editCompositeKey", {key: keyIndex, caption: data});
                 } else {
                     eventDispatcher("updateCaption", {key: keyIndex, caption: data});
@@ -105,11 +84,11 @@
             class:key-drop-hover={dropHover}
             class:key-selected={selected}
 
-            class:key-with-caption={calculatedHasKey}
-            class:key-without-caption={!calculatedHasKey}
+            class:key-with-caption={!capInfo.emptyKey}
+            class:key-without-caption={capInfo.emptyKey}
 
-            class:key-small-caption={!largeCaption}
-            class:key-large-caption={largeCaption}
+            class:key-small-caption={capInfo.label.base.length > 3 || capInfo.label.split}
+            class:key-large-caption={capInfo.label.base.length <= 3 && !capInfo.label.split}
             on:mouseup={dispatchSelectedKey}
             on:dragstart={onDragStart}
             on:drop={onDrop}
@@ -119,49 +98,49 @@
             draggable="true"
     >
         <div
-                class:key-caption-single-letter={calculatedCaption.length === 1}
-                class:key-caption={calculatedCaption.length !== 1}
+                class:key-caption-single-letter={capInfo.label.base.length === 1}
+                class:key-caption={capInfo.label.base.length !== 1}
         >
-            {#if calculatedSplitCaption}
+            {#if capInfo.label.split}
                 <div class="outer-key"
-                     class:key-nowrap={calculatedInnerCaption.length < 6}
+                     class:key-nowrap={capInfo.label.base.length < 6}
                 >
-                    {calculatedOuterCaption}
+                    {capInfo.label.base}
                 </div>
                 <div class="inner-key">
-                    {calculatedInnerCaption}
+                    {capInfo.label.inner}
                 </div>
             {:else }
                 <div class="inner-key"
-                     class:key-nowrap={calculatedInnerCaption.length < 6}
-                     class:inner-key-emoji={unicodeRegex.test(calculatedCaption)}>
-                    {calculatedCaption}
+                     class:key-nowrap={capInfo.label.base.length < 6}
+                     class:inner-key-emoji={unicodeRegex.test(capInfo.label.base)}>
+                    {capInfo.label.base}
                 </div>
             {/if}
         </div>
 
     </div>
-    {#if exposeInner && calculatedIsMultiActionKey}
-        {caption}
-        <div class="select">
-            <select bind:value={arg1} onchange={updateCaption(arg1)}>
-                <option selected value=1>Layer 1</option>
-                <option value=2>Layer 2</option>
-            </select>
-        </div>
-        {#if calculatedKeyArity > 1}
-            <div class="key key-not-selected key-large-caption key-with-caption">
-                <div
-                        class:key-caption-single-letter={calculatedInnerCaption.length === 1}
-                        class:key-caption={calculatedInnerCaption.length !== 1}
-                        class:key-nowrap={calculatedInnerCaption.length < 6}
-                >
-                    {calculatedInnerCaption}
-                </div>
+    <!--{#if exposeInner && capInfo.multiKey}-->
+    <!--    {caption}-->
+    <!--    <div class="select">-->
+    <!--        <select bind:value={arg1} onchange={updateCaption(arg1)}>-->
+    <!--            <option selected value=1>Layer 1</option>-->
+    <!--            <option value=2>Layer 2</option>-->
+    <!--        </select>-->
+    <!--    </div>-->
+    <!--    {#if calculatedKeyArity > 1}-->
+    <!--        <div class="key key-not-selected key-large-caption key-with-caption">-->
+    <!--            <div-->
+    <!--                    class:key-caption-single-letter={calculatedInnerCaption.length === 1}-->
+    <!--                    class:key-caption={calculatedInnerCaption.length !== 1}-->
+    <!--                    class:key-nowrap={calculatedInnerCaption.length < 6}-->
+    <!--            >-->
+    <!--                {calculatedInnerCaption}-->
+    <!--            </div>-->
 
-            </div>
-        {/if}
-    {/if}
+    <!--        </div>-->
+    <!--    {/if}-->
+    <!--{/if}-->
 </div>
 <style>
     .key-nowrap {

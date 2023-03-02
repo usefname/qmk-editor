@@ -1,6 +1,6 @@
 <script>
     import {createEventDispatcher} from "svelte";
-    import {hasNoKey} from "../lib/key-info";
+    import {parseCaption} from "../lib/key-info";
 
     const eventDispatcher = createEventDispatcher();
 
@@ -9,8 +9,9 @@
     export let selected = false;
     export let keyIndex;
 
-    $: calculatedColor = hasNoKey(caption) ? "#999" : "#0a2040";
-    $: calculatedBackgroundColor = hasNoKey(caption) ? "#eee" : "#dad4c4";
+    $: capInfo = parseCaption(caption);
+    $: calculatedColor = capInfo.emptyKey ? "#999" : "#0a2040";
+    $: calculatedBackgroundColor = capInfo.emptyKey ? "#eee" : "#dad4c4";
 
 function dispatchSelectedKey() {
     if (!selected) {

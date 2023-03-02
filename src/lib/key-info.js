@@ -1,155 +1,204 @@
-import keycodeCaption from './keycodes/keyCaption.json';
-import keycodeDescription from './keycodes/keyDescription.json';
+import keycodeCaption from './keycodes/keyCaption.json' assert {type: "json"};
+import keycodeDescription from './keycodes/keyDescription.json' assert {type: "json"};
+import fnTypeInfo from './keycodes/keycodeType.json' assert {type: "json"};
+import keycodes from './keycodes/keycodes.json' assert {type: "json"};
 
 export const LAYER_ARG = "Layer";
 export const BASIC_ARG = "Basic";
-export const MOD_ARG = "Basic";
+export const LEFT_MOD_ARG = "Left Mod";
 
-const mKeyes2Args = new Set(["LM", "LT"]);
-const mKeyes1Args = new Set(["DF", "MO", "OSL", "TG", "TO", "TT", "LCTL_T", "CTL_T", "LSFT_T", "SFT_T", "LALT_T", "LOPT_T", "ALT_T", "OPT_T", "LGUI_T", "LCMD_T", "LWIN_T", "GUI_T", "CMD_T", "WIN_T", "RCTL_T", "RSFT_T", "RALT_T", "ROPT_T", "ALGR_T", "RGUI_T", "RCMD_T", "RWIN_T", "LSG_T", "SGUI_T", "SCMD_T", "SWIN_T", "LAG_T", "RSG_T", "RAG_T", "LCA_T", "LSA_T", "RSA_T", "SAGR_T", "RCS_T", "LCAG_T", "RCAG_T", "C_S_T", "MEH_T", "HYPR_T", "ALL_T"]);
-
-let argument1Type = new Map();
-let argument2Type = new Map();
-let arg1Layer = ["DF", "MO", "OSL", "TG", "TO", "TT", "LM", "LT"];
-for (let i in arg1Layer) {
-    let key = arg1Layer[i];
-    argument1Type.set(key, LAYER_ARG);
-}
-for (let i in mKeyes1Args) {
-    let key = arg1Layer[i];
-    if (!argument1Type.has(key)) {
-        argument1Type.set(key, BASIC_ARG);
+export const parseCaption = (caption) => {
+    let uppercaseCaption = caption.toUpperCase().trim();
+    let captionObj = {
+        caption: uppercaseCaption,
+        emptyKey: hasNoKey(uppercaseCaption),
+        multiKey: isMultiActionKey(uppercaseCaption),
+        label: {
+            base: "",
+            split: false,
+            description: ""
+        }
     }
-}
-argument2Type.set("LT", BASIC_ARG);
-argument2Type.set("LM", MOD_ARG);
 
-export const hasNoKey = (caption) => {return caption === "KC_NO" || caption === "XXXXXXX"}
-export const isMultiActionKey = (caption) => {
+    if (captionObj.multiKey) {
+        let captionFn = parseCaptionFunction(uppercaseCaption);
+        if (captionFn.err) {
+            captionObj.label.base = uppercaseCaption;
+            captionObj.label.split = false;
+            captionObj.label.error = captionFn.err;
+        } else {
+            captionObj.captionFn = captionFn;
+            captionObj.label.base = parseBaseLabel(captionFn);
+            captionObj.label.description = keycodeToDescription(captionFn.fn);
+            captionObj.label.split = isSplitCaption(captionFn);
+            if (captionObj.label.split) {
+                captionObj.label.inner = parseInnerLabel(captionFn);
+            }
+        }
+    } else {
+        let label = captionToLabel(uppercaseCaption);
+        if (label) {
+            captionObj.label.base = label;
+            captionObj.label.description = keycodeToDescription(uppercaseCaption);
+            captionObj.label.split = false;
+        } else {
+            captionObj.label.base = uppercaseCaption;
+            captionObj.label.error = "Unknown key";
+            captionObj.label.split = false;
+            captionObj.label.description = "";
+        }
+    }
+    if (!captionObj.label.base) {
+        console.log("Label undefined");
+        console.log(captionObj);
+    }
+    return captionObj;
+}
+
+export const replaceArgsInMultiCaption = (keyInfo, args) => {
+    if (!keyInfo.multiKey) {
+        return keyInfo.caption;
+    }
+    let captionFn = keyInfo.captionFn;
+    let newCaption = captionFn.fn + "(" + args[0].default;
+    if (captionFn.args.length > 1) {
+        newCaption = newCaption + "," + args[1].default + ")";
+    } else {
+        newCaption = newCaption + ")";
+    }
+    return newCaption;
+}
+
+const hasNoKey = (caption) => {
+    return caption === "KC_NO" || caption === "XXXXXXX"
+}
+
+const isMultiActionKey = (caption) => {
     return caption.indexOf('(') > 0;
 }
 
-export const hasSplitCaption = (caption) => {
+const isArgumentInvalid = (type, value) => {
+    if (type === LAYER_ARG) {
+        if (isNaN(value)) {
+            return "Layer argument requires a number";
+        }
+    } else if (type === BASIC_ARG) {
+        if (!keycodes.basic.includes(value)) {
+            return value + " is not a basic keycode";
+        }
+    } else if (type === LEFT_MOD_ARG) {
+        if (!keycodes.leftMods.includes(value)) {
+            return value + " is not a valid modifier";
+        }
+    } else {
+        return "Unknown argument type: " + type + " " + LAYER_ARG;
+    }
+    return false;
+}
+
+export const parseCaptionFunction = (caption) => {
     let argStart = caption.indexOf('(');
-    if (argStart > 0) {
-        let outerCaption = caption.substring(0, argStart).toUpperCase();
-        let isSplitCaption = (argument2Type.has(outerCaption) || argument1Type.get(outerCaption) !== LAYER_ARG);
-        return isSplitCaption;
+    if (argStart === -1 || caption.length === argStart+1) {
+        return {err: "Invalid multiaction key"};
+    }
+    if (!caption.endsWith(')')) {
+        return {err: "Invalid multiaction key"};
+    }
+    let fn = caption.substring(0, argStart).trim();
+    if (!fnTypeInfo[fn]) {
+        return {err: "Unknown multiaction key: " + fn};
+    }
+    let args = [];
+    let rest = caption.substring(argStart+1);
+
+    let argEnd = rest.search("[,)]");
+    if (argEnd <= 0) {
+        return {err: "Invalid multiaction key"};
+    }
+    let arg = rest.substring(0, argEnd).trim();
+    args.push(arg);
+
+    if (rest.at(argEnd) === ',') {
+        rest = rest.substring(argEnd+1);
+        argEnd = rest.indexOf(")");
+        if (argEnd <= 0) {
+            return {err: "Invalid multiaction key"};
+        }
+        arg = rest.substring(0, argEnd).trim();
+        args.push(arg)
+    }
+
+    if (fnTypeInfo[fn].length !== args.length) {
+        return {err: "Argument length mismatch"};
+    }
+    let typedArgs = [];
+    for (let i in args) {
+        let type = fnTypeInfo[fn][i];
+        let value = args[i];
+        let err = isArgumentInvalid(type, value);
+        if (type === LAYER_ARG) {
+            value = parseInt(value);
+        }
+        if (err) {
+            return {err: err};
+        }
+        typedArgs.push({type: type, value: value})
+    }
+    return {
+        fn: fn,
+        args: typedArgs
     }
 }
 
-export const getOuterCaption = (caption) => {
-    let argStart = caption.indexOf('(');
-    let outerCaption = caption.substring(0, argStart).toUpperCase();
-    let label = captionToLabel(outerCaption);
-    if (argument1Type.get(outerCaption) === LAYER_ARG) {
-        let innerString = caption.substring(argStart, caption.length);
-        if (innerString.length > 2) {
-            let needle = innerString.search("[,)]");
-            if (needle > 1) {
-                let arg1 = innerString.substring(1, needle);
-                return label + " " + arg1;
-            }
-        }
+const isSplitCaption = (captionFn) => {
+    return !(captionFn.args.length === 1 && captionFn.args[0].type === LAYER_ARG);
+}
+
+const parseBaseLabel = (captionFn) => {
+    let label = captionToLabel(captionFn.fn);
+    if (!label) {
+        return captionFn.fn;
+    }
+    if (captionFn.args[0].type === LAYER_ARG) {
+        return label + " " + captionFn.args[0].value;
     }
     return label;
 }
 
-export const getInnerCaption = (caption) => {
-    let argStart = caption.indexOf('(');
-    let outerCaption = caption.substring(0, argStart).toUpperCase();
-    if (mKeyes2Args.has(outerCaption)) {
-        let innerCaption = caption.substring(caption.indexOf(',')+1, caption.length-1).toUpperCase();
-        let label = captionToLabel(innerCaption);
-        return label;
+const parseInnerLabel = (captionFn) => {
+    let label;
+    if (captionFn.args[0].type === LAYER_ARG && captionFn.args.length > 1) {
+        label = captionToLabel(captionFn.args[1].value);
     } else {
-        let innerCaption = caption.substring(caption.indexOf('(')+1, caption.length-1).toUpperCase();
-        let label = captionToLabel(innerCaption);
-        return label;
+        label = captionToLabel(captionFn.args[0].value);
     }
-}
-
-export const captionArity = (caption) => {
-    let outerCaption = caption.substring(0, caption.indexOf('(')).toUpperCase();
-    if (mKeyes1Args.has(outerCaption)) {
-        return 1;
-    } else if (mKeyes2Args.has(outerCaption)) {
-        return 2;
+    if (label === null) {
+        return captionFn.args[captionFn.args.length-1].value;
     }
-    return 0;
-}
-
-export const getFirstArgType = (caption) => {
-    let outerCaption = caption.substring(0, caption.indexOf('(')).toUpperCase();
-    if (mKeyes1Args.has(outerCaption)) {
-        return argument1Type.get(outerCaption);
-    }
-    return null;
-}
-
-export const getSecondArgType = (caption) => {
-    let outerCaption = caption.substring(0, caption.indexOf('(')).toUpperCase();
-    if (mKeyes2Args.has(outerCaption)) {
-        return argument2Type.get(outerCaption);
-    }
-    return null;
-}
-
-export const replaceFirstArgInCaption = (caption, arg) => {
-    if (!isMultiActionKey(caption)) {
-        throw("'" + caption + "' does not take any arguments")
-    }
-    let beforeArg = caption.substring(0, caption.indexOf('(')+1, caption.length-1).toUpperCase();
-    let rest = caption.substring(caption.search('[,)]'), caption.length).toUpperCase();
-
-    let newCaption = beforeArg + arg + rest;
-    return newCaption;
-}
-
-export const getFirstArg = (caption) => {
-    if (isMultiActionKey(caption)) {
-        let start = caption.indexOf('(');
-        let end = caption.search('[,)]');
-        if (end > start+1) {
-            return caption.substring(start+1, end);
-        }
-    }
-    return "";
-}
-
-export const getSecondArg = (caption) => {
-    if (isMultiActionKey(caption)) {
-        let start = caption.indexOf(',');
-        let end = caption.indexOf(')');
-        if (end > start+1) {
-            return caption.substring(start+1, end);
-        }
-    }
-    return "";
+    return label;
 }
 
 export const captionToLabel = (caption) => {
-    if (isMultiActionKey(caption)) {
-        return getOuterCaption(caption);
-    } else {
-        let upperCaseCaption = caption.toUpperCase();
-        if (keycodeCaption[upperCaseCaption]) {
-            return keycodeCaption[upperCaseCaption];
-        }
+    if (keycodeCaption[caption]) {
+        return keycodeCaption[caption];
     }
-    return caption;
+    return null;
 }
 
-export const captionToDescription = (caption) => {
-    let description;
-    if (isMultiActionKey(caption)) {
-        let argStart = caption.indexOf('(');
-        let outerCaption = caption.substring(0, argStart).toUpperCase();
-        description = keycodeDescription[outerCaption];
-    } else {
-        description = keycodeDescription[caption];
+let basicCaptions = {};
+export const allBasicCaptions = () => {
+    if (Object.entries(basicCaptions).length === 0) {
+        for (let keycodeCaptionKey in keycodes.basic) {
+            let keyCode =keycodes.basic[keycodeCaptionKey];
+            let label = captionToLabel(keyCode);
+            if (!basicCaptions[label]) {
+                basicCaptions[label] = keyCode;
+            }
+        }
     }
-    if (!description)
-        return "";
-    return description;
+    return basicCaptions;
+}
+
+const keycodeToDescription = (caption) => {
+    return keycodeDescription[caption] ? keycodeDescription[caption] : "";
 }

@@ -1,7 +1,7 @@
 <script>
     import {createEventDispatcher} from "svelte";
     import Keycap from "./Keycap.svelte"
-    import {captionToDescription} from "@/lib/key-info.js";
+    import {parseCaption} from "@/lib/key-info.js";
 
     const eventDispatcher = createEventDispatcher();
 
@@ -10,12 +10,13 @@
     export let keyIndex;
     export let selected;
 
+    $: capInfo = parseCaption(caption);
+
     const forwardEvent = (eventMessage) => {
             return (event) => {
                     eventDispatcher(eventMessage, event.detail);
             }
     }
-    $: captionDescription = captionToDescription(caption);
 </script>
 <div
         class="key-position"
@@ -33,9 +34,9 @@
                 <h6 class="is-size-6">
                         {caption}
                 </h6>
-                {#if captionDescription}
+                {#if capInfo.label.description}
                         <div class="description">
-                                {captionDescription}
+                                {capInfo.label.description}
                         </div>
                 {/if}
         </div>
