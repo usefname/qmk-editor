@@ -41,7 +41,9 @@
     generatedLayer[69] = "MO(1)";
     generatedLayer[70] = "KC_A";
     generatedLayer[71] = "KC_ENTER";
-    keymap.push(generatedLayer);
+    if (keymap.length === 1) {
+        keymap.push(generatedLayer);
+    }
     keymap = padLayerSize(keymap, layout.length);
 
     const iskeyselected = (keynum) => selectedKey === keynum;
@@ -62,10 +64,10 @@
     };
 
     const setCaption = (event) => {
-        if (keycapMode === keyEditStandard
+        if (!showKeyModal
+            && keycapMode === keyEditStandard
             && event.key
             && jsKeyCodes[event.code]) {
-        // && eventKeyCodeToQMKKeyCode.has(event.code)) {
             currentLayer[selectedKey] = jsKeyCodes[event.code];
             event.preventDefault();
             deselectKeyboard();
@@ -95,9 +97,9 @@
     }
 
     function handleSelectedModalKey(event) {
-        if (showKeyModal) {
-            selectedKey = event.detail.key;
-        }
+        // if (showKeyModal) {
+        //     selectedKey = event.detail.key;
+        // }
     }
 
     function handleUpdateModalKeyCaption(event) {
@@ -115,7 +117,7 @@
 <div class="workspace">
     <div class="edit-workspace box"
             on:keydown={setCaption}
-            on:mouseup={deselectKeyboard}
+            on:click={deselectKeyboard}
             on:dragstart={deselectKeyboard}
             tabindex="0">
         <div
@@ -130,7 +132,6 @@
                     This key have multiple actions. The inner key must be a <a href="https://qmk.github.io/qmk_mkdocs/master/en/keycodes_basic/" target="_blank">basic keycode</a>
                 </h2>
                 <Keycap caption={compositeCaption1} keyIndex={1} selected={isModalKeyselected(1)} on:selectedKey={handleSelectedModalKey} on:updateCaption={handleUpdateModalKeyCaption}/>
-                <Keycap caption={compositeCaption2} keyIndex={2} selected={isModalKeyselected(2)} on:selectedKey={handleSelectedModalKey} on:updateCaption={handleUpdateModalKeyCaption}/>
             </section>
         </div>
         <div class="keyboard-container is-narrow"

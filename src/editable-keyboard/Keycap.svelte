@@ -89,7 +89,7 @@
 
             class:key-small-caption={capInfo.label.base.length > 3 || capInfo.label.split}
             class:key-large-caption={capInfo.label.base.length <= 3 && !capInfo.label.split}
-            on:mouseup={dispatchSelectedKey}
+            on:click={dispatchSelectedKey}
             on:dragstart={onDragStart}
             on:drop={onDrop}
             on:dragenter={onDragEnter}
