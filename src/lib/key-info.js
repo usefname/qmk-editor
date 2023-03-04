@@ -1,6 +1,7 @@
 import keycodeCaption from './keycodes/keyCaption.json' assert {type: "json"};
 import keycodeDescription from './keycodes/keyDescription.json' assert {type: "json"};
 import fnTypeInfo from './keycodes/keycodeType.json' assert {type: "json"};
+import fnTypeDefault from './keycodes/keycodeTypeDefault.json' assert {type: "json"};
 import keycodes from './keycodes/keycodes.json' assert {type: "json"};
 
 export const LAYER_ARG = "Layer";
@@ -60,9 +61,9 @@ export const replaceArgsInMultiCaption = (keyInfo, args) => {
         return keyInfo.caption;
     }
     let captionFn = keyInfo.captionFn;
-    let newCaption = captionFn.fn + "(" + args[0].default;
+    let newCaption = captionFn.fn + "(" + args[0].value;
     if (captionFn.args.length > 1) {
-        newCaption = newCaption + "," + args[1].default + ")";
+        newCaption = newCaption + "," + args[1].value + ")";
     } else {
         newCaption = newCaption + ")";
     }
@@ -201,4 +202,30 @@ export const allBasicCaptions = () => {
 
 const keycodeToDescription = (caption) => {
     return keycodeDescription[caption] ? keycodeDescription[caption] : "";
+}
+
+export const captionFnKeyArgumentDesc = (captionFn) => {
+    // if (fnTypeInfo[keycode]) {
+    //     return fnTypeInfo[keycode].map(keyType => {return {"type": keyType, "value": fnTypeDefault[keyType]};});
+    // }
+    captionFn.args.map()
+    return [];
+}
+
+export const getKeyArgumentDesc = (keycode) => {
+    if (fnTypeInfo[keycode]) {
+        return fnTypeInfo[keycode].map(keyType => {return {"type": keyType, "value": fnTypeDefault[keyType]};});
+    }
+    return [];
+}
+export const appendDefaultArgs = (caption, argList) => {
+    if (argList.length === 1) {
+        return caption + "(" + argList[0].value + ")"
+    } else if (argList.length === 2) {
+        return caption  + "(" +
+            argList[0].value +
+            ", " +
+            argList[1].value +
+            ")";
+    }
 }

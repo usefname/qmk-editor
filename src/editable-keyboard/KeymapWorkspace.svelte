@@ -1,7 +1,8 @@
 <script>
     import {padLayerSize} from "../lib/layers";
     import {onMount} from "svelte";
-    import jsKeyCodes from '../lib/keycodes/jsKeyCodes.json'
+    import jsKeyCodes from '../lib/keycodes/jsKeyCodes.json';
+    import keycodes from '../lib/keycodes/keycodes.json';
     import RawKey from "./RawKey.svelte";
     import KeycodeLibrary from "./KeycodeInventory.svelte";
     import LayerPicker from "./LayerPicker.svelte";
@@ -9,6 +10,8 @@
     import KeyEditMode from "./KeyEditMode.svelte";
     import PositionalKey from "./PositionalKey.svelte";
     import Keycap from "./Keycap.svelte";
+    import ExplodedKey from "@/editable-keyboard/ExplodedKey.svelte";
+    import {BASIC_ARG, parseCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
 
     const maxLayers = 16;
 
@@ -33,10 +36,12 @@
     $: compositeCaption2 = "KC_A";
 
     let keycapMode = keyEditStandard;
+    let modalKey = null;
+    let modalKeyDesc = {args: []};
 
     let generatedLayer = [];
     for (let i = 0; i < layout.length; i++) {
-        generatedLayer.push("LALT_T(KC_" + i%10 + ")");
+        generatedLayer.push("LALT_T(KC_" + i % 10 + ")");
     }
     generatedLayer[69] = "MO(1)";
     generatedLayer[70] = "KC_A";
@@ -54,14 +59,20 @@
         selectedKey = null;
     };
 
-    const deselectModal = () => {
-        selectedModalKey = null;
-        showKeyModal = false;
-    };
-
     const deselectModalKey = () => {
         selectedModalKey = null;
     };
+
+    const closeModal = () => {
+        selectedKey = null;
+        showKeyModal = false;
+    }
+
+    const saveModalKey = () => {
+        currentLayer[selectedKey] = replaceArgsInMultiCaption(modalKey, modalKeyDesc.args);
+        selectedKey = null;
+        showKeyModal = false;
+    }
 
     const setCaption = (event) => {
         if (!showKeyModal
@@ -80,7 +91,12 @@
             showKeyModal = false;
         } else {
             selectedKey = event.detail.key;
-            showKeyModal = true;
+            let parsedCaption = parseCaption(currentLayer[selectedKey]);
+            if (parsedCaption.multiKey) {
+                modalKey = parsedCaption;
+                modalKeyDesc = parsedCaption.captionFn;
+                showKeyModal = true;
+            }
         }
     }
 
@@ -91,15 +107,7 @@
     }
 
     function handleUpdateCaption(event) {
-        if (!showKeyModal) {
-            keymap[currentLayerIndex][event.detail.key] = event.detail.caption;
-        }
-    }
-
-    function handleSelectedModalKey(event) {
-        // if (showKeyModal) {
-        //     selectedKey = event.detail.key;
-        // }
+        keymap[currentLayerIndex][event.detail.key] = event.detail.caption;
     }
 
     function handleUpdateModalKeyCaption(event) {
@@ -115,34 +123,48 @@
 </script>
 
 <div class="workspace">
-    <div class="edit-workspace box"
-            on:keydown={setCaption}
-            on:click={deselectKeyboard}
-            on:dragstart={deselectKeyboard}
-            tabindex="0">
-        <div
-                class="keycap-modal box has-background-white-ter"
-                class:kc-modal-visible={showKeyModal}
-                class:kc-modal-hidden={showKeyModal === false}
-                style="--key_w:1; --key_h:1;"
-        >
-            <section>
-                <h1 class="title">Edit multi action key</h1>
-                <h2 class="subtitle">
-                    This key have multiple actions. The inner key must be a <a href="https://qmk.github.io/qmk_mkdocs/master/en/keycodes_basic/" target="_blank">basic keycode</a>
-                </h2>
-                <Keycap caption={compositeCaption1} keyIndex={1} selected={isModalKeyselected(1)} on:selectedKey={handleSelectedModalKey} on:updateCaption={handleUpdateModalKeyCaption}/>
-            </section>
+    <div
+            class="keycap-modal box has-background-white-ter notification"
+            style="--key_w:1; --key_h:1;"
+            class:kc-modal-visible={showKeyModal}
+            class:kc-modal-hidden={showKeyModal === false}
+    >
+        <button class="delete"
+                on:click={closeModal}
+        ></button>
+        <h1 class="title">Edit multi action key</h1>
+        <h2 class="subtitle">
+            This key have multiple actions.
+        </h2>
+        {#if modalKeyDesc.args.length > 0}
+            <ExplodedKey keyDesc={modalKeyDesc} currentLayerIndex={currentLayerIndex}
+                         layerCount={keymap.length}/>
+        {/if}
+        <div class="is-flex is-justify-content-space-evenly">
+            {#if modalKey}
+                <Keycap caption={replaceArgsInMultiCaption(modalKey, modalKeyDesc.args)}/>
+            {/if}
+            <button class="button is-primary" on:click={saveModalKey}>Save</button>
         </div>
+    </div>
+    <div class="edit-workspace box"
+         on:keydown={setCaption}
+         on:click={deselectKeyboard}
+         on:dragstart={deselectKeyboard}
+         tabindex="0">
+
         <div class="keyboard-container is-narrow"
              class:inactive={showKeyModal}
         >
             <div class="keymap-layout">
                 {#each layout as key, i}
                     {#if keyEditStandard === keycapMode}
-                        <PositionalKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption} on:editCompositeKey={handleEditCompositeKey}/>
+                        <PositionalKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
+                                       on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}
+                                       on:editCompositeKey={handleEditCompositeKey}/>
                     {:else if keyEditRaw === keycapMode }
-                        <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey} on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
+                        <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
+                                on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
                     {/if}
                 {/each}
             </div>
@@ -154,7 +176,7 @@
             <KeyEditMode {keycapMode}/>
         </div>
     </div>
-    <KeycodeLibrary {currentLayerIndex} layoutCount={keymap.length}/>
+    <KeycodeLibrary {currentLayerIndex} layerCount={keymap.length}/>
 </div>
 
 <style>
@@ -167,8 +189,11 @@
     }
 
     .keycap-modal {
-        margin-top: 4rem;
-        position: absolute;
+        width: fit-content;
+        position: fixed;
+        left: 0;
+        right: 0;
+        margin: 4rem auto;
         z-index: 200;
     }
 
@@ -194,6 +219,7 @@
         height: calc((var(--kb_largest_y) + 0.0) * (var(--key_y_spacing) * 1px));
         width: calc((var(--kb_largest_x) + 0.0) * (var(--key_x_spacing) * 1px));
     }
+
     .keymap-layout {
         position: absolute;
         border-style: none;
