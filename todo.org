@@ -11,18 +11,18 @@
 * DONE Key library table layout
 Stack tables together
 * DONE Replace list of key captions with table showing descriptions
-* STARTED Combo keys visual
+* DONE Combo keys visual
 ** DONE Show combo box interactive area on click
-** TODO Keycap need input area for multiaction keys
-** TODO Mark combo key with background or border outline
-* TODO Edit combo keys
-* TODO Combo keys descriptions
-* TODO Combo keys inventory table
+** DONE Keycap need input area for multiaction keys
+* DONE Edit combo keys
+* DONE Combo keys descriptions
+* DONE Combo keys inventory table
+* DONE Keycap text overflowing keycap
 * TODO Save and load files
+** TODO save keymap to defines
+** TODO load keymap from defines
 ** TODO Load last file on startup
 ** TODO Settingsfile
-* TODO Multifunction key caption
-** TODO Make keycap parts clickable seperatly
-** TODO Caption only works for last part of multifunction key
-** TODO Handle more than two caption parts
-* TODO Keycap text overflowing keycap
+** TODO Open settings on start if qmk directory not found
+* TODO Generate base Layout from keymap
+* TODO Implement Mod for multikey (LM)

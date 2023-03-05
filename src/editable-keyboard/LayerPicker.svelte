@@ -30,15 +30,15 @@
     <div class="is-size-3"> Layers</div>
     <div class="mt-1">
         {#if keymap.length >= maxLayers}
-            <button class="button is-primary is-size-7" on:click={addLayer} disabled>Add</button>
+            <button class="button is-primary is-light is-size-7" on:click={addLayer} disabled>Add</button>
         {:else}
-            <button class="button is-primary is-size-7" on:click={addLayer}>Add</button>
+            <button class="button is-primary is-light is-size-7" on:click={addLayer}>Add</button>
         {/if}
 
         {#if keymap.length == 1}
-            <button class="button is-primary is-size-7" on:click={deleteLayer} disabled>Delete</button>
+            <button class="button is-primary is-light is-size-7" on:click={deleteLayer} disabled>Delete</button>
         {:else}
-            <button class="button is-primary is-size-7" on:click={deleteLayer }>Delete</button>
+            <button class="button is-primary is-light is-size-7" on:click={deleteLayer }>Delete</button>
         {/if}
     </div>
     <div class="mt-4">
