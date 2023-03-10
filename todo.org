@@ -19,10 +19,10 @@ Stack tables together
 * DONE Combo keys inventory table
 * DONE Keycap text overflowing keycap
 * TODO Save and load files
-** TODO save keymap to defines
-** TODO load keymap from defines
-** TODO Load last file on startup
+** DONE save keymap to defines
 ** TODO Settingsfile
+** TODO Load last file on startup
 ** TODO Open settings on start if qmk directory not found
+** TODO load keymap from defines
 * TODO Generate base Layout from keymap
 * TODO Implement Mod for multikey (LM)
