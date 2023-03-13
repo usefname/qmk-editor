@@ -1,7 +1,7 @@
 <script>
     import {invoke} from '@tauri-apps/api/tauri';
     import {onMount} from 'svelte';
-    import { createEventDispatcher } from 'svelte';
+    import {createEventDispatcher} from 'svelte';
 
     const eventDispatcher = createEventDispatcher();
 
@@ -21,8 +21,8 @@
         }
     })
 
-    async function import_keyboard_layout(keyboard, layout)  {
-        const loadedKeyboard = await invoke('import_keyboard', { keyboard: "ergodox_ez" });
+    async function import_keyboard_layout(keyboard, layout) {
+        const loadedKeyboard = await invoke('import_keyboard', {keyboard: "ergodox_ez"});
         if (Object.keys(loadedKeyboard).length <= 0) {
             eventDispatcher('QMKError', {output: 'keyboard is missing layouts'});
             return;
@@ -61,27 +61,27 @@
     }
 </script>
 
-<main>
-    <div class="columns">
-        <div class="column is-three-fifths">
-            <input class="input" type="search" bind:value={selectedKeyboard} on:change={changeEvent} list="keyboard-list" id="keyboard-choice" name="keyboard-choice" />
-            <datalist id="keyboard-list">
-                {#each keyboardList as keyboard}
-                    <option value="{keyboard}" />
+<div class="columns">
+    <div class="column is-three-fifths">
+        <input class="input" type="search" bind:value={selectedKeyboard} on:change={changeEvent} list="keyboard-list"
+               id="keyboard-choice" name="keyboard-choice"/>
+        <datalist id="keyboard-list">
+            {#each keyboardList as keyboard}
+                <option value="{keyboard}"/>
+            {/each}
+        </datalist>
+    </div>
+    <div class="column is-narrow">
+        <div class="select">
+            <select>
+                {#each keymapList as keymap}
+                    <option>{keymap}</option>
                 {/each}
-            </datalist>
-        </div>
-        <div class="column is-narrow">
-            <div class="select">
-                <select>
-                    {#each keymapList as keymap}
-                        <option>{keymap}</option>
-                    {/each}
-                </select>
-            </div>
-        </div>
-        <div class="column is-narrow">
-            <button class="button is-primary" on:click={dispatchLoadKeyboard} disabled={!validKeyboard}>Load keyboard</button>
+            </select>
         </div>
     </div>
-</main>
+    <div class="column is-narrow">
+        <button class="button is-primary" on:click={dispatchLoadKeyboard} disabled={!validKeyboard}>Load keyboard
+        </button>
+    </div>
+</div>

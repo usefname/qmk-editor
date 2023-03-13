@@ -2,7 +2,11 @@
     import ImportKeyboard from "./ImportKeyboard.svelte";
     import KeymapWorkspace from "./editable-keyboard/KeymapWorkspace.svelte";
     import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "./lib/layout";
+    import {invoke} from "@tauri-apps/api/tauri";
+    import {onMount} from "svelte";
+    import Config from "@/Config.svelte";
 
+    let need_config_update = null;
     let qmk_error = false;
     let qmk_error_output = "Failed to execute QMK";
 
@@ -10,6 +14,8 @@
     let pageWorkspace = "workspace";
     let pageBuild = "build";
     let pageSave = "save";
+    let pageSettings = "settings";
+
 
     let pageState = pageWorkspace;
     let keyboardName = "Test";
@@ -93,9 +99,35 @@
         pageState = pageLoading;
     }
 
+    const showConfig = () => {
+        pageState = pageSettings;
+    }
+
+    const showWorkspace = () => {
+        pageState = pageWorkspace;
+    }
+
+    const onConfigSaved = (event) => {
+        need_config_update = false;
+        showWorkspace();
+    }
+
+    onMount(async () => {
+        try {
+            need_config_update = await invoke('need_config_update');
+            console.log(need_config_update);
+            if (need_config_update) {
+                showConfig();
+            }
+        } catch (err) {
+            qmk_error = true;
+            qmk_error_output = err;
+        }
+    })
 </script>
 
-<main
+<div
+
         style="--app-width:{calculatedAppWidth};--layout-width:{calculatedLayoutWidth};--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};">
     {#if qmk_error}
         <h1 class="title has-text-centered has-text-danger is-block">Error while running QMK</h1>
@@ -115,7 +147,7 @@
                     Load
                 </button>
                 <button class="ml-4 button">Build</button>
-                <button class="ml-4 button">Settings</button>
+                <button class="ml-4 button" on:click={showConfig}>Settings</button>
             </div>
         </div>
 
@@ -125,5 +157,8 @@
         {#if pageState === pageWorkspace}
             <KeymapWorkspace name={keyboardName} layout={keyboardLayout} keymap={keymap}/>
         {/if}
+        {#if pageState === pageSettings}
+            <Config requireUpdate={need_config_update} on:exitConfig={onConfigSaved}/>
+        {/if}
     {/if}
-</main>
+</div>

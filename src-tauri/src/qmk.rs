@@ -1,6 +1,4 @@
-mod settings;
-
-use std::collections::{HashMap};
+use std::collections::HashMap;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
@@ -37,10 +35,10 @@ pub fn list_keyboards(qmk_path: &str) -> Result<Vec<String>> {
         .filter(|p| p.join("keymaps").exists())
         .filter(|p| p.join("info.json").exists())
         .map(|p|
-                p.to_string_lossy()
-                    .strip_prefix(&keyboard_path_string_prefix)
-                    .unwrap_or(&p.to_string_lossy())
-                    .to_string()
+            p.to_string_lossy()
+                .strip_prefix(&keyboard_path_string_prefix)
+                .unwrap_or(&p.to_string_lossy())
+                .to_string()
         )
         .collect::<Vec<String>>();
     keyboards.sort();
@@ -160,7 +158,11 @@ fn list_keymap_c_files(qmk_path: &str, keyboard: &str) -> Result<impl Iterator<I
         .map(|f| f.into_path()))
 }
 
-fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, keymap: Vec<Vec<Vec<String>>>) -> Result<usize> {
+pub fn is_path_qmk_root(qmk_path: &str) -> bool {
+    Path::new(qmk_path).join("keyboards").is_dir()
+}
+
+pub fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, keymap: Vec<Vec<Vec<String>>>) -> Result<usize> {
     ensure!(!keymap.is_empty(), "Keymap is empty");
     ensure!(!keymap[0].is_empty(), "Keymap has no layers");
     let layer_row_length = keymap[0][0].len();
@@ -207,9 +209,11 @@ fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, keymap:
 mod tests {
     use super::*;
 
+    static QMK_TEST_ROOT:&str = "test_data/qmk_firmware";
+
     #[test]
     fn test_generate_keymap() {
-        let keymap_path = Path::new("test_data/qmk_firmware/keyboards/flat/keymaps/generated/keymap.c");
+        let keymap_path = Path::new(QMK_TEST_ROOT).join("keyboards/flat/keymaps/generated/keymap.c");
         if keymap_path.exists() {
             fs::remove_file(keymap_path).unwrap();
         }
@@ -223,27 +227,26 @@ mod tests {
             keymap[0][1].push(String::from("KC_NO"));
             keymap[0][2].push(String::from("KC_NO"));
         }
-        let result= generate_keymap("test_data/qmk_firmware", "generated", "flat", keymap).unwrap();
+        let result= generate_keymap(QMK_TEST_ROOT, "generated", "flat", keymap).unwrap();
         assert_eq!(result, 168)
     }
 
     #[test]
     fn test_list_keyboards() {
-        let result = list_keyboards("test_data/qmk_firmware").unwrap();
-        assert!(result.len() == 2);
-        assert_eq!(result.len(), 2)
+        let result = list_keyboards(QMK_TEST_ROOT).unwrap();
+        assert_eq!(result.len(), 2);
     }
 
     #[test]
     fn test_list_keymaps() {
-        let km = list_keymaps(&"test_data/qmk_firmware/", &"bacca70");
+        let km = list_keymaps(QMK_TEST_ROOT, &"bacca70");
         let km = km.unwrap();
         assert_eq!(km.len(), 4);
     }
 
     #[test]
     fn test_load_keyboard_json() {
-        let keyboard = load_keyboard_json("test_data/qmk_firmware/", &"flat").unwrap();
+        let keyboard = load_keyboard_json(QMK_TEST_ROOT, &"flat").unwrap();
         assert_eq!(&keyboard.keyboard_name.as_str(), &"flat");
     }
 }
