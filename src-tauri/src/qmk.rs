@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt::Debug;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
@@ -8,6 +9,38 @@ use std::process::Command;
 use anyhow::{anyhow, Context, ensure, Result};
 use serde::{Deserialize, Serialize};
 use walkdir::WalkDir;
+
+
+type Keymap = Vec<Vec<Vec<String>>>;
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct KeymapDescription {
+    pub keyboard_name: String,
+    pub layout_name: String,
+    pub keymap: Keymap,
+}
+
+impl KeymapDescription {
+    pub fn new(keyboard: &str, layout: &str, keymap: Keymap) -> Self {
+        Self {
+            keyboard_name: keyboard.to_string(),
+            layout_name: layout.to_string(),
+            keymap,
+        }
+    }
+}
+
+pub fn load_keymap(path: &Path) -> Result<KeymapDescription> {
+    let keymap_file = std::fs::File::open(path).context("Failed to open keymap file")?;
+    let keymap: KeymapDescription = serde_yaml::from_reader(keymap_file).context("Failed to load keymap")?;
+    Ok(keymap)
+}
+
+pub fn save_keymap(path: &Path, keymap: &KeymapDescription) -> Result<()> {
+    let file_desc = File::create(&path)?;
+    serde_yaml::to_writer(file_desc, keymap).context("Failed to write keymap")?;
+    Ok(())
+}
 
 
 pub fn list_keyboards(qmk_path: &str) -> Result<Vec<String>> {
@@ -46,7 +79,6 @@ pub fn list_keyboards(qmk_path: &str) -> Result<Vec<String>> {
     Ok(keyboards)
 }
 
-#[allow(dead_code)]
 fn qmk_root_dir() -> Result<PathBuf> {
     let command = Command::new("qmk")
         .arg("env")
@@ -107,19 +139,11 @@ struct Layout {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct MatrixPins {
-    cols: Vec<String>,
-    rows: Vec<String>
-}
-
-#[derive(Serialize, Deserialize, Debug)]
 pub struct Keyboard {
     keyboard_name: String,
-    url: String,
-    maintainer: String,
     layouts: HashMap<String, Layout>,
-    matrix_pins: MatrixPins
 }
+
 
 pub fn load_keyboard_json(qmk_path: &str, keyboard: &str) -> Result<Keyboard> {
     let mut path = get_keyboard_path(qmk_path, keyboard)?;
@@ -129,7 +153,7 @@ pub fn load_keyboard_json(qmk_path: &str, keyboard: &str) -> Result<Keyboard> {
         path.display()
     ))?;
     let keyboard = serde_json::from_str::<Keyboard>(&file)
-        .context(anyhow!("Failed to deserialize {}", path.display()))?;
+        .context(anyhow!("Failed to deserialize {}\n", path.display()))?;
     ensure!(keyboard.layouts.len() > 0, "Keyboard is missing layouts");
     Ok(keyboard)
 }
@@ -205,19 +229,16 @@ pub fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, key
     Ok(bytes)
 }
 
+
 #[cfg(test)]
 mod tests {
+    use std::mem::size_of;
     use super::*;
 
-    static QMK_TEST_ROOT:&str = "test_data/qmk_firmware";
+    static QMK_TEST_ROOT: &str = "test_data/qmk_firmware";
 
-    #[test]
-    fn test_generate_keymap() {
-        let keymap_path = Path::new(QMK_TEST_ROOT).join("keyboards/flat/keymaps/generated/keymap.c");
-        if keymap_path.exists() {
-            fs::remove_file(keymap_path).unwrap();
-        }
-        let mut keymap: Vec<Vec<Vec<String>>> = Vec::new();
+    fn create_test_keymap() -> Keymap {
+        let mut keymap: Keymap = Vec::new();
         keymap.push(Vec::new());
         keymap[0].push(Vec::new());
         keymap[0].push(Vec::new());
@@ -227,7 +248,37 @@ mod tests {
             keymap[0][1].push(String::from("KC_NO"));
             keymap[0][2].push(String::from("KC_NO"));
         }
-        let result= generate_keymap(QMK_TEST_ROOT, "generated", "flat", keymap).unwrap();
+        keymap
+    }
+
+    #[test]
+    fn test_save_keymap() {
+        let keymap_path = Path::new(QMK_TEST_ROOT).join("save");
+        if !&keymap_path.exists() {
+            fs::create_dir(&keymap_path).unwrap();
+        }
+        let keymap = create_test_keymap();
+        let keymap_path = keymap_path.join("flat.km");
+        if keymap_path.exists() {
+            fs::remove_file(&keymap_path).unwrap();
+        }
+        let keymap_description = KeymapDescription::new("flat", "LAYOUT", keymap);
+        save_keymap(&keymap_path, &keymap_description).unwrap();
+
+        let result = load_keymap(&keymap_path).unwrap();
+        println!("{:?}", result);
+        assert_eq!(result.keyboard_name, "flat")
+    }
+
+
+    #[test]
+    fn test_generate_keymap() {
+        let keymap_path = Path::new(QMK_TEST_ROOT).join("keyboards/flat/keymaps/generated/keymap.c");
+        if keymap_path.exists() {
+            fs::remove_file(keymap_path).unwrap();
+        }
+        let keymap = create_test_keymap();
+        let result = generate_keymap(QMK_TEST_ROOT, "generated", "flat", keymap).unwrap();
         assert_eq!(result, 168)
     }
 

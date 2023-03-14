@@ -1,0 +1,15 @@
+keyboard_name: flat
+layout_name: LAYOUT
+keymap:
+- - - KC_NO
+    - KC_NO
+    - KC_NO
+    - KC_NO
+  - - KC_NO
+    - KC_NO
+    - KC_NO
+    - KC_NO
+  - - KC_NO
+    - KC_NO
+    - KC_NO
+    - KC_NO

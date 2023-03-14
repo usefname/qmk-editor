@@ -71,8 +71,8 @@
         }
     };
 </script>
-<div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
-    <div class="settings">
+<div class="settings is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
+    <div class="setting">
         <h5 class="is-size-5">Path to your <a
                 href="https://qmk.github.io/qmk_mkdocs/master/en/tutorial_getting_started/">qmk firmware
             installation</a>.</h5>
@@ -86,7 +86,7 @@
             </div>
         </div>
     </div>
-    <div class="settings">
+    <div class="setting">
         <h5 class="is-size-5">Keymap directory</h5>
         <div class="field is-horizontal">
             <div class="field-body">
@@ -94,7 +94,7 @@
             </div>
         </div>
     </div>
-    <div class="settings">
+    <div class="setting">
         <button disabled={!is_config_valid} class="ml-4 button is-primary"
                 on:click={saveConfig}
         >Save
@@ -108,7 +108,12 @@
 </div>
 <style>
     .settings {
-        margin-top: 2em;
+        margin-top: 6rem;
+    }
+    .setting {
+        margin-top: 2rem;
+    }
+    .field {
         width: 40rem;
     }
 </style>
