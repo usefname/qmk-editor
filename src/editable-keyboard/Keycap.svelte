@@ -120,27 +120,6 @@
         </div>
 
     </div>
-    <!--{#if exposeInner && capInfo.multiKey}-->
-    <!--    {caption}-->
-    <!--    <div class="select">-->
-    <!--        <select bind:value={arg1} onchange={updateCaption(arg1)}>-->
-    <!--            <option selected value=1>Layer 1</option>-->
-    <!--            <option value=2>Layer 2</option>-->
-    <!--        </select>-->
-    <!--    </div>-->
-    <!--    {#if calculatedKeyArity > 1}-->
-    <!--        <div class="key key-not-selected key-large-caption key-with-caption">-->
-    <!--            <div-->
-    <!--                    class:key-caption-single-letter={calculatedInnerCaption.length === 1}-->
-    <!--                    class:key-caption={calculatedInnerCaption.length !== 1}-->
-    <!--                    class:key-nowrap={calculatedInnerCaption.length < 6}-->
-    <!--            >-->
-    <!--                {calculatedInnerCaption}-->
-    <!--            </div>-->
-
-    <!--        </div>-->
-    <!--    {/if}-->
-    <!--{/if}-->
 </div>
 <style>
     .key-nowrap {

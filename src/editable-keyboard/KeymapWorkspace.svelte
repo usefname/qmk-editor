@@ -15,9 +15,7 @@
 
     const maxLayers = 16;
 
-    // export let keyboard = {name:"", layout_name: "", layout: [], keymap: [[]]};
-    // console.log(keymap);
-    export let name = "Unnamed keyboard";
+    export let keyboard_name = "Unnamed keyboard";
     export let layout;
     export let layout_name;
     export let keymap;

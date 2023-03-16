@@ -23,8 +23,8 @@
         filename: null
     };
 
-    let keyboard = {
-        name: "Test",
+    $: keyboard = {
+        keyboard_name: "Test",
         layout_name: "LAYOUT",
         layout: [
             {"x": 0, "y": 0.375, "w": 1.5}, {"x": 1.5, "y": 0.375}, {"x": 2.5, "y": 0.125}, {"x": 3.5, "y": 0}, {
@@ -93,7 +93,7 @@
     $: largest_x = layout_largest_x(keyboard.layout);
 
     const handleLoadKeyboard = (event) => {
-        keyboard.name = event.detail.keyboardName;
+        keyboard.keyboard_name = event.detail.keyboardName;
         keyboard.layout_name = event.detail.layoutName;
         keyboard.layout = event.detail.layout;
         keyboard.keymap = [[]];
@@ -113,7 +113,7 @@
     }
 
     const showWorkspace = () => {
-        if (keyboard.name) {
+        if (keyboard.keyboard_name) {
             pageState = pageWorkspace;
         } else {
             showLoadKeyboard();
@@ -129,7 +129,7 @@
         try {
             const selected = await save({
                 title: "Save keymap",
-                defaultPath: keyboard.name + ".keymap",
+                defaultPath: keyboard.keyboard_name + ".keymap",
                 filters: [{
                     name: "keymap",
                     extensions: ["keymap"]
@@ -148,7 +148,7 @@
         try {
             const selected = await open({
                 title: "Open keymap",
-                defaultPath: keyboard.name + ".keymap",
+                defaultPath: keyboard.keyboard_name + ".keymap",
                 filters: [{
                     name: "keymap",
                     extensions: ["keymap"]
@@ -163,13 +163,13 @@
                     qmk_error_output = keymapDescription.keyboard_name + " is missing layouts";
                     return;
                 }
-                keyboard.name = keymapDescription.keyboard_name;
+                keyboard.keyboard_name = keymapDescription.keyboard_name;
                 keyboard.layout_name = keymapDescription.layout_name;
-                keyboard.layout = keymapDescription.layout;
+                keyboard.layout = loadedKeyboard.layouts[keymapDescription.layout_name].layout;
                 keyboard.keymap = keymapDescription.keymap;
             }
         } catch (err) {
-           qmk_error = true;
+            qmk_error = true;
             qmk_error_output = err;
         }
     }
@@ -207,15 +207,11 @@
         {/if}
         {#if pageState === pageWorkspace}
             <div class="container is-widescreen is-justify-content-space-between is-flex is-align-items-center">
-                <div class="is-size-1">{keyboard.name ? keyboard.name : "Import QMK keyboard"}</div>
+                <div class="is-size-1">{keyboard.keyboard_name ? keyboard.keyboard_name : "Import QMK keyboard"}</div>
                 <div class="is-flex is-align-items-center">
-                    <button class="button class:is-invisible={!keyboard.name}" on:click={onSaveKeymap}>Save</button>
-                    <button class="button" on:click={onLoadKeymap}>Load</button>
-                    <button class="ml-4 button"
-                            class:is-invisible={!keyboard.name || pageState === pageLoading}
-                            on:click={showLoadKeyboard}>
-                        Load
-                    </button>
+                    <button class="button class:is-invisible={!keyboard.keyboard_name}" on:click={onSaveKeymap}>Save</button>
+                    <button class="button ml-4" on:click={onLoadKeymap}>Load</button>
+                    <button class="ml-4 button" on:click={showLoadKeyboard}>Import</button>
                     <button class="ml-4 button">Build</button>
                     <button class="ml-4 button" on:click={showConfig}>Settings</button>
                 </div>
