@@ -29,6 +29,7 @@
                 return;
             }
             layoutList = layouts;
+            selectedLayout = layoutList[0];
         } catch (err) {
             eventDispatcher('QMKError', {output: err});
         }
@@ -39,10 +40,6 @@
         if (keyboardList.indexOf(new_kb) != -1) {
             selectedKeyboard = new_kb;
             loadKeyboard(new_kb);
-        } else {
-            selectedKeyboard = null;
-            layoutList = [];
-            selectedLayout = null;
         }
     }
 
@@ -58,9 +55,11 @@
 </script>
 
 <div class="columns">
-    <div class="column">
+    <div class="column is-5">
         <label class="is-size-6" for="keyboard-choice">Keyboard</label><br>
         <input class="input" type="search" bind:value={selectedKeyboard} on:change={selectedKeyboardEvent}
+               on:select={selectedKeyboardEvent}
+               on:keyup={selectedKeyboardEvent}
                list="keyboard-list" id="keyboard-choice" name="keyboard-choice"/>
         <datalist id="keyboard-list">
             {#each keyboardList as keyboard}
