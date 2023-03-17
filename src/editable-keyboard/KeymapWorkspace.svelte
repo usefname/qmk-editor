@@ -2,7 +2,6 @@
     import {padLayerSize} from "../lib/layers";
     import {onMount} from "svelte";
     import jsKeyCodes from '../lib/keycodes/jsKeyCodes.json';
-    import keycodes from '../lib/keycodes/keycodes.json';
     import RawKey from "./RawKey.svelte";
     import KeycodeLibrary from "./KeycodeInventory.svelte";
     import LayerPicker from "./LayerPicker.svelte";
@@ -12,6 +11,7 @@
     import Keycap from "./Keycap.svelte";
     import ExplodedKey from "@/editable-keyboard/ExplodedKey.svelte";
     import {BASIC_ARG, parseCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
+    import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.js";
 
     const maxLayers = 16;
 
@@ -28,7 +28,17 @@
         }
     });
 
-    $: currentLayerIndex = 1;
+    $: calculatedAppWidth = "calc(((" + calcLayoutWidth(layout, key_x_spacing) + "*1px)) + 20rem)";
+    $: calculatedLayoutWidth = "calc((" + calcLayoutWidth(layout, key_x_spacing) + "*1px))";
+    $: largest_y = layout_largest_y(layout);
+    $: largest_x = layout_largest_x(layout);
+    let key_x_spacing = 55;
+    let key_y_spacing = 55;
+    let key_width = 50;
+    let key_height = 50;
+
+
+    $: currentLayerIndex = 0;
     $: currentLayer = keymap[currentLayerIndex];
     $: showKeyModal = false;
     $: selectedKey = null;
@@ -40,17 +50,17 @@
     let modalKey = null;
     let modalKeyDesc = {args: []};
 
-    let generatedLayer = [];
-    for (let i = 0; i < layout.length; i++) {
-        generatedLayer.push("LALT_T(KC_" + i % 10 + ")");
-    }
-    generatedLayer[69] = "MO(1)";
-    generatedLayer[70] = "KC_A";
-    generatedLayer[71] = "KC_ENTER";
-    if (keymap.length === 1) {
-        keymap.push(generatedLayer);
-    }
-    keymap = padLayerSize(keymap, layout.length);
+    // let generatedLayer = [];
+    // for (let i = 0; i < layout.length; i++) {
+    //     generatedLayer.push("LALT_T(KC_" + i % 10 + ")");
+    // }
+    // generatedLayer[69] = "MO(1)";
+    // generatedLayer[70] = "KC_A";
+    // generatedLayer[71] = "KC_ENTER";
+    // if (keymap.length === 1) {
+    //     keymap.push(generatedLayer);
+    // }
+    // keymap = padLayerSize(keymap, layout.length);
 
     const iskeyselected = (keynum) => selectedKey === keynum;
     const isModalKeyselected = (keynum) => selectedModalKey === keynum;
@@ -123,7 +133,8 @@
 
 </script>
 
-<div class="workspace">
+<div class="workspace"
+     style="--app-width:{calculatedAppWidth};--layout-width:{calculatedLayoutWidth};--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};">
     <div
             class="keycap-modal box has-background-white-ter notification"
             style="--key_w:1; --key_h:1;"

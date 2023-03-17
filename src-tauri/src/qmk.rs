@@ -186,7 +186,7 @@ pub fn is_path_qmk_root(qmk_path: &str) -> bool {
 }
 
 
-pub fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, layout: &str, keymap: Keymap) -> Result<usize> {
+pub fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, layout: &str, keymap: Keymap) -> Result<String> {
     ensure!(!keymap.is_empty(), "Keymap is empty");
 
     let path = get_keyboard_path(&qmk_path, keyboard)?
@@ -211,7 +211,7 @@ pub fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, lay
     file_data.push_str("};\n");
     let bytes = file.write(file_data.as_bytes())?;
     println!("wrote {} bytes to {}", bytes, keymap_file_path.canonicalize().unwrap().to_string_lossy().to_string());
-    Ok(bytes)
+    Ok(keymap_file_path.to_string_lossy().to_string())
 }
 
 
@@ -247,7 +247,7 @@ mod tests {
         }
         let keymap = create_test_keymap();
         let result = generate_keymap(QMK_TEST_ROOT, "generated", "flat", "LAYOUT", keymap).unwrap();
-        assert_eq!(result, 380)
+        assert!(result.len() > 0)
     }
 
     #[test]

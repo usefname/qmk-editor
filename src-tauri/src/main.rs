@@ -53,6 +53,11 @@ fn unlock_config<'a>(lock: &'a State<EditorConfigRwLock>) -> Result<RwLockReadGu
     Ok(config_guard)
 }
 
+fn unlock_writable_state<'a>(lock: &'a State<EditorStateRwLock>) -> Result<RwLockWriteGuard<'a, EditorState>, String> {
+    let state_guard = lock.write().map_err(|err| err.to_string())?;
+    Ok(state_guard)
+}
+
 fn unlock_state<'a>(lock: &'a State<EditorStateRwLock>) -> Result<RwLockReadGuard<'a, EditorState>, String> {
     let state_guard = lock.read().map_err(|err| err.to_string())?;
     Ok(state_guard)
@@ -60,6 +65,7 @@ fn unlock_state<'a>(lock: &'a State<EditorStateRwLock>) -> Result<RwLockReadGuar
 
 #[tauri::command]
 fn list_keymaps(config_lock: State<EditorConfigRwLock>, keyboard: String) -> Result<Vec<String>, String> {
+    println!("Listing keymaps for {}", &keyboard);
     let config = unlock_config(&config_lock)?;
     let qmk_path = match &config.qmk_path {
         None => { return Err("Missing qmk path".to_string()); }
@@ -70,6 +76,7 @@ fn list_keymaps(config_lock: State<EditorConfigRwLock>, keyboard: String) -> Res
 
 #[tauri::command]
 fn list_keyboards(config_lock: State<EditorConfigRwLock>) -> Result<Vec<String>, String> {
+    println!("Listing keyboards");
     let config = unlock_config(&config_lock)?;
     let qmk_path = match &config.qmk_path {
         None => { return Err("Missing qmk path".to_string()); }
@@ -80,7 +87,7 @@ fn list_keyboards(config_lock: State<EditorConfigRwLock>) -> Result<Vec<String>,
 
 #[tauri::command]
 fn import_keyboard(config_lock: State<EditorConfigRwLock>, keyboard: String) -> Result<qmk::Keyboard, String> {
-    println!("Loading keyboard {}", keyboard);
+    println!("Importing keyboard {}", keyboard);
     let config = unlock_config(&config_lock)?;
     let qmk_path = match &config.qmk_path {
         None => { return Err("Missing qmk path".to_string()); }
@@ -132,7 +139,7 @@ fn get_qmk_path(config_lock: State<EditorConfigRwLock>) -> Result<Option<String>
 }
 
 #[tauri::command]
-fn generate_keymap(config_lock: State<EditorConfigRwLock>, keyboard: String, layout: String, keymap: qmk::Keymap) -> Result<(), String> {
+fn generate_keymap(config_lock: State<EditorConfigRwLock>, keyboard: String, layout: String, keymap: qmk::Keymap) -> Result<String, String> {
     let qmk_path;
     let generated_keymap_path;
     {
@@ -144,7 +151,7 @@ fn generate_keymap(config_lock: State<EditorConfigRwLock>, keyboard: String, lay
         generated_keymap_path = config.generated_keymap.clone();
     }
 
-    qmk::generate_keymap(
+    let keymap_file = qmk::generate_keymap(
         qmk_path.as_str(),
         generated_keymap_path.as_str(),
         keyboard.as_str(),
@@ -152,19 +159,28 @@ fn generate_keymap(config_lock: State<EditorConfigRwLock>, keyboard: String, lay
         keymap,
     )
         .map_err(|err| err.to_string())?;
+    println!("Generated {}", &keymap_file);
+    Ok(keymap_file)
+}
+
+#[tauri::command]
+fn save_keymap(state_lock: State<EditorStateRwLock>, filename: String, keymap_description: KeymapDescription) -> Result<(), String> {
+    println!("Saving keymap to {}", &filename);
+    qmk::save_keymap(
+        Path::new(&filename),
+        &keymap_description)
+        .map_err(|err| err.to_string())?;
+
+    let mut state = unlock_writable_state(&state_lock)?;
+    state.filename = Some(filename);
+    config::create_state_file(&state)
+        .map_err(|err| err.to_string())?;
     Ok(())
 }
 
 #[tauri::command]
-fn save_keymap(filename: String, keymap_description: KeymapDescription) -> Result<(), String> {
-    qmk::save_keymap(
-        Path::new(&filename),
-        &keymap_description)
-        .map_err(|err| err.to_string())
-}
-
-#[tauri::command]
 fn load_keymap(filename: String) -> Result<KeymapDescription, String> {
+    println!("Loading keymap from {}", &filename);
     qmk::load_keymap(
         Path::new(&filename))
         .map_err(|err| err.to_string())
