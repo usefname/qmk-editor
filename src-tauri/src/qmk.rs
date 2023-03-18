@@ -139,7 +139,6 @@ struct Layout {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Keyboard {
-    keyboard_name: String,
     layouts: HashMap<String, Layout>,
 }
 

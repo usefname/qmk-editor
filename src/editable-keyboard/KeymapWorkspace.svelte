@@ -15,18 +15,10 @@
 
     const maxLayers = 16;
 
-    export let keyboard_name = "Unnamed keyboard";
+    export let keyboard_name;
     export let layout;
     export let layout_name;
     export let keymap;
-
-    onMount(async () => {
-        try {
-            // load_keyboard(keyboardName, keyboardLayout);
-        } catch (err) {
-            // eventDispatcher('QMKError', {output: err});
-        }
-    });
 
     $: calculatedAppWidth = "calc(((" + calcLayoutWidth(layout, key_x_spacing) + "*1px)) + 20rem)";
     $: calculatedLayoutWidth = "calc((" + calcLayoutWidth(layout, key_x_spacing) + "*1px))";
@@ -49,18 +41,6 @@
     let keycapMode = keyEditStandard;
     let modalKey = null;
     let modalKeyDesc = {args: []};
-
-    // let generatedLayer = [];
-    // for (let i = 0; i < layout.length; i++) {
-    //     generatedLayer.push("LALT_T(KC_" + i % 10 + ")");
-    // }
-    // generatedLayer[69] = "MO(1)";
-    // generatedLayer[70] = "KC_A";
-    // generatedLayer[71] = "KC_ENTER";
-    // if (keymap.length === 1) {
-    //     keymap.push(generatedLayer);
-    // }
-    // keymap = padLayerSize(keymap, layout.length);
 
     const iskeyselected = (keynum) => selectedKey === keynum;
     const isModalKeyselected = (keynum) => selectedModalKey === keynum;

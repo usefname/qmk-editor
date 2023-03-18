@@ -21,13 +21,19 @@
         filename: null
     };
 
-    let keyboard = {};
+    $: keyboard_name = "";
+    $: layout_name = "";
+    $: layout = [];
+    $: keymap = [[]];
 
     const handleLoadKeyboard = (event) => {
-        keyboard.keyboard_name = event.detail.keyboardName;
-        keyboard.layout_name = event.detail.layoutName;
-        keyboard.layout = event.detail.layout;
-        keyboard.keymap = [[]];
+        keyboard_name = event.detail.keyboardName;
+        layout_name = event.detail.layoutName;
+        layout = event.detail.layout;
+        keymap = [[]];
+        for (let i = 0; i < layout.length; i++) {
+            keymap[0].push("KC_NO");
+        }
         pageState = pageWorkspace;
     }
 
@@ -45,7 +51,7 @@
     }
 
     const showWorkspace = () => {
-        if (keyboard.keyboard_name) {
+        if (keyboard_name) {
             pageState = pageWorkspace;
         } else {
             showLoadKeyboard();
@@ -61,14 +67,14 @@
         try {
             const selected = await save({
                 title: "Save keymap",
-                defaultPath: keyboard.keyboard_name + ".keymap",
+                defaultPath: keyboard_name + ".keymap",
                 filters: [{
                     name: "keymap",
                     extensions: ["keymap"]
                 }]
             });
             if (selected !== null) {
-                await invoke('save_keymap', {filename: selected, keymapDescription: keyboard})
+                await invoke('save_keymap', {filename: selected, keymapDescription: {keyboard_name: keyboard_name, layout_name: layout_name, keymap: keymap}});
             }
         } catch (err) {
             qmk_error = true;
@@ -78,16 +84,16 @@
 
     const onBuild = async (event) => {
         try {
-            await invoke('generate_keymap', {keyboard: keyboard.keyboard_name, layout: keyboard.layout_name, keymap: keyboard.keymap})
+            await invoke('generate_keymap', {keyboard: keyboard_name, layout_name: layout_name, keymap: keymap})
         } catch (err) {
             qmk_error = true;
             qmk_error_output = err;
         }
     }
 
-    const loadKeymap = async (keymap) => {
+    const loadKeymap = async (keymapFile) => {
         try {
-            let keymapDescription = await invoke('load_keymap', {filename: keymap});
+            let keymapDescription = await invoke('load_keymap', {filename: keymapFile});
             let loadedKeyboard = await invoke('import_keyboard', {keyboard: keymapDescription.keyboard_name});
             let layouts = Object.keys(loadedKeyboard.layouts);
             if (layouts.length <= 0) {
@@ -95,12 +101,10 @@
                 qmk_error_output = keymapDescription.keyboard_name + " is missing layouts";
                 return;
             }
-            keyboard = {
-                keyboard_name: keymapDescription.keyboard_name,
-                layout_name: keymapDescription.layout_name,
-                layout: loadedKeyboard.layouts[keymapDescription.layout_name].layout,
-                keymap: keymapDescription.keymap
-            }
+            keyboard_name = keymapDescription.keyboard_name;
+            layout_name = keymapDescription.layout_name;
+            layout = loadedKeyboard.layouts[keymapDescription.layout_name].layout;
+            keymap = keymapDescription.keymap;
         } catch(err) {
             qmk_error = true;
             qmk_error_output = err;
@@ -158,9 +162,9 @@
         {/if}
         {#if pageState === pageWorkspace}
             <div class="container is-widescreen is-justify-content-space-between is-flex is-align-items-center">
-                <div class="is-size-1">{keyboard.keyboard_name ? keyboard.keyboard_name : "Import QMK keyboard"}</div>
+                <div class="is-size-1">{keyboard_name ? keyboard_name : "Import QMK keyboard"}</div>
                 <div class="is-flex is-align-items-center">
-                    <button class="button class:is-invisible={!keyboard.keyboard_name}" on:click={onSaveKeymap}>Save</button>
+                    <button class="button class:is-invisible={!keyboard_name}" on:click={onSaveKeymap}>Save</button>
                     <button class="button ml-4" on:click={onLoadKeymap}>Load</button>
                     <button class="ml-4 button" on:click={showLoadKeyboard}>Import</button>
                     <button class="ml-4 button" on:click={onBuild}>Build</button>
@@ -168,7 +172,7 @@
                 </div>
             </div>
 
-            <KeymapWorkspace bind:keymap={keyboard.keymap} keyboard_name=keyboard.name layout_name=keyboard.layout_name layout={keyboard.layout}/>
+            <KeymapWorkspace bind:keymap={keymap} keyboard_name={keyboard_name} layout_name={layout_name} layout={layout}/>
         {/if}
         {#if pageState === pageSettings}
             <Config requireUpdate={need_config_update} on:exitConfig={onConfigSaved}/>

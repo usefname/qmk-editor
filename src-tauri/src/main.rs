@@ -139,7 +139,7 @@ fn get_qmk_path(config_lock: State<EditorConfigRwLock>) -> Result<Option<String>
 }
 
 #[tauri::command]
-fn generate_keymap(config_lock: State<EditorConfigRwLock>, keyboard: String, layout: String, keymap: qmk::Keymap) -> Result<String, String> {
+fn generate_keymap(config_lock: State<EditorConfigRwLock>, keyboard: String, layout_name: String, keymap: qmk::Keymap) -> Result<String, String> {
     let qmk_path;
     let generated_keymap_path;
     {
@@ -155,7 +155,7 @@ fn generate_keymap(config_lock: State<EditorConfigRwLock>, keyboard: String, lay
         qmk_path.as_str(),
         generated_keymap_path.as_str(),
         keyboard.as_str(),
-        layout.as_str(),
+        layout_name.as_str(),
         keymap,
     )
         .map_err(|err| err.to_string())?;
