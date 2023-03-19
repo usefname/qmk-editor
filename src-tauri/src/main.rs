@@ -36,7 +36,8 @@ fn main() {
             get_qmk_path,
             generate_keymap,
             save_keymap,
-            load_keymap
+            load_keymap,
+            set_current_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running QMK Editor");
@@ -164,16 +165,11 @@ fn generate_keymap(config_lock: State<EditorConfigRwLock>, keyboard: String, lay
 }
 
 #[tauri::command]
-fn save_keymap(state_lock: State<EditorStateRwLock>, filename: String, keymap_description: KeymapDescription) -> Result<(), String> {
+fn save_keymap(filename: String, keymap_description: KeymapDescription) -> Result<(), String> {
     println!("Saving keymap to {}", &filename);
     qmk::save_keymap(
         Path::new(&filename),
         &keymap_description)
-        .map_err(|err| err.to_string())?;
-
-    let mut state = unlock_writable_state(&state_lock)?;
-    state.filename = Some(filename);
-    config::create_state_file(&state)
         .map_err(|err| err.to_string())?;
     Ok(())
 }
@@ -184,4 +180,13 @@ fn load_keymap(filename: String) -> Result<KeymapDescription, String> {
     qmk::load_keymap(
         Path::new(&filename))
         .map_err(|err| err.to_string())
+}
+
+#[tauri::command]
+fn set_current_file(state_lock: State<EditorStateRwLock>, filename: Option<String>) -> Result<(), String> {
+    let mut state = unlock_writable_state(&state_lock)?;
+    state.filename = filename;
+    config::create_state_file(&state)
+        .map_err(|err| err.to_string())?;
+    Ok(())
 }

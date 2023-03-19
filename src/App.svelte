@@ -26,7 +26,7 @@
     $: layout = [];
     $: keymap = [[]];
 
-    const handleLoadKeyboard = (event) => {
+    const handleLoadKeyboard = async (event) => {
         keyboard_name = event.detail.keyboardName;
         layout_name = event.detail.layoutName;
         layout = event.detail.layout;
@@ -34,6 +34,7 @@
         for (let i = 0; i < layout.length; i++) {
             keymap[0].push("KC_NO");
         }
+        await invoke('set_current_file', {filename: null});
         pageState = pageWorkspace;
     }
 
@@ -75,6 +76,7 @@
             });
             if (selected !== null) {
                 await invoke('save_keymap', {filename: selected, keymapDescription: {keyboard_name: keyboard_name, layout_name: layout_name, keymap: keymap}});
+                await invoke('set_current_file', {filename: selected});
             }
         } catch (err) {
             qmk_error = true;
@@ -95,6 +97,7 @@
         try {
             let keymapDescription = await invoke('load_keymap', {filename: keymapFile});
             let loadedKeyboard = await invoke('import_keyboard', {keyboard: keymapDescription.keyboard_name});
+            await invoke('set_current_file', {filename: keymapFile});
             let layouts = Object.keys(loadedKeyboard.layouts);
             if (layouts.length <= 0) {
                 qmk_error = true;
