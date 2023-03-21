@@ -27,3 +27,4 @@ Stack tables together
 * TODO Show error popup instead of full screen error
 * TODO Implement Mod for multikey (LM)
 * TODO Replace inner combo key when drag and dropping basic key
+* TODO Recover frontend after error

@@ -1,6 +1,4 @@
 <script>
-    import {padLayerSize} from "../lib/layers";
-    import {onMount} from "svelte";
     import jsKeyCodes from '../lib/keycodes/jsKeyCodes.json';
     import RawKey from "./RawKey.svelte";
     import KeycodeLibrary from "./KeycodeInventory.svelte";
@@ -10,15 +8,17 @@
     import PositionalKey from "./PositionalKey.svelte";
     import Keycap from "./Keycap.svelte";
     import ExplodedKey from "@/editable-keyboard/ExplodedKey.svelte";
-    import {BASIC_ARG, parseCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
+    import {parseCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
     import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.js";
 
     const maxLayers = 16;
 
-    export let keyboard_name;
+    export let keyboardName;
     export let layout;
-    export let layout_name;
+    export let layoutName;
     export let keymap;
+    console.log("keymap length:"  + keymap[0].length)
+    console.log("layout length:"  + layout.length)
 
     $: calculatedAppWidth = "calc(((" + calcLayoutWidth(layout, key_x_spacing) + "*1px)) + 20rem)";
     $: calculatedLayoutWidth = "calc((" + calcLayoutWidth(layout, key_x_spacing) + "*1px))";

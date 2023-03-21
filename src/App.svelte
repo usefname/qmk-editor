@@ -21,14 +21,14 @@
         filename: null
     };
 
-    $: keyboard_name = "";
-    $: layout_name = "";
+    $: keyboardName = "";
+    $: layoutName = "";
     $: layout = [];
     $: keymap = [[]];
 
     const handleLoadKeyboard = async (event) => {
-        keyboard_name = event.detail.keyboardName;
-        layout_name = event.detail.layoutName;
+        keyboardName = event.detail.keyboardName;
+        layoutName = event.detail.layoutName;
         layout = event.detail.layout;
         keymap = [[]];
         for (let i = 0; i < layout.length; i++) {
@@ -52,7 +52,7 @@
     }
 
     const showWorkspace = () => {
-        if (keyboard_name) {
+        if (keyboardName) {
             pageState = pageWorkspace;
         } else {
             showLoadKeyboard();
@@ -68,14 +68,14 @@
         try {
             const selected = await save({
                 title: "Save keymap",
-                defaultPath: keyboard_name + ".keymap",
+                defaultPath: keyboardName + ".keymap",
                 filters: [{
                     name: "keymap",
                     extensions: ["keymap"]
                 }]
             });
             if (selected !== null) {
-                await invoke('save_keymap', {filename: selected, keymapDescription: {keyboard_name: keyboard_name, layout_name: layout_name, keymap: keymap}});
+                await invoke('save_keymap', {filename: selected, keymapDescription: {keyboard_name: keyboardName, layout_name: layoutName, keymap: keymap}});
                 await invoke('set_current_file', {filename: selected});
             }
         } catch (err) {
@@ -86,7 +86,7 @@
 
     const onBuild = async (event) => {
         try {
-            await invoke('generate_keymap', {keyboard: keyboard_name, layout_name: layout_name, keymap: keymap})
+            await invoke('generate_keymap', {keymapDescription: {keyboard_name: keyboardName, layout_name: layoutName, keymap: keymap}})
         } catch (err) {
             qmk_error = true;
             qmk_error_output = err;
@@ -104,8 +104,8 @@
                 qmk_error_output = keymapDescription.keyboard_name + " is missing layouts";
                 return;
             }
-            keyboard_name = keymapDescription.keyboard_name;
-            layout_name = keymapDescription.layout_name;
+            keyboardName = keymapDescription.keyboard_name;
+            layoutName = keymapDescription.layout_name;
             layout = loadedKeyboard.layouts[keymapDescription.layout_name].layout;
             keymap = keymapDescription.keymap;
         } catch(err) {
@@ -150,6 +150,7 @@
         } catch (err) {
             qmk_error = true;
             qmk_error_output = err;
+            showLoadKeyboard();
         }
     })
 </script>
@@ -165,9 +166,9 @@
         {/if}
         {#if pageState === pageWorkspace}
             <div class="container is-widescreen is-justify-content-space-between is-flex is-align-items-center">
-                <div class="is-size-1">{keyboard_name ? keyboard_name : "Import QMK keyboard"}</div>
+                <div class="is-size-1">{keyboardName ? keyboardName : "Import QMK keyboard"}</div>
                 <div class="is-flex is-align-items-center">
-                    <button class="button class:is-invisible={!keyboard_name}" on:click={onSaveKeymap}>Save</button>
+                    <button class="button class:is-invisible={!keyboardName}" on:click={onSaveKeymap}>Save</button>
                     <button class="button ml-4" on:click={onLoadKeymap}>Load</button>
                     <button class="ml-4 button" on:click={showLoadKeyboard}>Import</button>
                     <button class="ml-4 button" on:click={onBuild}>Build</button>
@@ -175,7 +176,7 @@
                 </div>
             </div>
 
-            <KeymapWorkspace bind:keymap={keymap} keyboard_name={keyboard_name} layout_name={layout_name} layout={layout}/>
+            <KeymapWorkspace bind:keymap={keymap} keyboardName={keyboardName} layoutName={layoutName} layout={layout}/>
         {/if}
         {#if pageState === pageSettings}
             <Config requireUpdate={need_config_update} on:exitConfig={onConfigSaved}/>
