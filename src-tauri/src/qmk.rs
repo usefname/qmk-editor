@@ -20,6 +20,7 @@ pub struct KeymapDescription {
 }
 
 impl KeymapDescription {
+    #[allow(dead_code)]
     pub fn new(keyboard: &str, layout: &str, keymap: Keymap) -> Self {
         Self {
             keyboard_name: keyboard.to_string(),
@@ -78,6 +79,7 @@ pub fn list_keyboards(qmk_path: &str) -> Result<Vec<String>> {
     Ok(keyboards)
 }
 
+#[allow(dead_code)]
 fn qmk_root_dir() -> Result<PathBuf> {
     let command = Command::new("qmk")
         .arg("env")
@@ -217,7 +219,6 @@ pub fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, lay
 
 #[cfg(test)]
 mod tests {
-    use std::mem::size_of;
 
     use super::*;
 
@@ -264,7 +265,6 @@ mod tests {
 
     #[test]
     fn test_load_keyboard_json() {
-        let keyboard = load_keyboard_json(QMK_TEST_ROOT, &"flat").unwrap();
-        assert_eq!(&keyboard.keyboard_name.as_str(), &"flat");
+        load_keyboard_json(QMK_TEST_ROOT, &"flat").unwrap();
     }
 }

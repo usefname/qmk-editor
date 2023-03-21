@@ -18,7 +18,7 @@ Stack tables together
 * DONE Combo keys descriptions
 * DONE Combo keys inventory table
 * DONE Keycap text overflowing keycap
-* TODO Save and load files
+* DONE Save and load files
 ** DONE save keymap to defines
 ** DONE Settingsfile
 ** DONE Open settings on start if qmk directory not found
