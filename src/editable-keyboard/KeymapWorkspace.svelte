@@ -17,8 +17,6 @@
     export let layout;
     export let layoutName;
     export let keymap;
-    console.log("keymap length:"  + keymap[0].length)
-    console.log("layout length:"  + layout.length)
 
     $: calculatedAppWidth = "calc(((" + calcLayoutWidth(layout, key_x_spacing) + "*1px)) + 20rem)";
     $: calculatedLayoutWidth = "calc((" + calcLayoutWidth(layout, key_x_spacing) + "*1px))";

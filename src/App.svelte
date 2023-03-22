@@ -8,15 +8,15 @@
 
     let need_config_update = null;
     let qmk_error = false;
-    let qmk_error_output = "Failed to execute QMK";
+    let qmk_error_output = "QMK Error";
 
     let pageLoading = "loading";
     let pageWorkspace = "workspace";
     let pageBuild = "build";
-    let pageSettings = "";
+    let pageSettings = "settings";
 
 
-    let pageState = pageSettings;
+    let pageState = "";
     let editorState = {
         filename: null
     };
@@ -75,7 +75,10 @@
                 }]
             });
             if (selected !== null) {
-                await invoke('save_keymap', {filename: selected, keymapDescription: {keyboard_name: keyboardName, layout_name: layoutName, keymap: keymap}});
+                await invoke('save_keymap', {
+                    filename: selected,
+                    keymapDescription: {keyboard_name: keyboardName, layout_name: layoutName, keymap: keymap}
+                });
                 await invoke('set_current_file', {filename: selected});
             }
         } catch (err) {
@@ -86,7 +89,13 @@
 
     const onBuild = async (event) => {
         try {
-            await invoke('generate_keymap', {keymapDescription: {keyboard_name: keyboardName, layout_name: layoutName, keymap: keymap}})
+            await invoke('generate_keymap', {
+                keymapDescription: {
+                    keyboard_name: keyboardName,
+                    layout_name: layoutName,
+                    keymap: keymap
+                }
+            })
         } catch (err) {
             qmk_error = true;
             qmk_error_output = err;
@@ -108,7 +117,7 @@
             layoutName = keymapDescription.layout_name;
             layout = loadedKeyboard.layouts[keymapDescription.layout_name].layout;
             keymap = keymapDescription.keymap;
-        } catch(err) {
+        } catch (err) {
             qmk_error = true;
             qmk_error_output = err;
         }
@@ -156,10 +165,22 @@
 </script>
 <div>
     {#if qmk_error}
-        <h1 class="title has-text-centered has-text-danger is-block">Error</h1>
-        <code class="is-size-6 has-text-black">
-            {qmk_error_output}
-        </code>
+        <div class="modal"
+             class:is-active={qmk_error}>
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Unexpected Error</p>
+                    <button class="delete" aria-label="close" on:click={() => {qmk_error = false}}></button>
+                </header>
+                <section class="modal-card-body">
+                    {qmk_error_output}
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button" on:click={() => {qmk_error = false}}>Cancel</button>
+                </footer>
+            </div>
+        </div>
     {:else}
         {#if pageState === pageLoading}
             <ImportKeyboard on:QMKError={handleQMKError} on:loadKeyboard={handleLoadKeyboard}/>
