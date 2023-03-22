@@ -10,6 +10,7 @@
     export let caption;
     export let keyIndex = -1;
     export let selected = false;
+    export let popupDescription = false;
 
     $: capInfo = parseCaption(caption);
     $: dropHover = false;
@@ -75,7 +76,7 @@
         event.preventDefault();
     };
 
-    const unicodeRegex =/[^\u0000-\u00ff]/;
+    const unicodeRegex = /[^\u0000-\u00ff]/;
 </script>
 <div>
     <div
@@ -120,8 +121,60 @@
         </div>
 
     </div>
+    {#if popupDescription}
+        <div
+                class="key-info-popup notification message is-info is-size-7 description">
+            <div class="key-info-message message-body description">
+                <h6 class="is-size-6">
+                    {caption}
+                </h6>
+                {#if capInfo.label.description}
+                    <div class="description">
+                        {capInfo.label.description}
+                    </div>
+                {/if}
+            </div>
+        </div>
+    {/if}
 </div>
 <style>
+    .description {
+        width: 20em;
+    }
+
+    .key-info-popup {
+        display: none;
+        position: relative;
+        padding: 5px;
+        left: calc(var(--key_w) * var(--key_width) * 1px + 30px);
+        top: calc(-1 * (var(--key_y_spacing)) * 1px);
+        z-index: 2000;
+    }
+
+    .key-info-message {
+        padding: 1em 1.25em;
+        margin: 0 0;
+    }
+
+    @keyframes fadeTooltip {
+        0% {
+            opacity: 0;
+        }
+        30% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .key:hover + .key-info-popup {
+        display: block;
+        opacity: 1;
+        animation: fadeTooltip 1s ease-in-out;
+    }
+
+
     .key-nowrap {
         white-space: nowrap;
     }
@@ -171,8 +224,8 @@
     }
 
     .key {
-        width: calc(var(--key_w)*var(--key_width)*1px);
-        height: calc(var(--key_h)*var(--key_height)*1px);
+        width: calc(var(--key_w) * var(--key_width) * 1px);
+        height: calc(var(--key_h) * var(--key_height) * 1px);
         position: relative;
 
         display: inline-block;
@@ -199,6 +252,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
+
     .key-caption {
         position: absolute;
         top: 50%;
