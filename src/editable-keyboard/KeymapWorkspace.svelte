@@ -151,7 +151,7 @@
                     {#if keyEditStandard === keycapMode}
                         <PositionalKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
                                        on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}
-                                       on:editCompositeKey={handleEditCompositeKey}/>
+                                       on:editCompositeKey={handleEditCompositeKey} popupDescription={true}/>
                     {:else if keyEditRaw === keycapMode }
                         <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
                                 on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>

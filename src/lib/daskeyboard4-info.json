@@ -63,6 +63,7 @@
                 { "label":"Prt Sc", "matrix": [0, 0], "x": 15.25, "y": 0 },
                 { "label":"Scr Lk", "matrix": [1, 0], "x": 16.25, "y": 0 },
                 { "label":"Pause", "matrix": [1, 1], "x": 17.25, "y": 0 },
+                { "label":"NOP", "matrix": [1, 1], "x": 21.5, "y": 0 },
                 { "label":"`", "matrix": [2, 16], "x": 0, "y": 1.25 },
                 { "label":"1", "matrix": [0, 16], "x": 1, "y": 1.25 },
                 { "label":"2", "matrix": [0, 4], "x": 2, "y": 1.25 },

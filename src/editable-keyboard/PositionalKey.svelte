@@ -9,6 +9,7 @@
     export let caption;
     export let keyIndex;
     export let selected;
+    export let popupDescription = false;
 
     $: capInfo = parseCaption(caption);
 
@@ -21,7 +22,7 @@
 <div
         class="key-position"
         style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
-        <Keycap {caption} {keyIndex} {selected} popupDescription={true}
+        <Keycap {caption} {keyIndex} {selected} popupDescription={popupDescription}
                 on:selectedKey={forwardEvent("selectedKey")}
                 on:updateCaption={forwardEvent("updateCaption")}
                 on:editCompositeKey={forwardEvent("editCompositeKey")}
