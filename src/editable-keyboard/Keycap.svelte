@@ -121,7 +121,7 @@
         </div>
 
     </div>
-    {#if popupDescription}
+    {#if popupDescription && dropHover === false}
         <div
                 class="key-info-popup notification message is-info is-size-7 description">
             <div class="key-info-message message-body description">
