@@ -34,7 +34,6 @@ function onKeyUp(event) {
 >
     {#if selected}
         <input class="key-input" type="text" value={caption} on:keyup={onKeyUp} autofocus/>
-        <!--{caption}-->
     {:else}
         {caption}
     {/if}

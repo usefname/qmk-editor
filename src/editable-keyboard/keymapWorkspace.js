@@ -1,3 +1,2 @@
-export const keyEditStandard = "Standard";
-export const keyEditComposite = "Composite";
-export const keyEditRaw = "Raw";
+export const keyEditInteractive = "Interactive";
+export const keyEditText = "Text";

@@ -26,6 +26,7 @@
                 on:selectedKey={forwardEvent("selectedKey")}
                 on:updateCaption={forwardEvent("updateCaption")}
                 on:editCompositeKey={forwardEvent("editCompositeKey")}
+                on:updateCaptionMultiKey={forwardEvent("updateCaptionMultiKey")}
         />
 </div>
 

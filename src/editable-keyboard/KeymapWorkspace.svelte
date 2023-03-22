@@ -1,14 +1,15 @@
 <script>
     import jsKeyCodes from '../lib/keycodes/jsKeyCodes.json';
+    import keycodes from '../lib/keycodes/keycodes.json';
     import RawKey from "./RawKey.svelte";
     import KeycodeLibrary from "./KeycodeInventory.svelte";
     import LayerPicker from "./LayerPicker.svelte";
-    import {keyEditRaw, keyEditStandard} from "./keymapWorkspace";
+    import {keyEditInteractive, keyEditText} from "./keymapWorkspace";
     import KeyEditMode from "./KeyEditMode.svelte";
     import PositionalKey from "./PositionalKey.svelte";
     import Keycap from "./Keycap.svelte";
     import ExplodedKey from "@/editable-keyboard/ExplodedKey.svelte";
-    import {parseCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
+    import {BASIC_ARG, parseCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
     import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.js";
 
     const maxLayers = 16;
@@ -36,7 +37,7 @@
     $: compositeCaption1 = "MO";
     $: compositeCaption2 = "KC_A";
 
-    let keycapMode = keyEditStandard;
+    let keycapMode = keyEditInteractive;
     let modalKey = null;
     let modalKeyDesc = {args: []};
 
@@ -65,7 +66,7 @@
 
     const setCaption = (event) => {
         if (!showKeyModal
-            && keycapMode === keyEditStandard
+            && keycapMode === keyEditInteractive
             && event.key
             && jsKeyCodes[event.code]) {
             currentLayer[selectedKey] = jsKeyCodes[event.code];
@@ -96,7 +97,38 @@
     }
 
     function handleUpdateCaption(event) {
-        keymap[currentLayerIndex][event.detail.key] = event.detail.caption;
+        let newCaption = event.detail.caption;
+        let captionObj = parseCaption(newCaption);
+        if (captionObj.multiKey) {
+            switch (captionObj.captionFn.fn) {
+                case 'MO':
+                case 'LM':
+                case 'TT':
+                case 'LT':
+                    //todo: update target layer with KC_TRNS on same index https://github.com/qmk/qmk_firmware/blob/master/docs/feature_layers.md
+            }
+        }
+        keymap[currentLayerIndex][event.detail.key] = newCaption;
+    }
+
+    function handleUpdateCaptionMultiKey(event) {
+        let newCaption = event.detail.caption.toUpperCase();
+        let oldCaption = keymap[currentLayerIndex][event.detail.key];
+
+        let captionObj = parseCaption(oldCaption);
+        if (captionObj.multiKey && keycodes.basic.includes(newCaption)) {
+            let replaced = false;
+            for (let i in captionObj.captionFn.args) {
+                if (captionObj.captionFn.args[i].type === BASIC_ARG) {
+                    replaced = true;
+                    captionObj.captionFn.args[i].value = newCaption;
+                }
+            }
+            if (replaced) {
+                newCaption = replaceArgsInMultiCaption(captionObj, captionObj.captionFn.args);
+            }
+        }
+        keymap[currentLayerIndex][event.detail.key] = newCaption;
     }
 
     function handleUpdateModalKeyCaption(event) {
@@ -148,10 +180,13 @@
         >
             <div class="keymap-layout">
                 {#each layout as key, i}
-                    {#if keyEditStandard === keycapMode}
+                    {#if keyEditInteractive === keycapMode}
                         <PositionalKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
-                                       on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}
-                                       on:editCompositeKey={handleEditCompositeKey} popupDescription={true}/>
+                                       on:selectedKey={handleSelectedKey}
+                                       on:updateCaption={handleUpdateCaption}
+                                       on:editCompositeKey={handleEditCompositeKey}
+                                       on:updateCaptionMultiKey={handleUpdateCaptionMultiKey}
+                                       popupDescription={true}/>
                     {:else if keyEditRaw === keycapMode }
                         <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
                                 on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
@@ -163,7 +198,7 @@
              class:inactive={showKeyModal}
         >
             <LayerPicker bind:keymap bind:currentLayerIndex {maxLayers} layoutKeyCount={layout.length}/>
-            <KeyEditMode {keycapMode}/>
+            <KeyEditMode bind:keycapMode/>
         </div>
     </div>
     <KeycodeLibrary {currentLayerIndex} layerCount={keymap.length}/>

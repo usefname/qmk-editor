@@ -27,7 +27,7 @@
 </script>
 
 <div class="is-flex is-flex-direction-column layers">
-    <div class="is-size-3"> Layers</div>
+    <div class="is-size-3"> Layer</div>
     <div class="mt-1">
         {#if keymap.length >= maxLayers}
             <button class="button is-primary is-light is-size-7" on:click={addLayer} disabled>Add</button>

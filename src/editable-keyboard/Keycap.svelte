@@ -50,7 +50,7 @@
                 eventDispatcher("updateCaption", {key: keyIndex, caption: data});
             } else {
                 if (capInfo.multiKey) {
-                    eventDispatcher("editCompositeKey", {key: keyIndex, caption: data});
+                    eventDispatcher("updateCaptionMultiKey", {key: keyIndex, caption: data});
                 } else {
                     eventDispatcher("updateCaption", {key: keyIndex, caption: data});
                 }

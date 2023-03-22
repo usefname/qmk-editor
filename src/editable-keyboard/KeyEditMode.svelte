@@ -1,19 +1,19 @@
 <script>
-    import {keyEditRaw, keyEditStandard} from "./keymapWorkspace";
+    import {keyEditText, keyEditInteractive} from "./keymapWorkspace";
     export let keycapMode;
 </script>
 
 <div>
-    <div>
-        <h4 class="is-size-3">Key edit mode</h4>
+    <div class="mt-5">
+        <h4 class="is-size-3">Edit mode</h4>
         <div class="column">
-            <label class="radio is-size-4">
-                <input value={keyEditStandard} bind:group={keycapMode} type="radio" name="keytype" checked="true">
-                {keyEditStandard}
+            <label class="radio is-size-5">
+                <input value={keyEditInteractive} bind:group={keycapMode} type="radio" name="keytype" checked="true">
+                {keyEditInteractive}
             </label>
-            <label class="radio is-size-4">
-                <input value={keyEditRaw} bind:group={keycapMode} type="radio" name="keytype">
-                {keyEditRaw}
+            <label class="radio is-size-5">
+                <input value={keyEditText} bind:group={keycapMode} type="radio" name="keytype">
+                {keyEditText}
             </label>
         </div>
     </div>
