@@ -6,7 +6,7 @@
   "MediaTrackPrevious": "KC_MEDIA_PREV_TRACK",
   "MediaPlayPause": "KC_MEDIA_PLAY_PAUSE",
   "Tab": "KC_TAB",
-  "Enter": "KC_RETURN",
+  "Enter": "KC_ENTER",
   "Backspace": "KC_BACKSPACE",
   "Escape": "KC_ESCAPE",
   "Space": "KC_SPACE",

@@ -28,3 +28,8 @@ Stack tables together
 * DONE Show error popup instead of full screen error
 * TODO Implement Mod for multikey (LM)
 * TODO Replace inner combo key when drag and dropping basic key
+* TODO Save suggest replace current file
+* TODO Raw key edit does not work
+* TODO Paint with drag and drop
+* TODO Don't show hover after drop
+When dropping multiple keys in a row, hover does not clear correctly

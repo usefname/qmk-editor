@@ -1,6 +1,8 @@
 {
   "KC_NO": "Ignore this key (NOOP)",
   "XXXXXXX": "Ignore this key (NOOP)",
+  "QK_BOOTLOADER": "Put the keyboard into bootloader mode for flashing",
+  "QK_BOOT": "Put the keyboard into bootloader mode for flashing",
   "KC_TRANSPARENT": "Use the next lowest non-transparent key",
   "KC_TRNS": "Use the next lowest non-transparent key",
   "_______": "Use the next lowest non-transparent key",

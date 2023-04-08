@@ -1,6 +1,8 @@
 {
   "KC_NO": "N/A",
   "XXXXXXX": "N/A",
+  "QK_BOOTLOADER": "Flash",
+  "QK_BOOT": "Flash",
   "KC_TRANSPARENT": "🏳️",
   "KC_TRNS": "🏳️",
   "_______": "🏳️",

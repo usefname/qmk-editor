@@ -351,7 +351,8 @@
   ],
   "special": [
     "KC_NO",
-    "KC_TRANSPARENT"
+    "KC_TRANSPARENT",
+    "QK_BOOTLOADER"
   ],
   "mouse": [
     "KC_MS_UP",
