@@ -11,9 +11,13 @@
     import ExplodedKey from "@/editable-keyboard/ExplodedKey.svelte";
     import {BASIC_ARG, parseCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
     import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.js";
+    import {createEventDispatcher} from "svelte";
+
+    const eventDispatcher = createEventDispatcher();
 
     const maxLayers = 16;
 
+    export let dirty;
     export let keyboardName;
     export let layout;
     export let layoutName;
@@ -72,6 +76,7 @@
             currentLayer[selectedKey] = jsKeyCodes[event.code];
             event.preventDefault();
             deselectKeyboard();
+            dirty = true;
         }
     };
 
@@ -109,6 +114,7 @@
             }
         }
         keymap[currentLayerIndex][event.detail.key] = newCaption;
+        dirty = true;
     }
 
     function handleUpdateCaptionMultiKey(event) {
@@ -129,6 +135,7 @@
             }
         }
         keymap[currentLayerIndex][event.detail.key] = newCaption;
+        dirty = true;
     }
 
     function handleUpdateModalKeyCaption(event) {
@@ -141,10 +148,27 @@
         }
     }
 
+    const onDrop = (event) => {
+        event.preventDefault();
+        console.log("dropped")
+        let data = event.dataTransfer.getData("text/plain");
+        if (data.length > 0 && data.length < 1024) {
+            let sourceKeyIndex = event.dataTransfer.getData("_qmk/sourceIndex");
+            currentLayer[sourceKeyIndex] = "KC_NO";
+        }
+    }
+    const onDragEnter = (event) => {
+        event.preventDefault();
+    }
+    const onDragOver = (event) => {
+        event.preventDefault();
+    }
+
 </script>
 
 <div class="workspace"
-     style="--app-width:{calculatedAppWidth};--layout-width:{calculatedLayoutWidth};--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};">
+     style="--app-width:{calculatedAppWidth};--layout-width:{calculatedLayoutWidth};--kb_largest_x: {largest_x};--kb_largest_y: {largest_y}; --key_x_spacing: {key_x_spacing}; --key_y_spacing: {key_y_spacing}; --key_width: {key_width}; --key_height: {key_height};"
+>
     <div
             class="keycap-modal box has-background-white-ter notification"
             style="--key_w:1; --key_h:1;"
@@ -173,7 +197,11 @@
          on:keydown={setCaption}
          on:click={deselectKeyboard}
          on:dragstart={deselectKeyboard}
-         tabindex="0">
+         tabindex="0"
+         on:drop={onDrop}
+         on:dragenter={onDragEnter}
+         on:dragover={onDragOver}
+    >
 
         <div class="keyboard-container is-narrow"
              class:inactive={showKeyModal}

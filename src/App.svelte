@@ -2,9 +2,11 @@
     import ImportKeyboard from "./ImportKeyboard.svelte";
     import KeymapWorkspace from "./editable-keyboard/KeymapWorkspace.svelte";
     import {invoke} from "@tauri-apps/api/tauri";
-    import {open, save} from '@tauri-apps/api/dialog';
+    import {open, save, confirm} from '@tauri-apps/api/dialog';
+    import { appWindow } from "@tauri-apps/api/window";
     import {onMount} from "svelte";
     import Config from "@/Config.svelte";
+    import {TauriEvent} from "@tauri-apps/api/event";
 
     let need_config_update = null;
     let qmk_error = false;
@@ -25,6 +27,23 @@
     $: layoutName = "";
     $: layout = [];
     $: keymap = [[]];
+    $: dirty = false;
+
+    appWindow.listen(TauriEvent.WINDOW_CLOSE_REQUESTED, () => {
+        if (dirty) {
+            confirm('Unsaved changes exist, exit anyway?', editorState.filename).then((result) => {
+                if (result) {
+                    appWindow.close();
+                }
+                },
+                (error) => {
+                    console.log(error)
+                })
+            return false;
+        } else {
+            appWindow.close();
+        }
+    })
 
     const handleLoadKeyboard = async (event) => {
         keyboardName = event.detail.keyboardName;
@@ -35,6 +54,8 @@
             keymap[0].push("KC_NO");
         }
         await invoke('set_current_file', {filename: null});
+        editorState.filename = null;
+        updateTitle()
         pageState = pageWorkspace;
     }
 
@@ -59,12 +80,20 @@
         }
     }
 
+    const updateTitle = () => {
+        let title = "QMK Editor";
+        if (editorState.filename) {
+            title += " - " + editorState.filename
+        }
+        appWindow.setTitle(title);
+    }
+
     const onConfigSaved = (event) => {
         need_config_update = false;
         showWorkspace();
     }
 
-    const onSaveKeymap = async (event) => {
+    const onSaveAsKeymap = async (event) => {
         try {
             const selected = await save({
                 title: "Save keymap",
@@ -81,9 +110,26 @@
                 });
                 await invoke('set_current_file', {filename: selected});
             }
+            dirty = false;
+            updateTitle();
         } catch (err) {
             qmk_error = true;
             qmk_error_output = err;
+        }
+    }
+
+    const onSaveKeymap = async (event) => {
+        if (editorState.filename) {
+            try {
+                await invoke('save_keymap', {
+                    filename: editorState.filename,
+                    keymapDescription: {keyboard_name: keyboardName, layout_name: layoutName, keymap: keymap}
+                });
+                dirty = false;
+            } catch (err) {
+                qmk_error = true;
+                qmk_error_output = err;
+            }
         }
     }
 
@@ -117,6 +163,9 @@
             layoutName = keymapDescription.layout_name;
             layout = loadedKeyboard.layouts[keymapDescription.layout_name].layout;
             keymap = keymapDescription.keymap;
+            editorState.filename = keymapFile;
+            dirty = false;
+            updateTitle();
         } catch (err) {
             qmk_error = true;
             qmk_error_output = err;
@@ -187,9 +236,10 @@
         {/if}
         {#if pageState === pageWorkspace}
             <div class="container is-widescreen is-justify-content-space-between is-flex is-align-items-center">
-                <div class="is-size-1">{keyboardName ? keyboardName : "Import QMK keyboard"}</div>
+                <div class="is-size-3">{keyboardName ? keyboardName : "Import QMK keyboard"} {editorState.filename ? " - " + editorState.filename : ""}</div>
                 <div class="is-flex is-align-items-center">
-                    <button class="button class:is-invisible={!keyboardName}" on:click={onSaveKeymap}>Save</button>
+                    <button class="button class:is-invisible={!keyboardName}" on:click={onSaveAsKeymap}>Save as</button>
+                    <button class="button ml-4 class:is-invisible={!keyboardName}" on:click={onSaveKeymap} disabled={!dirty}>Save</button>
                     <button class="button ml-4" on:click={onLoadKeymap}>Load</button>
                     <button class="ml-4 button" on:click={showLoadKeyboard}>Import</button>
                     <button class="ml-4 button" on:click={onBuild}>Build</button>
@@ -197,7 +247,7 @@
                 </div>
             </div>
 
-            <KeymapWorkspace bind:keymap={keymap} keyboardName={keyboardName} layoutName={layoutName} layout={layout}/>
+            <KeymapWorkspace bind:dirty bind:keymap={keymap} keyboardName={keyboardName} layoutName={layoutName} layout={layout}/>
         {/if}
         {#if pageState === pageSettings}
             <Config requireUpdate={need_config_update} on:exitConfig={onConfigSaved}/>

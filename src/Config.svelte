@@ -101,7 +101,7 @@
         </button>
         {#if !requireUpdate}
             <button disabled={!isKeymapPathValid} class="ml-4 button is-primary"
-                    on:click={exitConfig}>Discard changes
+                    on:click={exitConfig}>Back
             </button>
         {/if}
     </div>

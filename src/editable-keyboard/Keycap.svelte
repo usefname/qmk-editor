@@ -35,12 +35,17 @@
 
     const onDragStart = (event) => {
         event.dataTransfer.setData("text/plain", caption);
-        event.dataTransfer.setData("_qmk/effect", "swap");
         event.dataTransfer.setData("_qmk/source", "keycap");
         event.dataTransfer.setData("_qmk/sourceIndex", keyIndex);
+        if (event.ctrlKey) {
+            event.dataTransfer.setData("_qmk/effect", "copy");
+            event.dataTransfer.dropEffect = "copy";
+        } else {
+            event.dataTransfer.setData("_qmk/effect", "swap");
+        }
     };
 
-    const onDrop = (event) => {
+    const dndUpdateCaption = (event) => {
         let data = event.dataTransfer.getData("text/plain");
         if (data.length > 0 && data.length < 1024) {
             let type = event.dataTransfer.getData("_qmk/effect");
@@ -58,22 +63,26 @@
         }
         dropHover = false;
         selected = false;
+    }
+
+    const onDrop = (event) => {
+        event.stopPropagation();
         event.preventDefault();
+        dndUpdateCaption(event);
     };
 
     const onDragEnter = (event) => {
-        event.dataTransfer.dropEffect = "copy";
-        dropHover = true;
+        event.stopPropagation();
         event.preventDefault();
+        dropHover = true;
     };
     const onDragOver = (event) => {
-        event.dataTransfer.dropEffect = "copy";
-        dropHover = true;
+        event.stopPropagation();
         event.preventDefault();
     };
     const onDragLeave = (event) => {
-        dropHover = false;
         event.preventDefault();
+        dropHover = false;
     };
 
     const unicodeRegex = /[^\u0000-\u00ff]/;
@@ -168,12 +177,11 @@
         }
     }
 
-    .key:hover + .key-info-popup {
-        display: block;
-        opacity: 1;
-        animation: fadeTooltip 1s ease-in-out;
-    }
-
+    /*.key:hover + .key-info-popup {*/
+    /*    display: block;*/
+    /*    opacity: 1;*/
+    /*    animation: fadeTooltip 1s ease-in-out;*/
+    /*}*/
 
     .key-nowrap {
         white-space: nowrap;
