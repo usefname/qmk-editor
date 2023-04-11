@@ -5,35 +5,76 @@
     const eventDispatcher = createEventDispatcher();
 
     export let caption;
-    export let key;
+    export let keyIndex = -1;
     export let selected = false;
-    export let keyIndex;
 
     $: capInfo = parseCaption(caption);
     $: calculatedColor = capInfo.emptyKey ? "#999" : "#0a2040";
     $: calculatedBackgroundColor = capInfo.emptyKey ? "#eee" : "#dad4c4";
 
-function dispatchSelectedKey() {
-    if (!selected) {
-        eventDispatcher("selectedKey", {key: keyIndex});
+    let captionField = caption;
+    const dispatchSelectedKey = (event) => {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        captionField = caption;
+        if (selected === false) {
+            eventDispatcher("selectedKey", {key: keyIndex});
+        } else {
+            eventDispatcher("selectedKey", {key: null});
+        }
     }
-}
 
-function onKeyUp(event) {
-    if (event.key === "Enter") {
-        // caption=event.target.value;
-        eventDispatcher("updateCaption", {key: keyIndex, caption: event.target.value});
+    const deselectKey = (event) => {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        eventDispatcher("selectedKey", {key: null});
+        captionField = caption;
+    }
+
+    const updateCaption = (newCaption) => {
+        eventDispatcher("updateCaption", {key: keyIndex, caption: newCaption});
         eventDispatcher("selectedKey", {key: null});
     }
-}
+
+    const onSave = (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        updateCaption(captionField);
+    }
+
+    const onKeyUp = (event) => {
+        if (event.key === "Enter") {
+            event.stopPropagation();
+            event.preventDefault();
+            updateCaption(event.target.value);
+        }
+    }
 
 </script>
 
-<div class="key" style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};background: {calculatedBackgroundColor}; color: {calculatedColor}"
+<div
+        class="key"
+        class:key-selected={selected}
+        class:key-not-selected={!selected}
      on:click={dispatchSelectedKey}
 >
     {#if selected}
-        <input class="key-input" type="text" value={caption} on:keyup={onKeyUp} autofocus/>
+        <div class="modal is-active"
+        on:click={(e) => {e.stopPropagation(); e.preventDefault();}}>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Edit key</p>
+                    <button class="delete" aria-label="close" on:click={deselectKey}></button>
+                </header>
+                <section class="modal-card-body">
+                    <input class="key-input" type="text" bind:value={captionField} on:keyup={onKeyUp} autofocus/>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success" on:click={onSave}>Save</button>
+                    <button class="button" on:click={deselectKey}>Cancel</button>
+                </footer>
+            </div>
+        </div>
     {:else}
         {caption}
     {/if}
@@ -41,33 +82,42 @@ function onKeyUp(event) {
 
 <style>
     .key {
-        top: calc(var(--key_y)*var(--key_y_spacing));
-        left: calc(var(--key_x)*var(--key_x_spacing));
-        width: calc(var(--key_w)*var(--key_width));
-        height: calc(var(--key_h)*var(--key_height));
-        display: flex;
-        justify-content: space-around;
-        -webkit-box-align: center;
-        align-items: center;
-        text-align: center;
-        position: absolute;
+        font-size: x-small;
+        line-break: anywhere;
+
+        width: calc(var(--key_w) * var(--key_width) * 1px);
+        height: calc(var(--key_h) * var(--key_height) * 1px);
+        position: relative;
+        background-color: var(--key-noop-background-color);
+
+        display: inline-block;
         box-sizing: border-box;
-        white-space: pre-line;
         cursor: pointer;
         padding: 1px 1px 3px;
+        line-height: 1.3rem;
 
-        border-radius: 6px;
         font-family: 'Montserrat', sans-serif;
-        font-size: 10px;
-        overflow-wrap: anywhere;
         box-shadow: 0px -1px 0px 3px inset rgba(0, 0, 0, 0.1),
         0px 0px 0px 1px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+    .key-selected {
+        border-radius: 6px;
+        border-style: solid;
+
+        border-color: var(--color5);
+    }
+
+    .key-not-selected {
+        border-radius: 6px;
         border-left: 1px solid rgba(0, 0, 0, 0.1);
         border-right: 1px solid rgba(0, 0, 0, 0.1);
     }
+
     .key-input {
         /*width: 30px;*/
         /*height: 25px;*/
+        /*background-color: white;*/
         border-radius: 2px;
         border: 1px solid;
         margin: 0 auto;

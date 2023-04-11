@@ -1,7 +1,6 @@
 <script>
     import jsKeyCodes from '../lib/keycodes/jsKeyCodes.json';
     import keycodes from '../lib/keycodes/keycodes.json';
-    import RawKey from "./RawKey.svelte";
     import KeycodeLibrary from "./KeycodeInventory.svelte";
     import LayerPicker from "./LayerPicker.svelte";
     import {keyEditInteractive, keyEditText} from "./keymapWorkspace";
@@ -150,7 +149,6 @@
 
     const onDrop = (event) => {
         event.preventDefault();
-        console.log("dropped")
         let data = event.dataTransfer.getData("text/plain");
         if (data.length > 0 && data.length < 1024) {
             let sourceKeyIndex = event.dataTransfer.getData("_qmk/sourceIndex");
@@ -208,16 +206,16 @@
         >
             <div class="keymap-layout">
                 {#each layout as key, i}
-                    {#if keyEditInteractive === keycapMode}
-                        <PositionalKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
+                        <PositionalKey {key} keycapType={keycapMode} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
                                        on:selectedKey={handleSelectedKey}
                                        on:updateCaption={handleUpdateCaption}
                                        on:editCompositeKey={handleEditCompositeKey}
                                        on:updateCaptionMultiKey={handleUpdateCaptionMultiKey}
                                        popupDescription={true}/>
-                    {:else if keyEditRaw === keycapMode }
-                        <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}
-                                on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>
+                    {#if keyEditInteractive === keycapMode}
+                    {:else if keyEditText === keycapMode }
+<!--                        <RawKey {key} caption={currentLayer[i]} keyIndex={i} selected={i===selectedKey}-->
+<!--                                on:selectedKey={handleSelectedKey} on:updateCaption={handleUpdateCaption}/>-->
                     {/if}
                 {/each}
             </div>

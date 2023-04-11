@@ -2,6 +2,8 @@
     import {createEventDispatcher} from "svelte";
     import Keycap from "./Keycap.svelte"
     import {parseCaption} from "@/lib/key-info.js";
+    import {keyEditInteractive, keyEditText} from "./keymapWorkspace";
+    import RawKey from "@/editable-keyboard/RawKey.svelte";
 
     const eventDispatcher = createEventDispatcher();
 
@@ -10,6 +12,7 @@
     export let keyIndex;
     export let selected;
     export let popupDescription = false;
+    export let keycapType;
 
     $: capInfo = parseCaption(caption);
 
@@ -22,12 +25,20 @@
 <div
         class="key-position"
         style="--key_x:{key.x}; --key_y:{key.y}; --key_w:{key.w?key.w:1}; --key_h:{key.h?key.h:1};">
-        <Keycap {caption} {keyIndex} {selected} popupDescription={popupDescription}
-                on:selectedKey={forwardEvent("selectedKey")}
-                on:updateCaption={forwardEvent("updateCaption")}
-                on:editCompositeKey={forwardEvent("editCompositeKey")}
-                on:updateCaptionMultiKey={forwardEvent("updateCaptionMultiKey")}
-        />
+        {#if keyEditInteractive === keycapType}
+                <Keycap {caption} {keyIndex} {selected} popupDescription={popupDescription}
+                        on:selectedKey={forwardEvent("selectedKey")}
+                        on:updateCaption={forwardEvent("updateCaption")}
+                        on:editCompositeKey={forwardEvent("editCompositeKey")}
+                        on:updateCaptionMultiKey={forwardEvent("updateCaptionMultiKey")}
+                />
+        {:else if keyEditText === keycapType }
+                <RawKey
+                        {caption} {keyIndex} {selected}
+                        on:selectedKey={forwardEvent("selectedKey")}
+                        on:updateCaption={forwardEvent("updateCaption")}
+                />
+        {/if}
 </div>
 
 <style>

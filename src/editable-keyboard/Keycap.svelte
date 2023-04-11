@@ -205,18 +205,18 @@
         background-color: var(--key-noop-background-color);
     }
 
-    .key-selected {
-        border-radius: 6px;
-        border-style: solid;
-
-        border-color: var(--color5);
-    }
-
     .key-drop-hover {
         border-radius: 6px;
         border-style: solid;
 
         border-color: var(--color4);
+    }
+
+    .key-selected {
+        border-radius: 6px;
+        border-style: solid;
+
+        border-color: var(--color5);
     }
 
     .key-not-selected {

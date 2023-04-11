@@ -4,6 +4,7 @@
     import {layout_largest_x, layout_largest_y} from "../lib/layout";
     import PositionalKey from "./PositionalKey.svelte";
     import Keycap from "./Keycap.svelte";
+    import {keyEditInteractive} from "./keymapWorkspace";
     import {
         appendDefaultArgs,
         getKeyArgumentDesc,
@@ -89,7 +90,7 @@
         {#if currentTab === "Keyboard"}
             <div class="column keyboard is-narrow box">
                 {#each layout as key, i}
-                    <PositionalKey {key} caption={keymap[i]} keyIndex=i selected={false} popupDescription={false}/>
+                    <PositionalKey {key} keycapType={keyEditInteractive} caption={keymap[i]} keyIndex=i selected={false} popupDescription={false}/>
                 {/each}
             </div>
         {:else if sections.has(currentTab)}
