@@ -21,6 +21,8 @@ anyhow = "1.0.58"
 walkdir = "2"
 xdg = "2.4.1"
 serde_yaml = "0.9.19"
+nix = {version = "0.26.2", features = ["process"] }
+#rustix = { version = "0.37.11", features = "process" }
 
 [features]
 # by default Tauri runs in production mode

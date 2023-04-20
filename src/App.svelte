@@ -1,12 +1,13 @@
 <script>
-    import ImportKeyboard from "./ImportKeyboard.svelte";
-    import KeymapWorkspace from "./editable-keyboard/KeymapWorkspace.svelte";
+    import {onMount} from "svelte";
     import {invoke} from "@tauri-apps/api/tauri";
     import {open, save, confirm} from '@tauri-apps/api/dialog';
     import { appWindow } from "@tauri-apps/api/window";
-    import {onMount} from "svelte";
-    import Config from "@/Config.svelte";
     import {TauriEvent} from "@tauri-apps/api/event";
+    import Config from "@/Config.svelte";
+    import Build from "@/Build.svelte";
+    import ImportKeyboard from "./ImportKeyboard.svelte";
+    import KeymapWorkspace from "./editable-keyboard/KeymapWorkspace.svelte";
 
     let need_config_update = null;
     let qmk_error = false;
@@ -134,18 +135,7 @@
     }
 
     const onBuild = async (event) => {
-        try {
-            await invoke('generate_keymap', {
-                keymapDescription: {
-                    keyboard_name: keyboardName,
-                    layout_name: layoutName,
-                    keymap: keymap
-                }
-            })
-        } catch (err) {
-            qmk_error = true;
-            qmk_error_output = err;
-        }
+        pageState = pageBuild;
     }
 
     const loadKeymap = async (keymapFile) => {
@@ -251,6 +241,9 @@
         {/if}
         {#if pageState === pageSettings}
             <Config requireUpdate={need_config_update} on:exitConfig={onConfigSaved}/>
+        {/if}
+        {#if pageState === pageBuild}
+            <Build {keyboardName} {layoutName} {keymap} build={pageState === pageBuild} on:exitBuild={showWorkspace}/>
         {/if}
     {/if}
 </div>

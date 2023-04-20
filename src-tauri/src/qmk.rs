@@ -1,14 +1,15 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
-use std::fs;
+use std::{fs};
 use std::fs::File;
-use std::io::Write;
+use std::io::{Write};
 use std::path::{MAIN_SEPARATOR, Path, PathBuf};
-use std::process::Command;
+use std::process::{Command};
 
 use anyhow::{anyhow, Context, ensure, Result};
 use serde::{Deserialize, Serialize};
 use walkdir::WalkDir;
+use crate::command::{async_command, BuildEvent, BuildProcess};
 
 pub type Keymap = Vec<Vec<String>>;
 
@@ -108,6 +109,13 @@ fn qmk_root_dir() -> Result<PathBuf> {
     }
 }
 
+pub fn flash_keyboard<F: Fn(BuildEvent, String) -> () + Clone + Send + 'static>(io_callback: F, qmk_path: &str, keyboard: &str, keymap: &str) -> Result<BuildProcess> {
+    let arg = [keyboard, keymap, "flash"].join(":");
+    let program = "make";
+    println!("{}: {} {}", qmk_path, program, arg);
+    let build_process = async_command(io_callback, qmk_path, program, &arg)?;
+    Ok(build_process)
+}
 
 fn get_keyboard_path(qmk_path: &str, keyboard: &str) -> Result<PathBuf> {
     let path = Path::new(qmk_path)
@@ -223,6 +231,7 @@ mod tests {
     use super::*;
 
     static QMK_TEST_ROOT: &str = "test_data/qmk_firmware";
+
 
     fn create_test_keymap() -> Keymap {
         let mut keymap: Keymap = Vec::new();

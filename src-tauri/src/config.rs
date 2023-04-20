@@ -1,13 +1,10 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-extern crate xdg;
-
 use std::fs::File;
 use std::path::PathBuf;
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
-use crate::generate_keymap;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct EditorConfig {
