@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "css-build": "node-sass --omit-source-map-url src-sass/bulma-override.scss src/css/bulma-custom.css",
+    "css-build": "node-sass --omit-source-map-url src-sass/bulma-override.scss src-svelte/css/bulma-custom.css",
     "build": "vite build",
     "preview": "vite preview",
     "tauri": "tauri"
