@@ -1,17 +1,17 @@
 [package]
 name = "qmk-editor"
 version = "0.1.0"
-description = "A Tauri App"
+description = "Qmk keyboard layout editor"
 license = ""
 repository = ""
 default-run = "qmk-editor"
 edition = "2021"
-rust-version = "1.57"
+rust-version = "1.69"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.0.4", features = [] }
+tauri-build = { version = "1.2", features = [] }
 
 [dependencies]
 serde_json = "1.0"

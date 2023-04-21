@@ -158,7 +158,6 @@ pub fn async_command<P, F>(io_callback: F, path: P, program: &str, arg: &str) ->
         success
     });
 
-    println!("child: {:?}", child_thread.thread().id());
 
     let build_process = BuildProcess {
         command: command_str,
