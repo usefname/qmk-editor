@@ -10,16 +10,6 @@ const disabledWarnings = [
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svelte(
-    {
-      onwarn(warning, handler) {
-        if (disabledWarnings.includes(warning.message)) {
-          return;
-        }
-        handler(warning);
-      },
-    }
-  )],
   resolve: {
     alias: {
       '@': path.resolve("./src"),
