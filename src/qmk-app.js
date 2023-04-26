@@ -1,18 +1,72 @@
 import {QMKElement} from './qmk-element.js';
 
-document.body.insertAdjacentHTML('afterbegin', `
-<template id="qmk-app">
-    <h1 class="is-size-1">Title</h1>
-    <p class="is-text">Body body</p>
-</template>
-`);
+document.body.insertAdjacentHTML('afterbegin',
+// language=HTML
+    `<template id="qmk-app">
+        <div class="container is-widescreen is-justify-content-space-between is-flex is-align-items-center">
+            <div id="keyboardTitle" class="is-size-3"></div>
+            <div class="is-flex is-align-items-center">
+                <button id="saveAsButton" class="button class:is-invisible={!keyboardName}">Save as</button>
+                <button id="saveButton" class="button ml-4 class:is-invisible={!keyboardName}" disabled={!dirty}>Save</button>
+                <button id="loadButton" class="button ml-4">Load</button>
+                <button id="importButton" class="ml-4 button">Import</button>
+                <button id="buildButton" class="ml-4 button">Build</button>
+                <button id="configButton" class="ml-4 button">Settings</button>
+            </div>
+        </div>
+        <KeymapWorkspace bind:dirty bind:keymap={keymap} keyboardName={keyboardName} layoutName={layoutName} layout={layout}/>
+    </template>`
+);
 
 
 class QMKApp extends QMKElement {
     constructor() {
-        super();
-        this.addTemplate('qmk-app');
+        super('qmk-app');
+
+        let needConfigUpdate = await
+
+        let keyboardName = "Hello";
+        let editorState = {
+           filename: "dude"
+        }
+
+        let kbtext = keyboardName ? keyboardName : "Import QMK keyboard" + editorState.filename ? " - " + editorState.filename : "";
+        this.template.querySelector("#keyboardTitle").textContent = kbtext;
+        this.template.addEvents([
+            ['#saveAsButton', 'click', this.onSaveAs],
+            ['#saveButton', 'click', this.onSave],
+            ['#loadButton', 'click', this.onLoad],
+            ['#importButton', 'click', this.onImport],
+            ['#buildButton', 'click', this.onBuild],
+            ['#configButton', 'click', this.onConfig],
+        ]);
+        this.shadowRoot.appendChild(this.template);
     }
+
+    onSaveAs() {
+        console.log("onSaveAs");
+    }
+
+    onSave() {
+        console.log("onSave");
+    }
+
+    onLoad() {
+       console.log("onLoad");
+    }
+
+    onImport() {
+        console.log("onImport");
+    }
+
+    onBuild() {
+        console.log("onBuild");
+    }
+
+    onConfig() {
+        console.log("onConfig");
+    }
+
 }
 
 customElements.define('qmk-app', QMKApp);

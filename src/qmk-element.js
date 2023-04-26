@@ -6,14 +6,19 @@ export class QMKElement extends HTMLElement {
         this.bulma_css.replaceSync(bulma_css);
     }
 
-    constructor() {
+    constructor(templateName) {
         super();
         this.shadow = this.attachShadow({mode: "open"});
         this.shadow.adoptedStyleSheets = [QMKElement.bulma_css];
-    }
-
-    addTemplate(templateName) {
-        const template = document.getElementById(templateName).content.cloneNode(true);
-        this.shadow.appendChild(template);
+        if (templateName) {
+            console.log("adding template");
+            this.template = document.getElementById(templateName).content.cloneNode(true);
+            this.template.addEvents = (events) => {
+                for (let e of events) {
+                    console.log(e);
+                    this.template.querySelector(e[0]).addEventListener(e[1], e[2]);
+                }
+            }
+        }
     }
 }
