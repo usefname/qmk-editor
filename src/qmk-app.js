@@ -1,49 +1,97 @@
-// const qmk_app_template = document.createElement('qmk-app-template');
-//
-// template.innerHTML = `
-//   <style>
-//     .container {
-//       padding: 8px;
-//     }
-//
-//     button {
-//       display: block;
-//       overflow: hidden;
-//       position: relative;
-//       padding: 0 16px;
-//       font-size: 16px;
-//       font-weight: bold;
-//       text-overflow: ellipsis;
-//       white-space: nowrap;
-//       cursor: pointer;
-//       outline: none;
-//
-//       width: 100%;
-//       height: 40px;
-//
-//       box-sizing: border-box;
-//       border: 1px solid #a1a1a1;
-//       background: #ffffff;
-//       box-shadow: 0 2px 4px 0 rgba(0,0,0, 0.05), 0 2px 8px 0 rgba(161,161,161, 0.4);
-//       color: #363636;
-//     }
-//   </style>
-//
-//   <div class="container">
-//     <button>Label</button>
-//   </div>
-// `;
-//
-// class QMKApp extends HTMLElement {
-//     constructor() {
-//         super();
-//
-//         this._shadowRoot = this.attachShadow({ mode: 'open' });
-//         this._shadowRoot.appendChild(qmk_app_template.content.cloneNode(true));
-//     }
-// }
-//
-// window.customElements.define('qmk-app', QMKApp);
-import qmk_template from './qmk-app.html?raw';
-console.log("de!");
-console.log(qmk_template);
+import {QMKElement} from './qmk-element.js';
+
+document.body.insertAdjacentHTML('afterbegin', `
+<template id="qmk-app">
+    <h1 class="is-size-1">Title</h1>
+    <p class="is-text">Body body</p>
+</template>
+`);
+
+
+class QMKApp extends QMKElement {
+    constructor() {
+        super();
+        this.addTemplate('qmk-app');
+    }
+}
+
+customElements.define('qmk-app', QMKApp);
+
+
+class PopUpInfo extends HTMLElement {
+    constructor() {
+        // Always call super first in constructor
+        super();
+
+    //     // Create a shadow root
+    //     const shadow = this.attachShadow({mode: 'open'});
+    //
+    //     // Create spans
+    //     const wrapper = document.createElement('span');
+    //     wrapper.setAttribute('class', 'wrapper');
+    //
+    //     const icon = document.createElement('span');
+    //     icon.setAttribute('class', 'icon');
+    //     icon.setAttribute('tabindex', 0);
+    //
+    //     const info = document.createElement('span');
+    //     info.setAttribute('class', 'info');
+    //
+    //     // Take attribute content and put it inside the info span
+    //     const text = this.getAttribute('data-text');
+    //     info.textContent = text;
+    //
+    //     // Insert icon
+    //     let imgUrl;
+    //     if(this.hasAttribute('img')) {
+    //         imgUrl = this.getAttribute('img');
+    //     } else {
+    //         imgUrl = 'img/default.png';
+    //     }
+    //
+    //     const img = document.createElement('img');
+    //     img.src = imgUrl;
+    //     icon.appendChild(img);
+    //
+    //     // Create some CSS to apply to the shadow dom
+    //     const style = document.createElement('style');
+    //     console.log(style.isConnected);
+    //
+    //     style.textContent = `
+    //   .wrapper {
+    //     position: relative;
+    //   }
+    //   .info {
+    //     font-size: 0.8rem;
+    //     width: 200px;
+    //     display: inline-block;
+    //     border: 1px solid black;
+    //     padding: 10px;
+    //     background: white;
+    //     border-radius: 10px;
+    //     opacity: 0;
+    //     transition: 0.6s all;
+    //     position: absolute;
+    //     bottom: 20px;
+    //     left: 10px;
+    //     z-index: 3;
+    //   }
+    //   img {
+    //     width: 1.2rem;
+    //   }
+    //   .icon:hover + .info, .icon:focus + .info {
+    //     opacity: 1;
+    //   }
+    // `;
+    //
+    //     // Attach the created elements to the shadow dom
+    //     shadow.appendChild(style);
+    //     console.log(style.isConnected);
+    //     shadow.appendChild(wrapper);
+    //     wrapper.appendChild(icon);
+    //     wrapper.appendChild(info);
+    }
+}
+
+// Define the new element
+customElements.define('popup-info', PopUpInfo);
