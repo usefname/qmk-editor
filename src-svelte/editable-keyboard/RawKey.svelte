@@ -1,6 +1,6 @@
 <script>
     import {createEventDispatcher} from "svelte";
-    import {parseCaption} from "../lib/key-info";
+    import {parseCaption} from "../../src/lib/key-info";
 
     const eventDispatcher = createEventDispatcher();
 

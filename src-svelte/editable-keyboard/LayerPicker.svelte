@@ -1,5 +1,5 @@
 <script>
-    import {insertEmptyLayer} from "../lib/layers";
+    import {insertEmptyLayer} from "../../src/lib/layers";
 
     export let keymap;
     export let currentLayerIndex;

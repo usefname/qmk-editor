@@ -3,7 +3,7 @@
     import {
         replaceArgsInMultiCaption,
         parseCaption,
-    } from "../lib/key-info";
+    } from "../../src/lib/key-info";
 
     const eventDispatcher = createEventDispatcher();
 
@@ -76,10 +76,12 @@
         event.preventDefault();
         dropHover = true;
     };
+
     const onDragOver = (event) => {
         event.stopPropagation();
         event.preventDefault();
     };
+
     const onDragLeave = (event) => {
         event.preventDefault();
         dropHover = false;

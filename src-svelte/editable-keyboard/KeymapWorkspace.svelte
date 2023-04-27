@@ -1,6 +1,6 @@
 <script>
-    import jsKeyCodes from '../lib/keycodes/jsKeyCodes.json';
-    import keycodes from '../lib/keycodes/keycodes.json';
+    import jsKeyCodes from '../../src/lib/keycodes/jsKeyCodes.json';
+    import keycodes from '../../src/lib/keycodes/keycodes.json';
     import KeycodeLibrary from "./KeycodeInventory.svelte";
     import LayerPicker from "./LayerPicker.svelte";
     import {keyEditInteractive, keyEditText} from "./keymapWorkspace";

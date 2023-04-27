@@ -8,6 +8,8 @@ export const LAYER_ARG = "Layer";
 export const BASIC_ARG = "Basic";
 export const LEFT_MOD_ARG = "Left Mod";
 
+export const unicodeRegex = /[^\u0000-\u00ff]/;
+
 export const parseCaption = (caption) => {
     let uppercaseCaption = caption.toUpperCase().trim();
     let captionObj = {

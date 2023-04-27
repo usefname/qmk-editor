@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {BASIC_ARG, LAYER_ARG, MOD_ARG, parseCaption, parseCaptionFunction} from "../lib/key-info.js";
+import {BASIC_ARG, LAYER_ARG, MOD_ARG, parseCaption, parseCaptionFunction} from "../../src/lib/key-info.js";
 
 test('Parsing malformed caption functions returns error', () => {
     assert(parseCaptionFunction("LM(1,A,").err);

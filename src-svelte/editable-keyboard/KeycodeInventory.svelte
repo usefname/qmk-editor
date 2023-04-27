@@ -1,7 +1,7 @@
 <script>
-    import keycodes from "../lib/keycodes/keycodes.json";
-    import layouts from "../lib/daskeyboard4-info.json";
-    import {layout_largest_x, layout_largest_y} from "../lib/layout";
+    import keycodes from "../../src/lib/keycodes/keycodes.json";
+    import layouts from "../../src/lib/daskeyboard4-info.json";
+    import {layout_largest_x, layout_largest_y} from "../../src/lib/layout";
     import PositionalKey from "./PositionalKey.svelte";
     import Keycap from "./Keycap.svelte";
     import {keyEditInteractive} from "./keymapWorkspace";

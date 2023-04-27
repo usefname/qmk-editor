@@ -26,12 +26,14 @@ export class QMKError extends QMKElement {
         super('qmk-error');
         this.template.querySelector(".modal-card-title").textContent = title;
         this.template.querySelector(".modal-card-body").textContent = error;
-        this.template.querySelector(".button").addEventListener('click', this.onClick.bind(this));
+        this.template.querySelectorAll("button").forEach(el => {
+            el.addEventListener('click', this.onClick.bind(this));
+        });
         this.shadow.appendChild(this.template);
     }
 
     onClick() {
-        this.dispatchEvent(new Event('click'));
+        this.dispatchEvent(new Event('close-error'));
     }
 }
 
