@@ -1,4 +1,6 @@
 import {QMKElement} from './qmk-element.js';
+import {QMKError} from './qmk-error.js';
+import {invoke} from "@tauri-apps/api/tauri";
 
 document.body.insertAdjacentHTML('afterbegin',
 // language=HTML
@@ -7,7 +9,7 @@ document.body.insertAdjacentHTML('afterbegin',
             <div id="keyboardTitle" class="is-size-3"></div>
             <div class="is-flex is-align-items-center">
                 <button id="saveAsButton" class="button class:is-invisible={!keyboardName}">Save as</button>
-                <button id="saveButton" class="button ml-4 class:is-invisible={!keyboardName}" disabled={!dirty}>Save</button>
+                <button id="saveButton" class="button ml-4 class:is-invisible={!keyboardName}" disabled>Save</button>
                 <button id="loadButton" class="button ml-4">Load</button>
                 <button id="importButton" class="ml-4 button">Import</button>
                 <button id="buildButton" class="ml-4 button">Build</button>
@@ -18,33 +20,79 @@ document.body.insertAdjacentHTML('afterbegin',
     </template>`
 );
 
-
 class QMKApp extends QMKElement {
     constructor() {
         super('qmk-app');
 
-        let needConfigUpdate = await
-
-        let keyboardName = "Hello";
-        let editorState = {
-           filename: "dude"
+        this.needConfigUpdate = false;
+        this.dirty = false;
+        this.keyboardName = "ergodoxEz";
+        this.editorState = {
+           filename: null
         }
 
-        let kbtext = keyboardName ? keyboardName : "Import QMK keyboard" + editorState.filename ? " - " + editorState.filename : "";
-        this.template.querySelector("#keyboardTitle").textContent = kbtext;
-        this.template.addEvents([
-            ['#saveAsButton', 'click', this.onSaveAs],
-            ['#saveButton', 'click', this.onSave],
-            ['#loadButton', 'click', this.onLoad],
-            ['#importButton', 'click', this.onImport],
-            ['#buildButton', 'click', this.onBuild],
-            ['#configButton', 'click', this.onConfig],
-        ]);
-        this.shadowRoot.appendChild(this.template);
+        this.loadEditorState().then(_ => {
+            this.template.querySelector("#keyboardTitle").textContent = this.keyboardName;
+            this.template.addEvents([
+                ['#saveAsButton', 'click', this.onSaveAs],
+                ['#saveButton', 'click', this.onSave],
+                ['#loadButton', 'click', this.onLoad],
+                ['#importButton', 'click', this.onImport],
+                ['#buildButton', 'click', this.onBuild],
+                ['#configButton', 'click', this.onConfig],
+            ]);
+            this.shadowRoot.appendChild(this.template);
+        });
+    }
+
+    async loadEditorState() {
+       if (stubTauri) {
+           console.log("stubbed");
+           this.keyboardName = "stubbed";
+           this.editorState.filename = "/home/joe/km/stubbed.json"
+           this.needConfigUpdate = false;
+           this.page = 'workspace';
+       } else {
+           try {
+               this.needConfigUpdate = await invoke('need_config_update');
+               if (this.needConfigUpdate) {
+                   this.editorState.filename = null;
+                   this.page = 'config';
+               } else {
+                   this.editorState = await invoke('get_state');
+                   if (editorState !== null && editorState.filename !== null) {
+                       await loadKeymap(editorState.filename);
+                       this.page = 'workspace';
+                   } else {
+                       this.page = 'import';
+                   }
+               }
+           } catch (err) {
+               this.qmkError = true;
+               this.qmkErrorOutput = err;
+               this.page = 'import';
+           }
+       }
+    }
+
+    markAsDirty() {
+        this.dirty = true;
+        this.idElement("saveButton").disabled = true;
+    }
+
+    markAsClean() {
+        this.dirty = false;
+        this.idElement("saveButton").disabled = false;
+    }
+
+    setKeyboardTitle(title) {
+        this.idElement("keyboardTitle").textContent = this.keyboardName + (this.editorState.filename ? " - " + this.editorState.filename : "");
     }
 
     onSaveAs() {
         console.log("onSaveAs");
+        this.setKeyboardTitle();
+        this.markAsClean();
     }
 
     onSave() {
@@ -61,91 +109,22 @@ class QMKApp extends QMKElement {
 
     onBuild() {
         console.log("onBuild");
+        this.markAsDirty();
     }
 
     onConfig() {
         console.log("onConfig");
+        this.showError();
     }
 
+    showError(error) {
+        const qmkError = new QMKError("Test title", error);
+        const shadowRoot = this.shadowRoot;
+        qmkError.addEventListener('click', () => {
+           shadowRoot.removeChild(qmkError);
+        });
+        this.shadowRoot.appendChild(qmkError);
+    }
 }
 
 customElements.define('qmk-app', QMKApp);
-
-
-class PopUpInfo extends HTMLElement {
-    constructor() {
-        // Always call super first in constructor
-        super();
-
-    //     // Create a shadow root
-    //     const shadow = this.attachShadow({mode: 'open'});
-    //
-    //     // Create spans
-    //     const wrapper = document.createElement('span');
-    //     wrapper.setAttribute('class', 'wrapper');
-    //
-    //     const icon = document.createElement('span');
-    //     icon.setAttribute('class', 'icon');
-    //     icon.setAttribute('tabindex', 0);
-    //
-    //     const info = document.createElement('span');
-    //     info.setAttribute('class', 'info');
-    //
-    //     // Take attribute content and put it inside the info span
-    //     const text = this.getAttribute('data-text');
-    //     info.textContent = text;
-    //
-    //     // Insert icon
-    //     let imgUrl;
-    //     if(this.hasAttribute('img')) {
-    //         imgUrl = this.getAttribute('img');
-    //     } else {
-    //         imgUrl = 'img/default.png';
-    //     }
-    //
-    //     const img = document.createElement('img');
-    //     img.src = imgUrl;
-    //     icon.appendChild(img);
-    //
-    //     // Create some CSS to apply to the shadow dom
-    //     const style = document.createElement('style');
-    //     console.log(style.isConnected);
-    //
-    //     style.textContent = `
-    //   .wrapper {
-    //     position: relative;
-    //   }
-    //   .info {
-    //     font-size: 0.8rem;
-    //     width: 200px;
-    //     display: inline-block;
-    //     border: 1px solid black;
-    //     padding: 10px;
-    //     background: white;
-    //     border-radius: 10px;
-    //     opacity: 0;
-    //     transition: 0.6s all;
-    //     position: absolute;
-    //     bottom: 20px;
-    //     left: 10px;
-    //     z-index: 3;
-    //   }
-    //   img {
-    //     width: 1.2rem;
-    //   }
-    //   .icon:hover + .info, .icon:focus + .info {
-    //     opacity: 1;
-    //   }
-    // `;
-    //
-    //     // Attach the created elements to the shadow dom
-    //     shadow.appendChild(style);
-    //     console.log(style.isConnected);
-    //     shadow.appendChild(wrapper);
-    //     wrapper.appendChild(icon);
-    //     wrapper.appendChild(info);
-    }
-}
-
-// Define the new element
-customElements.define('popup-info', PopUpInfo);
