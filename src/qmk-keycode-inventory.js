@@ -1,10 +1,16 @@
 import {QMKElement} from "@/qmk-element.js";
 import keycodes from "@/lib/keycodes/keycodes.json";
-import {appendDefaultArgs, getKeyArgumentDesc, LAYER_ARG, parseCaption} from "@/lib/key-info.js";
+import {
+    appendDefaultArgs, BASIC_ARG,
+    getKeyArgumentDesc,
+    LAYER_ARG,
+    parseCaption, replaceArgInMultiCaption
+} from "@/lib/key-info.js";
 import {layout_largest_x, layout_largest_y} from "@/lib/layout.js";
 import {QMKPositionalKey} from "@/qmk-positional-key.js";
 import daskeyboard from "@/lib/daskeyboard4-info.json";
 import {QMKKeycap} from "@/qmk-keycap.js";
+import {QmkExplodedKey} from "@/qmk-exploded-key.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -50,20 +56,39 @@ document.body.insertAdjacentHTML('afterbegin',
 
 export class QMKKeycodeInventory extends QMKElement {
     static get observedAttributes() {
-       return ['layercount'];
+       return ['layercount', 'layer'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if (newValue <= 1) {
-            let rootElement = this.shadowRoot ? this.shadowRoot : this.template;
-            rootElement.querySelectorAll('.layer-warning').forEach(el => {
-                el.style.display = 'Block';
-            })
-        } else {
-            let rootElement = this.shadowRoot ? this.shadowRoot : this.template;
-            rootElement.querySelectorAll('.layer-warning').forEach(el => {
-                el.style.display = 'None';
-            })
+        let value = Number(newValue)
+        if (isNaN(value)) {
+            return;
+        }
+        let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
+        if (name === 'layercount') {
+            if (value <= 1) {
+                rootElement.querySelectorAll('.layer-warning').forEach(el => {
+                    el.style.display = 'Block';
+                });
+                rootElement.querySelectorAll('.require-layer').forEach(el => {
+                    el.style.display = 'None';
+                });
+            } else {
+                let rootElement = this.shadowRoot ? this.shadowRoot : this.template;
+                rootElement.querySelectorAll('.layer-warning').forEach(el => {
+                    el.style.display = 'None';
+                });
+                rootElement.querySelectorAll('.require-layer').forEach(el => {
+                    el.style.display = 'Block';
+                });
+            }
+            rootElement.querySelectorAll('.keycap-layer').forEach(el => {
+                el.setAttribute('layercount', value);
+            });
+        } else if (name === 'layer') {
+            rootElement.querySelectorAll('.keycap-layer').forEach(el => {
+                el.setAttribute('layer', value);
+            });
         }
     }
 
@@ -187,13 +212,48 @@ export class QMKKeycodeInventory extends QMKElement {
                 topicParent.appendChild(layerWarning);
             }
 
+            if (keyDesc.args) {
+               const explodedKey = new QmkExplodedKey(keyDesc, 0, 1);
+               if (requiresLayer) {
+                   explodedKey.classList.add('require-layer');
+                   explodedKey.classList.add('keycap-layer');
+               }
+               explodedKey.addEventListener('changeKeyBasicOption', (ev) => {
+                  topicParent.querySelectorAll('.keycap-arg-basic').forEach(keycap => {
+                      let captionInfo = keycap.getParsedCaption();
+                      let newCaption = replaceArgInMultiCaption(captionInfo, ev.detail, BASIC_ARG);
+                      keycap.setAttribute('caption', newCaption);
+                  });
+               });
+                explodedKey.addEventListener('changeKeyLayerOption', (ev) => {
+                    topicParent.querySelectorAll('.keycap-arg-layer').forEach(keycap => {
+                        let captionInfo = keycap.getParsedCaption();
+                        let newCaption = replaceArgInMultiCaption(captionInfo, ev.detail, LAYER_ARG);
+                        keycap.setAttribute('caption', newCaption);
+                    });
+                });
+                topicParent.appendChild(explodedKey);
+            }
+
             const tableTemplate = document.getElementById('qmk-keycode-inventory-table').content.cloneNode(true);
             const table = tableTemplate.querySelector('table');
-
+            if (requiresLayer) {
+                table.classList.add('require-layer');
+            }
             for (const key of keyDesc.keyList) {
                 const tr = document.createElement('tr');
                 const keyTd = document.createElement('td');
                 const keycap = new QMKKeycap(-1, key.caption);
+                if (key.captionFn) {
+                    for (const arg of key.captionFn.args) {
+                        if (arg.type === BASIC_ARG) {
+                            keycap.classList.add('keycap-arg-basic');
+                        } else  if (arg.type === LAYER_ARG) {
+                            keycap.classList.add('keycap-arg-layer');
+                        }
+                    }
+                }
+
                 keyTd.appendChild(keycap);
                 tr.appendChild(keyTd);
                 const keyDescriptionTd = document.createElement('td');
@@ -203,6 +263,7 @@ export class QMKKeycodeInventory extends QMKElement {
             }
 
             topicParent.appendChild(tableTemplate);
+
             section.appendChild(topicParent);
         }
         return section;

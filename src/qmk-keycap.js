@@ -165,6 +165,7 @@ export class QMKKeycap extends QMKElement {
         this.keyIndex = index;
         this.keyElement = this.template.querySelector('#key');
         this.keyCaptionElement = this.template.querySelector('#key-caption');
+        this.captionInfo = parseCaption(caption);
 
         this.setAttribute('caption', caption);
         this.addEvents([
@@ -180,7 +181,7 @@ export class QMKKeycap extends QMKElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if (newValue && newValue !== oldValue) {
+        if (newValue) {
             switch (name) {
                 case 'selected':
                     this.keyElement.classList.add('key-selected');
@@ -195,6 +196,10 @@ export class QMKKeycap extends QMKElement {
                     break;
             }
         }
+    }
+
+    getParsedCaption() {
+        return this.captionInfo;
     }
 
     onClick(e) {

@@ -72,6 +72,19 @@ export const replaceArgsInMultiCaption = (keyInfo, args) => {
     return newCaption;
 }
 
+export const replaceArgInMultiCaption = (keyInfo, replacedArg, argType) => {
+    let args = [];
+    for (const arg of keyInfo.captionFn.args) {
+        if (argType === arg.type) {
+            arg.value = replacedArg;
+        }
+        args.push(arg);
+    }
+
+    return replaceArgsInMultiCaption(keyInfo, args);
+}
+
+
 const hasNoKey = (caption) => {
     return caption === "KC_NO" || caption === "XXXXXXX"
 }

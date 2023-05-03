@@ -55,7 +55,7 @@ export class QmkLayerPicker extends QMKElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         const layerNumber = Number(newValue);
-        if (newValue !== oldValue && !isNaN(layerNumber)) {
+        if (!isNaN(layerNumber)) {
             this.currentLayer = layerNumber;
             this.updateLayerNumbers(this.shadowRoot);
         }

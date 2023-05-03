@@ -35,7 +35,7 @@ export class QMKPositionalKey extends QMKElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (this.keycap) {
-            if (newValue && newValue !== oldValue) {
+            if (newValue) {
                 this.keycap.setAttribute(name, newValue);
             } else {
                 this.keycap.removeAttribute(name);

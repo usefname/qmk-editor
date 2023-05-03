@@ -152,6 +152,7 @@ export class QMKWorkspace extends QMKElement {
             this.selectedLayer++;
             this.layerPickerElement.addLayer();
             this.layerPickerElement.setAttribute("layer", this.selectedLayer);
+            this.keycodeInventory.setAttribute("layer", this.selectedLayer);
             this.updateLayout();
             this.keycodeInventory.setAttribute('layercount', this.keyboard.keymap.length);
         }
@@ -165,6 +166,7 @@ export class QMKWorkspace extends QMKElement {
             }
             this.layerPickerElement.deleteLayer();
             this.layerPickerElement.setAttribute("layer", this.selectedLayer);
+            this.keycodeInventory.setAttribute("layer", this.selectedLayer);
             this.updateLayout();
             this.keycodeInventory.setAttribute('layercount', this.keyboard.keymap.length);
         }
@@ -173,6 +175,7 @@ export class QMKWorkspace extends QMKElement {
     onChangeLayer(ev) {
         this.selectedLayer = ev.detail.layer;
         this.layerPickerElement.setAttribute("layer", this.selectedLayer);
+        this.keycodeInventory.setAttribute("layer", this.selectedLayer);
         this.updateLayout();
     }
 
@@ -238,8 +241,6 @@ export class QMKWorkspace extends QMKElement {
 
     setKeyCaption(key, caption) {
         this.keyboard.keymap[this.selectedLayer][key] = caption;
-        // let el = this.keymapElements[key];
-        // el.setAttribute('caption', caption);
         this.keymapElements[key].setAttribute('caption', caption);
         this.markAsDirty();
     }
