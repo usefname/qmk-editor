@@ -220,6 +220,7 @@ export const getKeyArgumentDesc = (keycode) => {
     }
     return [];
 }
+
 export const appendDefaultArgs = (caption, argList) => {
     if (argList.length === 1) {
         return caption + "(" + argList[0].value + ")"

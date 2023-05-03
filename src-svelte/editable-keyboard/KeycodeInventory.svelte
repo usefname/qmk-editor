@@ -85,7 +85,7 @@
             {/each}
         </ul>
     </div>
-    <div class="is-flex is-justify-content-center"
+    <div class="is-flex is-justify-content-center is-flex-"
          style="--sample-kb-largest_y:{largest_y}; --sample-kb-largest_x:{largest_x};">
         {#if currentTab === "Keyboard"}
             <div class="column keyboard is-narrow box">

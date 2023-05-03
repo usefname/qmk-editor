@@ -11,6 +11,13 @@ export const padLayerSize = (layers, layoutLenght) => {
     return layers;
 }
 
+
+export const removeLayer = (layers, layerToDelete) => {
+    if (layers.length > 1) {
+        layers.splice(layerToDelete, 1);
+    }
+}
+
 export const insertEmptyLayer = (layers, layoutLength) => {
     let emptyLayer = [];
     for(let i = 0; i < layoutLength; i++) {

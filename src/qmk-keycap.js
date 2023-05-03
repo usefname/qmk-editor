@@ -160,7 +160,7 @@ export class QMKKeycap extends QMKElement {
         return ['selected', 'caption'];
     }
 
-    constructor(key, index, caption) {
+    constructor(index, caption) {
         super('qmk-keycap');
         this.keyIndex = index;
         this.keyElement = this.template.querySelector('#key');
@@ -228,11 +228,11 @@ export class QMKKeycap extends QMKElement {
         if (data.length > 0 && data.length < 1024) {
             let type = ev.dataTransfer.getData("_qmk/effect");
             let sourceKeyIndex = Number(ev.dataTransfer.getData("_qmk/sourceIndex"));
-            if (type === "swap" && !isNaN(sourceKeyIndex)) {
+            if (type === "swap" && !isNaN(sourceKeyIndex) && sourceKeyIndex >= 0) {
                 this.emitEvent("updateCaption", {key: sourceKeyIndex, caption: this.captionInfo.caption});
                 this.emitEvent("updateCaption", {key: this.keyIndex, caption: data});
             } else {
-                if (capInfo.multiKey) {
+                if (this.captionInfo.multiKey) {
                     this.emitEvent("updateCaptionMultiKey", {key: this.keyIndex, caption: data});
                 } else {
                     this.emitEvent("updateCaption", {key: this.keyIndex, caption: data});

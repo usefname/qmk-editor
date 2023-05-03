@@ -28,7 +28,7 @@ export class QMKPositionalKey extends QMKElement {
         this.template.querySelector("#key-position").style.setProperty("--key_w", key.w ? key.w : 1);
         this.template.querySelector("#key-position").style.setProperty("--key_h", key.h ? key.h : 1);
         this.setAttribute('caption', caption);
-        this.keycap = new QMKKeycap(key, index, caption);
+        this.keycap = new QMKKeycap(index, caption);
         this.template.querySelector("#key-position").appendChild(this.keycap);
         this.shadowRoot.appendChild(this.template);
     }

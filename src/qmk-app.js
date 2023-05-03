@@ -27,7 +27,6 @@ class QMKApp extends QMKElement {
         }
 
         this.loadEditorState().then((page) => {
-            console.log('Loaded ' + page);
         });
     }
 

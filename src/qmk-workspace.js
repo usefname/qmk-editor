@@ -1,5 +1,5 @@
 import {QMKElement} from "@/qmk-element.js";
-import {QMKKeycapLibrary} from "@/qmk-keycode-library.js";
+import {QMKKeycodeInventory} from "@/qmk-keycode-inventory.js";
 import {QMKKeycapModal} from "@/qmk-keycap-modal.js";
 import {QMKEditMode} from "@/qmk-edit-mode.js";
 import {QmkLayerPicker} from "@/qmk-layer-picker.js";
@@ -7,6 +7,7 @@ import {QMKPositionalKey} from "@/qmk-positional-key.js";
 import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.js";
 import {keyEditInteractive} from "../src-svelte/editable-keyboard/keymapWorkspace.js";
 import jsKeyCodes from "@/lib/keycodes/jsKeyCodes.json";
+import {insertEmptyLayer, removeLayer} from "@/lib/layers.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -74,12 +75,8 @@ document.body.insertAdjacentHTML('afterbegin',
                 <div id="keyboard-container" class="is-narrow" class:inactive={showKeyModal}>
                     <div id="keymap-layout"></div>
                 </div>
-                <div class="is-flex is-flex-direction-column is-justify-content-space-between ml-5" class:inactive={showKeyModal}>
-                    <qmk-layer-picker bind:keymap bind:currentLayerIndex {maxLayers} layoutKeyCount={layout.length}></qmk-layer-picker>
-                    <qmk-edit-mode bind:keycapMode></qmk-edit-mode>
-                </div>
+                <div id='workspace-sidepanel' class="is-flex is-flex-direction-column is-justify-content-space-between ml-5" class:inactive={showKeyModal}></div>
             </div>
-            <qmk-keycode-library {currentLayerIndex} layerCount={keymap.length}></qmk-keycode-library>
         </div>
     </template>`
 );
@@ -89,19 +86,32 @@ export class QMKWorkspace extends QMKElement {
         super('qmk-workspace');
 
         this.keyboard = keyboard;
+        this.keymapElements = [];
+
         this.largest_y = layout_largest_y(this.keyboard.layout);
         this.largest_x = layout_largest_x(this.keyboard.layout);
         this.key_x_spacing = 55;
         this.key_y_spacing = 55;
         this.key_width = 50;
         this.key_height = 50;
+
         this.selectedKeyElement = null;
         this.selectedLayer = 0;
-        this.keymapElements = [];
-        this.showKeyModal = false;
+        this.maxLayers = 16;
+
         this.keycapMode = keyEditInteractive;
+        this.showKeyModal = false;
 
         this.template.querySelector("#keyboardTitle").textContent = this.createTitle(keyboard.keyboardName, keyboard.editorState.filename);
+
+        this.setWorkspaceSize(this.template.querySelector("#workspace"));
+        this.createLayout(this.template.querySelector("#keymap-layout"));
+        this.layerPickerElement = new QmkLayerPicker(this.maxLayers);
+        this.template.querySelector('#workspace-sidepanel').appendChild(this.layerPickerElement);
+        this.editModeElement = new QMKEditMode(this.keycapMode);
+        this.template.querySelector('#workspace-sidepanel').appendChild(this.editModeElement);
+        this.keycodeInventory = new QMKKeycodeInventory(this.keyboard.keymap.length);
+        this.template.querySelector('#workspace').appendChild(this.keycodeInventory);
 
         this.addEventsToElement(this.template, [
             ['#saveAsButton', 'click', this.emitCustomEvent('saveAs')],
@@ -123,13 +133,48 @@ export class QMKWorkspace extends QMKElement {
             ['updateCaptionMultiKey', this.onUpdateCaptionMultikey],
             ['selectedKey', this.onSelectKey],
             ['editMultiKey', this.onEditMultiKey],
+            ['addLayer', this.onAddLayer],
+            ['deleteLayer', this.onDeleteLayer],
+            ['changeLayer', this.onChangeLayer],
+            ['changeEditMode', this.onChangeEditMode]
         ]);
 
-        this.setWorkspaceSize(this.template.querySelector("#workspace"));
-        this.createLayout(this.template.querySelector("#keymap-layout"));
         this.shadowRoot.appendChild(this.template);
     }
 
+    onChangeEditMode(ev) {
+        this.keycapMode = ev.detail;
+    }
+
+    onAddLayer(ev) {
+        if (this.keyboard.keymap.length < this.maxLayers) {
+            this.keyboard.keymap = insertEmptyLayer(this.keyboard.keymap, this.keyboard.layout.length);
+            this.selectedLayer++;
+            this.layerPickerElement.addLayer();
+            this.layerPickerElement.setAttribute("layer", this.selectedLayer);
+            this.updateLayout();
+            this.keycodeInventory.setAttribute('layercount', this.keyboard.keymap.length);
+        }
+    }
+
+    onDeleteLayer(ev) {
+        if (this.keyboard.keymap.length > 1) {
+            removeLayer(this.keyboard.keymap, this.selectedLayer);
+            if (this.selectedLayer >= this.keyboard.keymap.length) {
+                this.selectedLayer = this.selectedLayer - 1;
+            }
+            this.layerPickerElement.deleteLayer();
+            this.layerPickerElement.setAttribute("layer", this.selectedLayer);
+            this.updateLayout();
+            this.keycodeInventory.setAttribute('layercount', this.keyboard.keymap.length);
+        }
+    }
+
+    onChangeLayer(ev) {
+        this.selectedLayer = ev.detail.layer;
+        this.layerPickerElement.setAttribute("layer", this.selectedLayer);
+        this.updateLayout();
+    }
 
     onWorkspaceKeyDown(ev) {
         if (!this.showKeyModal
@@ -193,6 +238,8 @@ export class QMKWorkspace extends QMKElement {
 
     setKeyCaption(key, caption) {
         this.keyboard.keymap[this.selectedLayer][key] = caption;
+        // let el = this.keymapElements[key];
+        // el.setAttribute('caption', caption);
         this.keymapElements[key].setAttribute('caption', caption);
         this.markAsDirty();
     }
@@ -220,6 +267,13 @@ export class QMKWorkspace extends QMKElement {
         }
     }
 
+    updateLayout() {
+        for (let i = 0; i < this.keyboard.layout.length; i++) {
+            const el = this.keymapElements[i];
+            const caption = this.keyboard.keymap[this.selectedLayer][i];
+            el.setAttribute('caption', caption);
+        }
+    }
 
     emitCustomEvent(eventName) {
         return function () {
