@@ -80,6 +80,7 @@ export class QmkExplodedKey extends QMKElement {
         let self = this;
         select.addEventListener('change', (ev) => {
             self.emitEvent('changeKeyBasicOption', ev.currentTarget.value);
+            self.emitEvent('changeKeyOption', {value: ev.currentTarget.value, type: BASIC_ARG});
         });
         return basicOption;
     }
@@ -101,6 +102,7 @@ export class QmkExplodedKey extends QMKElement {
         let self = this;
         select.addEventListener('change', (ev) => {
             self.emitEvent('changeKeyLayerOption', ev.currentTarget.value);
+            self.emitEvent('changeKeyOption', {value: ev.currentTarget.value, type: LAYER_ARG});
         });
         return layerOption;
     }

@@ -167,7 +167,17 @@ export class QMKKeycodeInventory extends QMKElement {
 
         this.setAttribute('layercount', layerCount);
 
+        this.addEvents([
+            ['selectedKey', this.stopKeyEventPropagation],
+            ['updateCaption', this.stopKeyEventPropagation],
+            ['updateCaptionMultiKey', this.stopKeyEventPropagation],
+        ]);
+
         this.shadowRoot.appendChild(this.template);
+    }
+
+    stopKeyEventPropagation(ev) {
+        ev.stopPropagation();
     }
 
     onClickTab(ev) {
@@ -218,17 +228,18 @@ export class QMKKeycodeInventory extends QMKElement {
                    explodedKey.classList.add('require-layer');
                    explodedKey.classList.add('keycap-layer');
                }
-               explodedKey.addEventListener('changeKeyBasicOption', (ev) => {
-                  topicParent.querySelectorAll('.keycap-arg-basic').forEach(keycap => {
-                      let captionInfo = keycap.getParsedCaption();
-                      let newCaption = replaceArgInMultiCaption(captionInfo, ev.detail, BASIC_ARG);
-                      keycap.setAttribute('caption', newCaption);
-                  });
-               });
-                explodedKey.addEventListener('changeKeyLayerOption', (ev) => {
-                    topicParent.querySelectorAll('.keycap-arg-layer').forEach(keycap => {
+                explodedKey.addEventListener('changeKeyOption', (ev) => {
+                    const value = ev.detail.value;
+                    const type = ev.detail.type;
+                    let selector;
+                    if (type === BASIC_ARG) {
+                        selector = '.keycap-arg-basic';
+                    } else if (type === LAYER_ARG) {
+                        selector = '.keycap-arg-layer';
+                    }
+                    topicParent.querySelectorAll(selector).forEach(keycap => {
                         let captionInfo = keycap.getParsedCaption();
-                        let newCaption = replaceArgInMultiCaption(captionInfo, ev.detail, LAYER_ARG);
+                        let newCaption = replaceArgInMultiCaption(captionInfo, value, type);
                         keycap.setAttribute('caption', newCaption);
                     });
                 });

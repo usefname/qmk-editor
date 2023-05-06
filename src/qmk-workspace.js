@@ -8,19 +8,12 @@ import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.
 import {keyEditInteractive} from "../src-svelte/editable-keyboard/keymapWorkspace.js";
 import jsKeyCodes from "@/lib/keycodes/jsKeyCodes.json";
 import {insertEmptyLayer, removeLayer} from "@/lib/layers.js";
+import {BASIC_ARG, parseCaption, replaceArgInMultiCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
     `<template id="qmk-workspace">
         <style>
-            .kc-modal-visible {
-                display: block;
-            }
-
-            .kc-modal-hidden {
-                display: none;
-            }
-
             #edit-workspace {
                 display: flex;
                 justify-content: center;
@@ -70,12 +63,12 @@ document.body.insertAdjacentHTML('afterbegin',
         </div>
 
         <div id="workspace">
-            <qmk-keycap-modal class="kc-modal-hidden"></qmk-keycap-modal>
+            <div id='keycap-modal'></div>
             <div id="edit-workspace" class="box" tabindex="0">
-                <div id="keyboard-container" class="is-narrow" class:inactive={showKeyModal}>
+                <div id="keyboard-container" class="is-narrow">
                     <div id="keymap-layout"></div>
                 </div>
-                <div id='workspace-sidepanel' class="is-flex is-flex-direction-column is-justify-content-space-between ml-5" class:inactive={showKeyModal}></div>
+                <div id='workspace-sidepanel' class="is-flex is-flex-direction-column is-justify-content-space-between ml-5"></div>
             </div>
         </div>
     </template>`
@@ -104,14 +97,17 @@ export class QMKWorkspace extends QMKElement {
 
         this.template.querySelector("#keyboardTitle").textContent = this.createTitle(keyboard.keyboardName, keyboard.editorState.filename);
 
-        this.setWorkspaceSize(this.template.querySelector("#workspace"));
+        let workspaceElement = this.template.querySelector('#workspace');
+        this.setWorkspaceSize(workspaceElement);
         this.createLayout(this.template.querySelector("#keymap-layout"));
         this.layerPickerElement = new QmkLayerPicker(this.maxLayers);
         this.template.querySelector('#workspace-sidepanel').appendChild(this.layerPickerElement);
         this.editModeElement = new QMKEditMode(this.keycapMode);
         this.template.querySelector('#workspace-sidepanel').appendChild(this.editModeElement);
         this.keycodeInventory = new QMKKeycodeInventory(this.keyboard.keymap.length);
-        this.template.querySelector('#workspace').appendChild(this.keycodeInventory);
+        workspaceElement.appendChild(this.keycodeInventory);
+        this.keycapModal = new QMKKeycapModal(0, this.keyboard.keymap.length, this.selectedLayer, 'LT(0, KC_A)');
+        workspaceElement.replaceChild(this.keycapModal, this.template.querySelector('#keycap-modal'));
 
         this.addEventsToElement(this.template, [
             ['#saveAsButton', 'click', this.emitCustomEvent('saveAs')],
@@ -136,14 +132,20 @@ export class QMKWorkspace extends QMKElement {
             ['addLayer', this.onAddLayer],
             ['deleteLayer', this.onDeleteLayer],
             ['changeLayer', this.onChangeLayer],
-            ['changeEditMode', this.onChangeEditMode]
+            ['changeEditMode', this.onChangeEditMode],
+            ['closeKeycapModal', this.onCloseKeycapModal]
         ]);
 
         this.shadowRoot.appendChild(this.template);
     }
 
+
     onChangeEditMode(ev) {
         this.keycapMode = ev.detail;
+    }
+
+    onCloseKeycapModal() {
+        this.hideKeycapModal();
     }
 
     onAddLayer(ev) {
@@ -197,7 +199,11 @@ export class QMKWorkspace extends QMKElement {
     }
 
     onUpdateCaptionMultikey(ev) {
-        alert('Not implemented: onUpdateCaptionMultikey')
+        const key = ev.detail.key;
+        const oldCaption = this.keyboard.keymap[this.selectedLayer][key];
+        const parsedKey = parseCaption(oldCaption);
+        const newCaption = replaceArgInMultiCaption(parsedKey, ev.detail.caption, BASIC_ARG);
+        this.setKeyCaption(key, newCaption);
     }
 
     onSelectKey(ev) {
@@ -210,7 +216,9 @@ export class QMKWorkspace extends QMKElement {
     }
 
     onEditMultiKey(ev) {
-
+        this.showKeycapModal();
+        this.keycapModal.show();
+        this.shadowRoot.querySelector('#keyboard-container').classList.add('inactive');
     }
 
     onDrop(ev) {
@@ -232,11 +240,15 @@ export class QMKWorkspace extends QMKElement {
 
 
     deSelectKey() {
-        if (this.selectedKeyElement) {
-            this.selectedKeyElement.removeAttribute('selected');
-            this.selectedKeyElement = null;
+        if (this.keycapModal.hidden()) {
+            if (this.selectedKeyElement) {
+                this.selectedKeyElement.removeAttribute('selected');
+                this.selectedKeyElement = null;
+            }
+            this.selectedKey = null;
+        } else {
+            this.hideKeycapModal();
         }
-        this.selectedKey = null;
     }
 
     setKeyCaption(key, caption) {
@@ -298,6 +310,22 @@ export class QMKWorkspace extends QMKElement {
 
     setKeyboardTitle(title) {
         this.idElement("keyboardTitle").textContent = this.createTitle(this.keyboardName, this.filename);
+    }
+
+    hideKeycapModal() {
+        this.keycapModal.hide();
+        let queries = ['#keyboard-container', '#workspace-sidepanel','qmk-keycode-inventory'];
+        for (const query of queries) {
+            this.shadowRoot.querySelector(query).classList.remove('inactive');
+        }
+    }
+
+    showKeycapModal(caption, index, layer, layerCount) {
+        this.keycapModal.show();
+        let queries = ['#keyboard-container', '#workspace-sidepanel','qmk-keycode-inventory'];
+        for (const query of queries) {
+            this.shadowRoot.querySelector(query).classList.remove('inactive');
+        }
     }
 }
 
