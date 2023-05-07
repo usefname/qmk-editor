@@ -16,7 +16,7 @@ document.body.insertAdjacentHTML('afterbegin',
                 z-index: 200;
             }
             
-            #exploded-key {
+            .exploded-key {
                 padding: 1.25rem;
             }
         </style>
@@ -35,10 +35,6 @@ document.body.insertAdjacentHTML('afterbegin',
     </template>`);
 
 export class QMKKeycapModal extends QMKElement {
-    static get observedAttributes() {
-        return ['layercount', 'layer', 'caption'];
-    }
-
     constructor(index, layerCount, currentLayer) {
         super('qmk-keycap-modal');
 
@@ -49,58 +45,29 @@ export class QMKKeycapModal extends QMKElement {
         this.index = index;
 
         this.explodedKey = new QmkExplodedKey(this.parsedCaption.captionFn, this.layerCount, this.layer);
-        this.explodedKey.id = 'exploded-key';
-
-        let explodedKeyElement = this.template.querySelector('#exploded-key');
-        this.template.querySelector('#keycap-modal').replaceChild(this.explodedKey, explodedKeyElement);
+        // this.explodedKey.id = 'exploded-key';
+        this.template.querySelector('#exploded-key').replaceWith(this.explodedKey);
 
         this.keycap = new QMKKeycap(index, this.caption);
-        let keycapElement = this.template.querySelector('#keycap');
-        this.template.querySelector('#keycap-container').replaceChild(this.keycap, keycapElement);
+        this.template.querySelector('#keycap').replaceWith(this.keycap);
 
         this.addEventsToElement(this.template, [
             ['#closeButton', 'click', this.onClickClose],
             ['#saveButton', 'click', this.onClickSave],
             ['#keycap-modal', 'changeKeyOption', this.onUpdateKeyOption],
         ]);
-        this.hide();
+
         this.shadowRoot.appendChild(this.template);
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-
-        let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
-        if (name === 'layercount') {
-            let value = Number(newValue);
-            if (isNaN(value)) {
-                return;
-            }
-            rootElement.querySelectorAll('.keycap-layer').forEach(el => {
-                el.setAttribute('layercount', value);
-            });
-        } else if (name === 'layer') {
-            let value = Number(newValue);
-            if (isNaN(value)) {
-                return;
-            }
-            rootElement.querySelectorAll('.keycap-layer').forEach(el => {
-                el.setAttribute('layer', value);
-            });
-        } else if (name === 'caption') {
-            this.caption = newValue;
-        }
-    }
-
-    hidden() {
-        return this.shadowRoot.host.style.display === 'none';
-    }
-
-    hide() {
-        this.shadowRoot.host.style.display = 'none';
-    }
-
-    show() {
-        this.shadowRoot.host.style.display = 'block';
+    update(caption, index, layer, layerCount) {
+        this.caption = caption;
+        this.parsedCaption = parseCaption(caption);
+        this.index = index;
+        this.layer = layer;
+        this.layerCount = layerCount;
+        this.keycap.setAttribute('caption', this.caption);
+        this.explodedKey.update(this.parsedCaption.captionFn, layerCount, layer);
     }
 
     onUpdateKeyOption(ev) {

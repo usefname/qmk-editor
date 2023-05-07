@@ -1,5 +1,4 @@
 import {QMKElement} from "@/qmk-element.js";
-import {QMKKeycap} from "@/qmk-keycap.js";
 import {allBasicCaptions, BASIC_ARG, LAYER_ARG} from "@/lib/key-info.js";
 
 // language=HTML
@@ -26,44 +25,58 @@ document.body.insertAdjacentHTML('afterbegin',
     `);
 
 export class QmkExplodedKey extends QMKElement {
-    static get observedAttributes() {
-        return ['layercount', 'layer'];
-    }
-
-    constructor(keyDesc, layerCount, currentLayer) {
+    constructor(keyDesc, layerCount, selectedLayer) {
         super('qmk-exploded-key');
+        this.classList.add('exploded-key');
+
         this.layerCount = layerCount;
-        this.currentLayer = currentLayer;
+        this.selectedLayer = selectedLayer;
 
-        this.explodedKey = this.template.querySelector('#exploded-key');
-
-        for (const arg of keyDesc.args) {
-           if (arg.type === BASIC_ARG) {
-               const el = this.createBasicOption();
-               this.explodedKey.appendChild(el);
-           } else if (arg.type === LAYER_ARG) {
-               const el = this.createLayerOption(layerCount, currentLayer);
-               this.explodedKey.appendChild(el);
-           }
-        }
+        this.update(keyDesc, layerCount, selectedLayer);
 
         this.shadowRoot.appendChild(this.template);
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        let number = Number(newValue);
-        if (isNaN(number)) {
-            return;
+    update(keyDesc, layerCount, selectedLayer) {
+        let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
+
+        this.layerCount = layerCount;
+        this.selectedLayer = selectedLayer;
+        this.explodedKey = rootElement.querySelector('#exploded-key');
+        this.removeChildren(this.explodedKey);
+        for (const arg of keyDesc.args) {
+            if (arg.type === BASIC_ARG) {
+                const el = this.createBasicOption();
+                this.explodedKey.appendChild(el);
+            } else if (arg.type === LAYER_ARG) {
+                const el = this.createLayerOption(layerCount, selectedLayer);
+                this.explodedKey.appendChild(el);
+            }
         }
-        switch (name) {
-            case 'layercount':
-                this.layerCount = Number(newValue);
-                this.updateLayerOptions(this.layerCount, this.currentLayer);
-                break;
-            case 'layer':
-                this.currentLayer = Number(newValue);
-                this.updateLayerOptions(this.layerCount, this.currentLayer);
-                break;
+
+    }
+
+    updateLayerOptions(layerCount, currentLayer) {
+        let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
+        const select = rootElement.getElementById('layerselect');
+        // console.log(select);
+        const previousSelected = rootElement.querySelector('#layerselect > Option:checked');
+        let lastId = previousSelected ? Number(previousSelected.value) : 0;
+        this.removeChildren(select);
+
+        for (let i = 0; i < layerCount; i++) {
+            if (currentLayer === i) {
+                continue;
+            }
+
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            if (lastId === i) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
         }
     }
 
@@ -105,23 +118,6 @@ export class QmkExplodedKey extends QMKElement {
             self.emitEvent('changeKeyOption', {value: ev.currentTarget.value, type: LAYER_ARG});
         });
         return layerOption;
-    }
-
-    updateLayerOptions(layerCount, currentLayer) {
-        let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
-        const select = rootElement.getElementById('layerselect');
-        this.removeChildren(select);
-
-        for (let i = 0; i < layerCount; i++) {
-            if (currentLayer === i) {
-                continue;
-            }
-
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i;
-            select.appendChild(option);
-        }
     }
 }
 
