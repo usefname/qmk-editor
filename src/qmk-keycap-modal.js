@@ -44,9 +44,7 @@ export class QMKKeycapModal extends QMKElement {
         this.layer = currentLayer;
         this.index = index;
 
-        this.explodedKey = new QmkExplodedKey(this.parsedCaption.captionFn, this.layerCount, this.layer);
-        // this.explodedKey.id = 'exploded-key';
-        this.template.querySelector('#exploded-key').replaceWith(this.explodedKey);
+        this.explodedKey = this.replace('exploded-key', new QmkExplodedKey(this.parsedCaption.captionFn, this.layerCount, this.layer));
 
         this.keycap = new QMKKeycap(index, this.caption);
         this.template.querySelector('#keycap').replaceWith(this.keycap);
