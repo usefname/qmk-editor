@@ -55,6 +55,12 @@ export class QMKKeycapModal extends QMKElement {
             ['#keycap-modal', 'changeKeyOption', this.onUpdateKeyOption],
         ]);
 
+        this.addEvents([
+            ['click', this.stopProp],
+            ['selectedKey', this.stopProp],
+            ['editMultiKey', this.stopProp]
+        ]);
+
         this.shadowRoot.appendChild(this.template);
     }
 
@@ -64,17 +70,21 @@ export class QMKKeycapModal extends QMKElement {
         this.index = index;
         this.layer = layer;
         this.layerCount = layerCount;
-        this.keycap.setAttribute('caption', this.caption);
+        this.keycap.updateCaption(this.caption);
         this.explodedKey.update(this.parsedCaption.captionFn, layerCount, layer);
+    }
+
+    stopProp(ev) {
+       ev.stopPropagation();
     }
 
     onUpdateKeyOption(ev) {
         let newCaption = replaceArgInMultiCaption(this.parsedCaption, ev.detail.value, ev.detail.type);
         this.caption = newCaption;
-        this.keycap.setAttribute('caption', newCaption);
+        this.keycap.updateCaption(newCaption);
     }
 
-    onClickClose() {
+    onClickClose(ev) {
         this.emitEvent("closeKeycapModal");
     }
 

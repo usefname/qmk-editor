@@ -155,8 +155,7 @@ export class QMKWorkspace extends QMKElement {
             this.keyboard.keymap = insertEmptyLayer(this.keyboard.keymap, this.keyboard.layout.length);
             this.selectedLayer++;
             const layerCount = this.keyboard.keymap.length;
-            this.layerPickerElement.addLayer();
-            this.layerPickerElement.setAttribute("layer", this.selectedLayer);
+            this.layerPickerElement.addLayer(this.selectedLayer);
             this.keycodeInventory.updateLayer(this.selectedLayer, layerCount);
             this.updateLayout();
         }
@@ -168,8 +167,7 @@ export class QMKWorkspace extends QMKElement {
             if (this.selectedLayer >= this.keyboard.keymap.length) {
                 this.selectedLayer = this.selectedLayer - 1;
             }
-            this.layerPickerElement.deleteLayer();
-            this.layerPickerElement.setAttribute("layer", this.selectedLayer);
+            this.layerPickerElement.deleteLayer(this.selectedLayer);
             const layerCount = this.keyboard.keymap.length;
             this.keycodeInventory.updateLayer(this.selectedLayer, layerCount);
             this.updateLayout();
@@ -178,7 +176,6 @@ export class QMKWorkspace extends QMKElement {
 
     onChangeLayer(ev) {
         this.selectedLayer = ev.detail.layer;
-        this.layerPickerElement.setAttribute("layer", this.selectedLayer);
         const layerCount = this.keyboard.keymap.length;
         this.keycodeInventory.updateLayer(this.selectedLayer, layerCount);
         this.updateLayout();
@@ -214,7 +211,7 @@ export class QMKWorkspace extends QMKElement {
         this.selectedKey = ev.detail.key;
         if (ev.detail.key !== null) {
             this.selectedKeyElement = this.keymapElements[ev.detail.key];
-            this.selectedKeyElement.setAttribute('selected', true);
+            this.selectedKeyElement.setSelected(true);
         }
     }
 
@@ -247,7 +244,7 @@ export class QMKWorkspace extends QMKElement {
     deSelectKey() {
         if (this.keycapModal.style.display === 'none') {
             if (this.selectedKeyElement) {
-                this.selectedKeyElement.removeAttribute('selected');
+                this.selectedKeyElement.setSelected(false);
                 this.selectedKeyElement = null;
             }
             this.selectedKey = null;
@@ -258,7 +255,7 @@ export class QMKWorkspace extends QMKElement {
 
     setKeyCaption(key, caption) {
         this.keyboard.keymap[this.selectedLayer][key] = caption;
-        this.keymapElements[key].setAttribute('caption', caption);
+        this.keymapElements[key].updateCaption(caption);
         this.markAsDirty();
     }
 
@@ -289,7 +286,7 @@ export class QMKWorkspace extends QMKElement {
         for (let i = 0; i < this.keyboard.layout.length; i++) {
             const el = this.keymapElements[i];
             const caption = this.keyboard.keymap[this.selectedLayer][i];
-            el.setAttribute('caption', caption);
+            el.updateCaption(caption);
         }
     }
 

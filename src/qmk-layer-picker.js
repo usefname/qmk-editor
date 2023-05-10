@@ -25,10 +25,6 @@ document.body.insertAdjacentHTML('afterbegin',
     `);
 
 export class QmkLayerPicker extends QMKElement {
-    static get observedAttributes() {
-        return ['layer'];
-    }
-
     constructor(maxLayers) {
         super('qmk-layer-picker');
         this.maxLayers = maxLayers;
@@ -48,17 +44,9 @@ export class QmkLayerPicker extends QMKElement {
             this.template.querySelector('#addButton').setAttribute('disabled', '');
         }
 
-        this.addLayer(this.template);
+        this._addLayer(this.template);
+        this.updateLayerNumbers(this.template);
         this.shadowRoot.appendChild(this.template);
-        this.setAttribute('layer', this.currentLayer);
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        const layerNumber = Number(newValue);
-        if (!isNaN(layerNumber)) {
-            this.currentLayer = layerNumber;
-            this.updateLayerNumbers(this.shadowRoot);
-        }
     }
 
     onAddLayer() {
@@ -72,15 +60,18 @@ export class QmkLayerPicker extends QMKElement {
     onLayerClick(ev) {
         const layer = Number(ev.target.getAttribute('layer'));
         if (!isNaN(layer)) {
+            this.currentLayer = layer;
+            this.updateLayerNumbers(this.shadowRoot);
             this.emitEvent('changeLayer', {layer: layer});
         }
     }
 
-    addLayer(rootElement) {
-        if (!rootElement) {
-            rootElement = this.shadowRoot;
-        }
+    addLayer(currentLayer) {
+        this.currentLayer = currentLayer;
+        this._addLayer(this.shadowRoot);
+    }
 
+    _addLayer(rootElement) {
         const layerNumber = this.layerCount;
         this.layerCount++;
         const li = document.getElementById('qmk-layer-picker-li').content.cloneNode(true);
@@ -94,8 +85,9 @@ export class QmkLayerPicker extends QMKElement {
         this.updateLayerNumbers(rootElement);
     }
 
-    deleteLayer() {
+    deleteLayer(currentLayer) {
         this.shadowRoot.querySelector('#layer-list').firstChild.remove();
+        this.currentLayer = currentLayer;
         this.updateLayerNumbers(this.shadowRoot);
     }
 

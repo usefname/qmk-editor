@@ -156,18 +156,14 @@ document.body.insertAdjacentHTML('afterbegin',
     </template>`);
 
 export class QMKKeycap extends QMKElement {
-    static get observedAttributes() {
-        return ['selected', 'caption'];
-    }
-
     constructor(index, caption) {
         super('qmk-keycap');
         this.keyIndex = index;
         this.keyElement = this.template.querySelector('#key');
         this.keyCaptionElement = this.template.querySelector('#key-caption');
-        this.captionInfo = parseCaption(caption);
+        this.captionInfo = null;
+        this.updateCaption(caption);
 
-        this.setAttribute('caption', caption);
         this.addEvents([
             ['click', this.onClick],
             ['dragstart', this.onDragStart],
@@ -180,23 +176,6 @@ export class QMKKeycap extends QMKElement {
         this.shadowRoot.appendChild(this.template);
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (newValue) {
-            switch (name) {
-                case 'selected':
-                    this.keyElement.classList.add('key-selected');
-                    break;
-                case 'caption':
-                    this.updateCaption(newValue);
-            }
-        } else {
-            switch (name) {
-                case 'selected':
-                    this.keyElement.classList.remove('key-selected');
-                    break;
-            }
-        }
-    }
 
     getParsedCaption() {
         return this.captionInfo;
@@ -270,6 +249,14 @@ export class QMKKeycap extends QMKElement {
         event.preventDefault();
         this.keyElement.classList.remove('key-drop-hover');
     };
+
+    setSelected(value) {
+        if (value) {
+            this.keyElement.classList.add('key-selected');
+        } else {
+            this.keyElement.classList.remove('key-selected');
+        }
+    }
 
     updateCaption(caption) {
         this.captionInfo = parseCaption(caption);

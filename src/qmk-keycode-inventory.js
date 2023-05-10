@@ -166,8 +166,6 @@ export class QMKKeycodeInventory extends QMKElement {
         this.currentTab = 'Keyboard';
         this.currentTabElement = keyboardTab;
 
-        this.setAttribute('layercount', layerCount);
-
         this.addEvents([
             ['selectedKey', this.stopKeyEventPropagation],
             ['updateCaption', this.stopKeyEventPropagation],
@@ -243,7 +241,7 @@ export class QMKKeycodeInventory extends QMKElement {
                     topicParent.querySelectorAll(selector).forEach(keycap => {
                         let captionInfo = keycap.getParsedCaption();
                         let newCaption = replaceArgInMultiCaption(captionInfo, value, type);
-                        keycap.setAttribute('caption', newCaption);
+                        keycap.updateCaption(newCaption);
                     });
                 });
                 topicParent.appendChild(explodedKey);

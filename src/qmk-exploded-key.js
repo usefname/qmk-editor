@@ -59,7 +59,6 @@ export class QmkExplodedKey extends QMKElement {
     updateLayerOptions(layerCount, currentLayer) {
         let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
         const select = rootElement.getElementById('layerselect');
-        // console.log(select);
         const previousSelected = rootElement.querySelector('#layerselect > Option:checked');
         let lastId = previousSelected ? Number(previousSelected.value) : 0;
         this.removeChildren(select);

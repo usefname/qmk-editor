@@ -17,30 +17,23 @@ document.body.insertAdjacentHTML('afterbegin',
     </template>`);
 
 export class QMKPositionalKey extends QMKElement {
-    static get observedAttributes() {
-       return ['selected', 'caption'];
-    }
-
     constructor(key, index, caption) {
         super('qmk-positional-key');
         this.template.querySelector("#key-position").style.setProperty("--key_y", key.y);
         this.template.querySelector("#key-position").style.setProperty("--key_x", key.x);
         this.template.querySelector("#key-position").style.setProperty("--key_w", key.w ? key.w : 1);
         this.template.querySelector("#key-position").style.setProperty("--key_h", key.h ? key.h : 1);
-        this.setAttribute('caption', caption);
         this.keycap = new QMKKeycap(index, caption);
         this.template.querySelector("#key-position").appendChild(this.keycap);
         this.shadowRoot.appendChild(this.template);
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (this.keycap) {
-            if (newValue) {
-                this.keycap.setAttribute(name, newValue);
-            } else {
-                this.keycap.removeAttribute(name);
-            }
-        }
+    updateCaption(caption) {
+        this.keycap.updateCaption(caption);
+    }
+
+    setSelected(value) {
+        this.keycap.setSelected(value);
     }
 }
 

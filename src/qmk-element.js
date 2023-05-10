@@ -12,7 +12,6 @@ export class QMKElement extends HTMLElement {
         this.shadow.adoptedStyleSheets = [QMKElement.bulma_css];
         if (templateName) {
             this.template = document.getElementById(templateName).content.cloneNode(true);
-
         }
     }
 
