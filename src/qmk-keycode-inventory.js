@@ -11,6 +11,7 @@ import {QMKPositionalKey} from "@/qmk-positional-key.js";
 import daskeyboard from "@/lib/daskeyboard4-info.json";
 import {QMKKeycap} from "@/qmk-keycap.js";
 import {QmkExplodedKey} from "@/qmk-exploded-key.js";
+import {keyEditInteractive} from "../src-svelte/editable-keyboard/keymapWorkspace.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -291,7 +292,7 @@ export class QMKKeycodeInventory extends QMKElement {
         div.style.setProperty('--sample-kb-largest_x', this.largest_x.toString());
         for (let i = 0; i < this.layout.length; i++) {
             const key = this.layout[i];
-            const positionalKey = new QMKPositionalKey(key, -1, this.keymap[i]);
+            const positionalKey = new QMKPositionalKey(key, -1, this.keymap[i], keyEditInteractive);
             div.appendChild(positionalKey);
         }
         return div;

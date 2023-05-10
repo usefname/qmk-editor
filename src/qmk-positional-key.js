@@ -1,5 +1,7 @@
 import {QMKElement} from "@/qmk-element.js";
 import {QMKKeycap} from "@/qmk-keycap.js";
+import {QMKRawKeycap} from "@/qmk-raw-keycap.js";
+import {keyEditInteractive, keyEditText} from "../src-svelte/editable-keyboard/keymapWorkspace.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -17,23 +19,57 @@ document.body.insertAdjacentHTML('afterbegin',
     </template>`);
 
 export class QMKPositionalKey extends QMKElement {
-    constructor(key, index, caption) {
+    constructor(key, index, caption, editMode) {
         super('qmk-positional-key');
         this.template.querySelector("#key-position").style.setProperty("--key_y", key.y);
         this.template.querySelector("#key-position").style.setProperty("--key_x", key.x);
         this.template.querySelector("#key-position").style.setProperty("--key_w", key.w ? key.w : 1);
         this.template.querySelector("#key-position").style.setProperty("--key_h", key.h ? key.h : 1);
+
+
+        this.keypositionElement = this.template.querySelector('#key-position');
         this.keycap = new QMKKeycap(index, caption);
         this.template.querySelector("#key-position").appendChild(this.keycap);
+        this.rawKeycap = new QMKRawKeycap(index, caption);
+        this.template.querySelector("#key-position").appendChild(this.rawKeycap);
+
+        this.editMode = null;
+        this.caption = caption;
+        this.selected = false;
+
+        this.currentKeyElement = this.keycap;
+        this.keycap.style.display = 'block';
+        this.rawKeycap.style.display = 'none';
+        this.setEditMode(editMode);
         this.shadowRoot.appendChild(this.template);
     }
 
+    setEditMode(editMode) {
+        if (editMode === this.editMode) {
+            return;
+        }
+        this.editMode = editMode;
+
+        this.currentKeyElement.style.display = 'none';
+        if (editMode === keyEditInteractive) {
+            this.currentKeyElement = this.keycap;
+        } else if (editMode === keyEditText){
+            this.currentKeyElement = this.rawKeycap;
+        }
+
+        this.currentKeyElement.updateCaption(this.caption);
+        this.currentKeyElement.setSelected(this.selected);
+        this.currentKeyElement.style.display = 'block';
+    }
+
     updateCaption(caption) {
-        this.keycap.updateCaption(caption);
+        this.caption = caption;
+        this.currentKeyElement.updateCaption(caption);
     }
 
     setSelected(value) {
-        this.keycap.setSelected(value);
+        this.selected = value;
+        this.currentKeyElement.setSelected(value);
     }
 }
 

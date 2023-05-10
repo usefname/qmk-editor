@@ -144,6 +144,9 @@ export class QMKWorkspace extends QMKElement {
 
     onChangeEditMode(ev) {
         this.keycapMode = ev.detail;
+        for (const key of this.keymapElements) {
+            key.setEditMode(this.keycapMode);
+        }
     }
 
     onCloseKeycapModal() {
@@ -276,7 +279,7 @@ export class QMKWorkspace extends QMKElement {
     createLayout(parentElement) {
         for (let i = 0; i < this.keyboard.layout.length; i++) {
             const key = this.keyboard.layout[i];
-            const positionalKey = new QMKPositionalKey(key, i, this.keyboard.keymap[this.selectedLayer][i]);
+            const positionalKey = new QMKPositionalKey(key, i, this.keyboard.keymap[this.selectedLayer][i], this.keycapMode);
             parentElement.appendChild(positionalKey);
             this.keymapElements.push(positionalKey);
         }

@@ -23,7 +23,10 @@ export class QMKElement extends HTMLElement {
 
     addEventsToElement(rootElement, events) {
         for (let e of events) {
-            rootElement.querySelector(e[0]).addEventListener(e[1], e[2].bind(this));
+            const elements = rootElement.querySelectorAll(e[0]);
+            for (const element of elements) {
+                element.addEventListener(e[1], e[2].bind(this));
+            }
         }
     }
 

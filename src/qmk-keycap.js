@@ -295,7 +295,6 @@ export class QMKKeycap extends QMKElement {
         }
         return div;
     }
-
 }
 
 customElements.define('qmk-keycap', QMKKeycap);
