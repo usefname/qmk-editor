@@ -178,6 +178,7 @@ fn generate_keymap(config_lock: State<EditorConfigRwLock>, keymap_description: K
     Ok(keymap_file)
 }
 
+// This should probably return filename from file desc metadata
 #[tauri::command]
 fn save_keymap(filename: String, keymap_description: KeymapDescription) -> Result<(), String> {
     println!("Saving keymap to {}", &filename);

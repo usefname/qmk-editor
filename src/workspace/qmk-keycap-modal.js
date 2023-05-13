@@ -1,7 +1,7 @@
 import {QMKElement} from "@/qmk-element.js";
 import {BASIC_ARG, LAYER_ARG, parseCaption, replaceArgInMultiCaption} from "@/lib/key-info.js";
-import {QmkExplodedKey} from "@/qmk-exploded-key.js";
-import {QMKKeycap} from "@/qmk-keycap.js";
+import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.js";
+import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',

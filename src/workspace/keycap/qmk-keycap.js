@@ -161,6 +161,7 @@ export class QMKKeycap extends QMKElement {
         this.keyIndex = index;
         this.keyElement = this.template.querySelector('#key');
         this.keyCaptionElement = this.template.querySelector('#key-caption');
+        this.selected = false;
         this.captionInfo = null;
         this.updateCaption(caption);
 
@@ -184,7 +185,7 @@ export class QMKKeycap extends QMKElement {
     onClick(e) {
         e.stopImmediatePropagation();
         e.preventDefault();
-        if (this.getAttribute("selected") !== null) {
+        if (this.selected === true) {
             this.emitEvent('selectedKey', {key: null});
         } else {
             if (this.captionInfo.multiKey) {
@@ -252,8 +253,10 @@ export class QMKKeycap extends QMKElement {
 
     setSelected(value) {
         if (value) {
+            this.selected = true;
             this.keyElement.classList.add('key-selected');
         } else {
+            this.selected = false;
             this.keyElement.classList.remove('key-selected');
         }
     }

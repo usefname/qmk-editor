@@ -1,14 +1,15 @@
 import {QMKElement} from "@/qmk-element.js";
-import {QMKKeycodeInventory} from "@/qmk-keycode-inventory.js";
-import {QMKKeycapModal} from "@/qmk-keycap-modal.js";
-import {QMKEditMode} from "@/qmk-edit-mode.js";
-import {QmkLayerPicker} from "@/qmk-layer-picker.js";
-import {QMKPositionalKey} from "@/qmk-positional-key.js";
+import {QMKKeycodeInventory} from "@/workspace/qmk-keycode-inventory.js";
+import {QMKKeycapModal} from "@/workspace/qmk-keycap-modal.js";
+import {QMKEditMode} from "@/workspace/sidepanel/qmk-edit-mode.js";
+import {QmkLayerPicker} from "@/workspace/sidepanel/qmk-layer-picker.js";
+import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
 import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.js";
-import {keyEditInteractive} from "../src-svelte/editable-keyboard/keymapWorkspace.js";
+import {keyEditInteractive} from "../../src-svelte/editable-keyboard/keymapWorkspace.js";
 import jsKeyCodes from "@/lib/keycodes/jsKeyCodes.json";
 import {insertEmptyLayer, removeLayer} from "@/lib/layers.js";
 import {BASIC_ARG, parseCaption, replaceArgInMultiCaption, replaceArgsInMultiCaption} from "@/lib/key-info.js";
+import {QMKWorkspaceMenu} from "@/workspace/qmk-workspace-menu.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -49,19 +50,8 @@ document.body.insertAdjacentHTML('afterbegin',
                 --key_height: 50;
             }
         </style> 
-        
-        <div class="container is-widescreen is-justify-content-space-between is-flex is-align-items-center">
-            <div id="keyboardTitle" class="is-size-3"></div>
-            <div class="is-flex is-align-items-center">
-                <button id="saveAsButton" class="button">Save as</button>
-                <button id="saveButton" class="button ml-4" disabled>Save</button>
-                <button id="loadButton" class="button ml-4">Load</button>
-                <button id="importButton" class="ml-4 button">Import</button>
-                <button id="buildButton" class="ml-4 button">Build</button>
-                <button id="configButton" class="ml-4 button">Settings</button>
-            </div>
-        </div>
-
+       
+        <div id='workspace-menu'></div>
         <div id="workspace">
             <div id='keycap-modal'></div>
             <div id="edit-workspace" class="box" tabindex="0">
@@ -80,6 +70,11 @@ export class QMKWorkspace extends QMKElement {
 
         this.keyboard = keyboard;
         this.keymapElements = [];
+        this.selectedKeyElement = null;
+        this.selectedLayer = 0;
+        this.maxLayers = 16;
+        this.keycapMode = keyEditInteractive;
+        this.showKeyModal = false;
 
         this.largest_y = layout_largest_y(this.keyboard.layout);
         this.largest_x = layout_largest_x(this.keyboard.layout);
@@ -88,35 +83,28 @@ export class QMKWorkspace extends QMKElement {
         this.key_width = 50;
         this.key_height = 50;
 
-        this.selectedKeyElement = null;
-        this.selectedLayer = 0;
-        this.maxLayers = 16;
-
-        this.keycapMode = keyEditInteractive;
-        this.showKeyModal = false;
-
-        this.template.querySelector("#keyboardTitle").textContent = this.createTitle(keyboard.keyboardName, keyboard.editorState.filename);
+        this.workspaceMenu = new QMKWorkspaceMenu(this.keyboard.keyboardName, this.keyboard.editorState.filename);
+        this.template.querySelector('#workspace-menu').replaceWith(this.workspaceMenu);
 
         let workspaceElement = this.template.querySelector('#workspace');
         this.setWorkspaceSize(workspaceElement);
-        this.createLayout(this.template.querySelector("#keymap-layout"));
-        this.layerPickerElement = new QmkLayerPicker(this.maxLayers);
+
+        this.createKeymapElements(this.template.querySelector("#keymap-layout"));
+
+        this.layerPickerElement = new QmkLayerPicker(this.keyboard.keymap.length, this.maxLayers);
         this.template.querySelector('#workspace-sidepanel').appendChild(this.layerPickerElement);
+
         this.editModeElement = new QMKEditMode(this.keycapMode);
         this.template.querySelector('#workspace-sidepanel').appendChild(this.editModeElement);
+
         this.keycodeInventory = new QMKKeycodeInventory(this.selectedLayer, this.keyboard.keymap.length);
         workspaceElement.appendChild(this.keycodeInventory);
+
         this.keycapModal = new QMKKeycapModal(0, this.keyboard.keymap.length, this.selectedLayer, 'LT(0, KC_A)');
         this.keycapModal.style.display = 'none';
-        workspaceElement.replaceChild(this.keycapModal, this.template.querySelector('#keycap-modal'));
+        this.template.querySelector('#keycap-modal').replaceWith(this.keycapModal);
 
         this.addEventsToElement(this.template, [
-            ['#saveAsButton', 'click', this.emitCustomEvent('saveAs')],
-            ['#loadButton', 'click', this.emitCustomEvent('load')],
-            ['#saveButton', 'click', this.emitCustomEvent('save')],
-            ['#importButton', 'click', this.emitCustomEvent('import')],
-            ['#buildButton', 'click', this.emitCustomEvent('build')],
-            ['#configButton', 'click', this.emitCustomEvent('config')],
             ['#edit-workspace', 'keydown', this.onWorkspaceKeyDown],
             ['#edit-workspace', 'click', this.deSelectKey],
             ['#edit-workspace', 'dragstart', this.deSelectKey],
@@ -276,7 +264,7 @@ export class QMKWorkspace extends QMKElement {
         element.style.setProperty("--key_height", this.key_height);
     }
 
-    createLayout(parentElement) {
+    createKeymapElements(parentElement) {
         for (let i = 0; i < this.keyboard.layout.length; i++) {
             const key = this.keyboard.layout[i];
             const positionalKey = new QMKPositionalKey(key, i, this.keyboard.keymap[this.selectedLayer][i], this.keycapMode);
@@ -293,28 +281,20 @@ export class QMKWorkspace extends QMKElement {
         }
     }
 
-    emitCustomEvent(eventName) {
-        return function () {
-            this.dispatchEvent(new Event(eventName));
-        }
-    }
-
     markAsDirty() {
-        this.keyboard.dirty = true;
-        this.idElement("saveButton").disabled = true;
+        if (!this.keyboard.dirty) {
+            this.keyboard.dirty = true;
+            this.workspaceMenu.markAsDirty();
+        }
     }
 
     markAsClean() {
         this.keyboard.dirty = false;
-        this.idElement("saveButton").disabled = false;
+        this.workspaceMenu.markAsClean();
     }
 
-    createTitle(keyboardName, filename) {
-       return keyboardName + (filename ? " - " + filename : "");
-    }
-
-    setKeyboardTitle(title) {
-        this.idElement("keyboardTitle").textContent = this.createTitle(this.keyboardName, this.filename);
+    updateFileName() {
+        this.workspaceMenu.updateFileName(this.keyboard.editorState.filename);
     }
 
     hideKeycapModal() {

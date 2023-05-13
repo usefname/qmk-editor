@@ -7,11 +7,11 @@ import {
     parseCaption, replaceArgInMultiCaption
 } from "@/lib/key-info.js";
 import {layout_largest_x, layout_largest_y} from "@/lib/layout.js";
-import {QMKPositionalKey} from "@/qmk-positional-key.js";
+import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
 import daskeyboard from "@/lib/daskeyboard4-info.json";
-import {QMKKeycap} from "@/qmk-keycap.js";
-import {QmkExplodedKey} from "@/qmk-exploded-key.js";
-import {keyEditInteractive} from "../src-svelte/editable-keyboard/keymapWorkspace.js";
+import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
+import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.js";
+import {keyEditInteractive} from "../../src-svelte/editable-keyboard/keymapWorkspace.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',

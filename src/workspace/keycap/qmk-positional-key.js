@@ -1,7 +1,7 @@
 import {QMKElement} from "@/qmk-element.js";
-import {QMKKeycap} from "@/qmk-keycap.js";
-import {QMKRawKeycap} from "@/qmk-raw-keycap.js";
-import {keyEditInteractive, keyEditText} from "../src-svelte/editable-keyboard/keymapWorkspace.js";
+import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
+import {QMKRawKeycap} from "@/workspace/keycap/qmk-raw-keycap.js";
+import {keyEditInteractive, keyEditText} from "../../../src-svelte/editable-keyboard/keymapWorkspace.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',

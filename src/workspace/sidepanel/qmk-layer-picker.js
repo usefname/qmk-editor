@@ -25,11 +25,11 @@ document.body.insertAdjacentHTML('afterbegin',
     `);
 
 export class QmkLayerPicker extends QMKElement {
-    constructor(maxLayers) {
+    constructor(layerCount, maxLayers) {
         super('qmk-layer-picker');
         this.maxLayers = maxLayers;
 
-        this.layerCount = 0;
+        this.layerCount = layerCount;
         this.currentLayer = 0;
         this.maxLayers = maxLayers;
 
@@ -44,7 +44,10 @@ export class QmkLayerPicker extends QMKElement {
             this.template.querySelector('#addButton').setAttribute('disabled', '');
         }
 
-        this._addLayer(this.template);
+        for (let i = 0; i < layerCount; i++)  {
+            this._addLayer(this.template);
+        }
+
         this.updateLayerNumbers(this.template);
         this.shadowRoot.appendChild(this.template);
     }
