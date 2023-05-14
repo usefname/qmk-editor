@@ -50,6 +50,7 @@ fn main() {
             save_config,
             get_config,
             get_qmk_path,
+            create_keymap_path,
             generate_keymap,
             save_keymap,
             load_keymap,
@@ -151,6 +152,26 @@ fn save_config(config_lock: State<EditorConfigRwLock>, new_config: EditorConfig)
 fn get_qmk_path(config_lock: State<EditorConfigRwLock>) -> Result<Option<String>, String> {
     let config = unlock_config(&config_lock)?;
     Ok(config.qmk_path.clone())
+}
+
+#[tauri::command]
+fn create_keymap_path(config_lock: State<EditorConfigRwLock>, keyboard_name: String) -> Result<String, String> {
+    let qmk_path;
+    let generated_keymap_path;
+    {
+        let config = unlock_config(&config_lock)?;
+        qmk_path = match &config.qmk_path {
+            None => { return Err("Missing qmk path".to_string()); }
+            Some(s) => s.clone()
+        };
+        generated_keymap_path = config.generated_keymap.clone();
+    }
+
+    let keymap_path = qmk::create_keymap_path(&qmk_path,
+                                              &keyboard_name,
+                                              &generated_keymap_path)
+        .map_err(|err| err.to_string())?;
+    Ok(keymap_path.join("keymap.c").to_string_lossy().to_string())
 }
 
 #[tauri::command]

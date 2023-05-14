@@ -4,10 +4,11 @@ import {invoke} from "@tauri-apps/api/tauri";
 import {QMKWorkspace} from './workspace/qmk-workspace.js'
 import {appWindow} from "@tauri-apps/api/window";
 import daskeyboard from './lib/daskeyboard4-info.json';
-import {QMKSettings} from "@/settings/qmk-settings.js";
+import {QMKSettings} from "@/qmk-settings.js";
 import {open, save} from "@tauri-apps/api/dialog";
-import {QMKImport} from "@/import/qmk-import.js";
+import {QMKImport} from "@/qmk-import.js";
 import {insertEmptyLayer} from "@/lib/layers.js";
+import {QMKBuild} from "@/qmk-build.js";
 
 document.body.insertAdjacentHTML('afterbegin',
 // language=HTML
@@ -29,6 +30,8 @@ class QMKApp extends QMKElement {
         this.page = null;
         this.workspaceElement = null;
         this.settingsElement = null;
+        this.importElement = null;
+        this.buildElement = null;
         this.keyboard = {
             keyboardName: null,
             keymap: null,
@@ -41,6 +44,7 @@ class QMKApp extends QMKElement {
             ['qmk-error', this.onError],
             ['exit-config', this.onExitConfig],
             ['exit-import', this.onExitImport],
+            ['exit-build', this.onExitBuild],
             ['import-keyboard', this.onImportKeyboard],
             ['saveAs', this.onSaveAs],
             ['save', this.onSave],
@@ -62,30 +66,25 @@ class QMKApp extends QMKElement {
            this.needConfigUpdate = false;
            this.loadStubbedKeymap();
            this.updatePage('settings');
-           return 'settings';
        } else {
            try {
                this.needConfigUpdate = await invoke('need_config_update');
                if (this.needConfigUpdate) {
                    this.keyboard.editorState.filename = null;
                    this.updatePage('config');
-                   return 'config';
                } else {
                    const editorState = await invoke('get_state');
                    if (editorState !== null && editorState.filename !== null && editorState.filename.length > 0) {
                        await this.loadKeymapFile(editorState.filename);
                        this.updatePage('workspace');
-                       return 'workspace'
                    } else {
                        this.createImport(true);
                        this.updatePage('import');
-                       return 'import';
                    }
                }
            } catch (err) {
                this.showError(err);
                this.updatePage('import');
-               return 'import';
            }
        }
     }
@@ -159,6 +158,9 @@ class QMKApp extends QMKElement {
             case 'import':
                 this.showImport();
                 break;
+            case 'build':
+                this.showBuild();
+                break;
         }
     }
 
@@ -196,6 +198,19 @@ class QMKApp extends QMKElement {
             this.importElement.refreshKeyboardData();
         }
         this.importElement.style.display = 'block';
+    }
+
+    showBuild() {
+        if (!this.buildElement) {
+            const rootElement = this.shadowRoot.hasChildNodes() ? this.shadowRoot : this.template;
+            this.buildElement = new QMKBuild(false);
+            rootElement.querySelector('#build').replaceWith(this.buildElement);
+            this.buildElement.id = 'settings';
+        }
+
+        this.buildElement.startBuild(this.keyboard.keyboardName, this.keyboard.layoutName, this.keyboard.keymap);
+
+        this.buildElement.style.display = 'block';
     }
 
     createImport(requireSelection) {
@@ -299,6 +314,10 @@ class QMKApp extends QMKElement {
     }
 
     onExitImport() {
+        this.updatePage('workspace');
+    }
+
+    onExitBuild() {
         this.updatePage('workspace');
     }
 

@@ -195,12 +195,16 @@ pub fn is_path_qmk_root(qmk_path: &str) -> bool {
 }
 
 
+pub fn create_keymap_path(qmk_path: &str, keyboard: &str, qmk_keymap_dir: &str) -> Result<PathBuf> {
+    Ok(get_keyboard_path(&qmk_path, keyboard)?
+        .join("keymaps")
+        .join(qmk_keymap_dir))
+}
+
 pub fn generate_keymap(qmk_path: &str, qmk_keymap_dir: &str, keyboard: &str, layout: &str, keymap: Keymap) -> Result<String> {
     ensure!(!keymap.is_empty(), "Keymap is empty");
 
-    let path = get_keyboard_path(&qmk_path, keyboard)?
-        .join("keymaps")
-        .join(qmk_keymap_dir);
+    let path = create_keymap_path(qmk_path, keyboard, qmk_keymap_dir)?;
     if !path.exists() {
         fs::create_dir(&path).context("Failed to create keymap dir")?;
     }
