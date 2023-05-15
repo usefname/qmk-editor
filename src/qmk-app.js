@@ -55,6 +55,8 @@ class QMKApp extends QMKElement {
             ]);
 
         this.loadEditorState().then((page) => {
+            //For filesystem cache, import keyboard have a small timeout if not cached
+            invoke('cache_keyboards');
         });
 
         this.shadowRoot.appendChild(this.template);

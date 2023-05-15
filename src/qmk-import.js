@@ -6,30 +6,33 @@ import {open} from "@tauri-apps/api/dialog";
 document.body.insertAdjacentHTML('afterbegin',
     `<template id="qmk-import">
         <style>
+            #title {
+                margin-top: 2rem;
+            }
             #keyboard-choice {
-                width: 100rem;
+                width: 40rem;
             }
             #layout-select {
-                width: 100rem;
+                width: 40rem;
             }
         </style>
         <div class="is-flex is-justify-content-center mt-4">
             <p id='title' class="title is-4"></p>
         </div>
         <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
-            <div class="column is-5">
+            <div class="mt-4">
                 <label class="title is-size-6" for="keyboard-choice">Keyboard</label><br>
                 <input class="input" type="search" list="keyboard-list" id="keyboard-choice" name="keyboard-choice"/>
                 <datalist id="keyboard-list"></datalist>
             </div>
-            <div class="column is-5">
+            <div class="mt-4">
                 <label class="title is-size-6" for="layout-choice">Layout</label><br>
                 <div class="select" id="layout-choice">
                     <select id='layout-select' disabled></select>
                 </div>
             </div>
         </div>
-        <div class="is-flex is-justify-content-center">
+        <div class="is-flex is-justify-content-center mt-4">
             <button id="load-button" class="button is-primary mr-4" disabled>Load</button>
             <button id='back-button' class="button is-primary ml-4">Back</button>
         </div> 

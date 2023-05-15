@@ -11,6 +11,7 @@ mod command;
 
 use std::path::Path;
 use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
+use std::thread;
 
 use tauri::{State, Window};
 use crate::command::BuildProcess;
@@ -42,6 +43,7 @@ fn main() {
         .manage(build_state_lock)
         .invoke_handler(tauri::generate_handler![
             list_keyboards,
+            cache_keyboards,
             list_keymaps,
             import_keyboard,
             need_config_update,
@@ -100,6 +102,27 @@ fn list_keyboards(config_lock: State<EditorConfigRwLock>) -> Result<Vec<String>,
     };
     qmk::list_keyboards(qmk_path.as_str()).map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+fn cache_keyboards(config_lock: State<EditorConfigRwLock>) -> () {
+    let qmk_path: String;
+    {
+        let config = unlock_config(&config_lock).expect("Failed to read config");
+        qmk_path = match &config.qmk_path {
+            None => { eprintln!("No QMK path configured, keyboards not cached"); return; }
+            Some(s) => s.to_owned()
+        };
+    }
+
+    println!("Caching keyboards");
+    thread::spawn(move || {
+        let result = qmk::list_keyboards(qmk_path.as_str());
+        if let Err(err) = result {
+            eprintln!("Keyboard list not cached: {}", err);
+        }
+    });
+}
+
 
 #[tauri::command]
 fn import_keyboard(config_lock: State<EditorConfigRwLock>, keyboard: String) -> Result<qmk::Keyboard, String> {
