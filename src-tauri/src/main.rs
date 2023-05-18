@@ -1,9 +1,3 @@
-#![feature(let_chains)]
-#![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
-)]
-
 mod config;
 mod qmk;
 mod command;
@@ -265,8 +259,10 @@ fn start_flash(window: Window, config_lock: State<EditorConfigRwLock>, build_sta
             None => false,
             Some(x) => x.is_finished()
         };
-        if finished && let Some(thread_handle) = process.thread_id.take() {
-            thread_handle.join().map_err(|_| "Unable to finish previous build")?;
+        if finished {
+            if let Some(thread_handle) = process.thread_id.take() {
+                thread_handle.join().map_err(|_| "Unable to finish previous build")?;
+            }
         } else {
             return Ok(process.command.clone());
         }

@@ -4,7 +4,6 @@ use std::{fs};
 use std::fs::File;
 use std::io::{Write};
 use std::path::{MAIN_SEPARATOR, Path, PathBuf};
-use std::process::{Command};
 
 use anyhow::{anyhow, Context, ensure, Result};
 use serde::{Deserialize, Serialize};
@@ -80,34 +79,33 @@ pub fn list_keyboards(qmk_path: &str) -> Result<Vec<String>> {
     Ok(keyboards)
 }
 
-#[allow(dead_code)]
-fn qmk_root_dir() -> Result<PathBuf> {
-    let command = Command::new("qmk")
-        .arg("env")
-        .arg("QMK_HOME")
-        .output()
-        .context("Failed to run qmk")?;
-    ensure!(command.status.success(), "Failed to get qmk env `QMK_HOME`");
+// fn qmk_root_dir() -> Result<PathBuf> {
+//     let command = Command::new("qmk")
+//         .arg("env")
+//         .arg("QMK_HOME")
+//         .output()
+//         .context("Failed to run qmk")?;
+//     ensure!(command.status.success(), "Failed to get qmk env `QMK_HOME`");
 
-    let path_string = String::from_utf8_lossy(&command.stdout)
-        .trim_end()
-        .to_string();
-    let path = PathBuf::from(path_string);
+//     let path_string = String::from_utf8_lossy(&command.stdout)
+//         .trim_end()
+//         .to_string();
+//     let path = PathBuf::from(path_string);
 
-    let meta_data = fs::metadata(&path).context(format!(
-        "Failed to get metadata for path {}",
-        path.display()
-    ))?;
+//     let meta_data = fs::metadata(&path).context(format!(
+//         "Failed to get metadata for path {}",
+//         path.display()
+//     ))?;
 
-    if meta_data.is_dir() {
-        Ok(path)
-    } else {
-        Err(anyhow!(
-            "Qmk path returned from `qmk env QMK_HOME`: '{}' is not a directory",
-            path.display()
-        ))
-    }
-}
+//     if meta_data.is_dir() {
+//         Ok(path)
+//     } else {
+//         Err(anyhow!(
+//             "Qmk path returned from `qmk env QMK_HOME`: '{}' is not a directory",
+//             path.display()
+//         ))
+//     }
+// }
 
 pub fn flash_keyboard<F: Fn(BuildEvent, String) -> () + Clone + Send + 'static>(io_callback: F, qmk_path: &str, keyboard: &str, keymap: &str) -> Result<BuildProcess> {
     let arg = [keyboard, keymap, "flash"].join(":");
