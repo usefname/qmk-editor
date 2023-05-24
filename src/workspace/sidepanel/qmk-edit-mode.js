@@ -1,5 +1,5 @@
 import {QMKElement} from "@/qmk-element.ts";
-import {keyEditInteractive, keyEditText} from "../../../src-svelte/editable-keyboard/keymapWorkspace.js";
+import {keyEditInteractive, keyEditText} from "@/lib/layers.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',

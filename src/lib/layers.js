@@ -1,3 +1,6 @@
+export const keyEditInteractive = "Interactive";
+export const keyEditText = "Text";
+
 export const padLayerSize = (layers, layoutLenght) => {
     let i = 0;
     for (; i < layers.length; i ++) {

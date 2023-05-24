@@ -11,7 +11,7 @@ import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
 import daskeyboard from "@/lib/daskeyboard4-info.json";
 import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
 import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.ts";
-import {keyEditInteractive} from "../../src-svelte/editable-keyboard/keymapWorkspace.js";
+import {keyEditInteractive} from "@/lib/layers.js";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',

@@ -5,9 +5,8 @@ import {QMKEditMode} from "@/workspace/sidepanel/qmk-edit-mode.js";
 import {QmkLayerPicker} from "@/workspace/sidepanel/qmk-layer-picker.js";
 import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
 import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.js";
-import {keyEditInteractive} from "../../src-svelte/editable-keyboard/keymapWorkspace.js";
 import jsKeyCodes from "@/lib/keycodes/jsKeyCodes.json";
-import {insertEmptyLayer, removeLayer} from "@/lib/layers.js";
+import {insertEmptyLayer, keyEditInteractive, removeLayer} from "@/lib/layers.js";
 import {BASIC_ARG, parseCaption, replaceArgInMultiCaption, replaceArgsInMultiCaption} from "@/lib/key-info.ts";
 import {QMKWorkspaceMenu} from "@/workspace/qmk-workspace-menu.js";
 
