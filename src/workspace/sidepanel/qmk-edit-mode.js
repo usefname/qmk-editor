@@ -1,5 +1,5 @@
 import {QMKElement} from "@/qmk-element.ts";
-import {keyEditInteractive, keyEditText} from "@/lib/layers.js";
+import {EditMode} from "@/lib/keymap.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -20,10 +20,10 @@ export class QMKEditMode extends QMKElement {
         super('qmk-edit-mode');
         this.radioContainer = this.template.querySelector('#radio-container');
 
-        this.interactiveOption = this.createRadioButton(keyEditInteractive);
+        this.interactiveOption = this.createRadioButton(EditMode.KEY_EDIT_INTERACTIVE);
         this.radioContainer.appendChild(this.interactiveOption);
 
-        this.textOption = this.createRadioButton(keyEditText);
+        this.textOption = this.createRadioButton(EditMode.KEY_EDIT_TEXT);
         this.radioContainer.appendChild(this.textOption);
 
         this.setValueChecked(this.template, defaultEditMode);

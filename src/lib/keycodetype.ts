@@ -1,7 +1,5 @@
 import _fnTypeInfo from './keycodes/keycodeType.json';
 
-
-
 export enum ArgumentType {
     LAYER_ARG = "Layer",
     BASIC_ARG = "Basic",

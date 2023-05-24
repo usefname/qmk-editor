@@ -4,9 +4,9 @@ import {QMKKeycapModal} from "@/workspace/qmk-keycap-modal.js";
 import {QMKEditMode} from "@/workspace/sidepanel/qmk-edit-mode.js";
 import {QmkLayerPicker} from "@/workspace/sidepanel/qmk-layer-picker.js";
 import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
-import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.js";
+import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.ts";
 import jsKeyCodes from "@/lib/keycodes/jsKeyCodes.json";
-import {insertEmptyLayer, keyEditInteractive, removeLayer} from "@/lib/layers.js";
+import {insertEmptyLayer, EditMode, removeLayer} from "@/lib/keymap.ts";
 import {BASIC_ARG, parseCaption, replaceArgInMultiCaption, replaceArgsInMultiCaption} from "@/lib/key-info.ts";
 import {QMKWorkspaceMenu} from "@/workspace/qmk-workspace-menu.js";
 
@@ -72,7 +72,7 @@ export class QMKWorkspace extends QMKElement {
         this.selectedKeyElement = null;
         this.selectedLayer = 0;
         this.maxLayers = 16;
-        this.keycapMode = keyEditInteractive;
+        this.keycapMode = EditMode.KEY_EDIT_INTERACTIVE;
         this.showKeyModal = false;
 
         this.largest_y = layout_largest_y(this.keyboard.layout);
@@ -174,7 +174,7 @@ export class QMKWorkspace extends QMKElement {
     onWorkspaceKeyDown(ev) {
         if (!this.showKeyModal
             && this.selectedKey
-            && this.keycapMode === keyEditInteractive
+            && this.keycapMode === EditMode.KEY_EDIT_INTERACTIVE
             && ev.key
             && jsKeyCodes[ev.code]) {
             ev.preventDefault();

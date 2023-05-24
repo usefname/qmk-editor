@@ -1,7 +1,7 @@
 import {QMKElement} from "@/qmk-element.ts";
 import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
 import {QMKRawKeycap} from "@/workspace/keycap/qmk-raw-keycap.js";
-import {keyEditInteractive, keyEditText} from "@/lib/layers.js";
+import {EditMode} from "@/lib/keymap.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -51,9 +51,9 @@ export class QMKPositionalKey extends QMKElement {
         this.editMode = editMode;
 
         this.currentKeyElement.style.display = 'none';
-        if (editMode === keyEditInteractive) {
+        if (editMode === EditMode.KEY_EDIT_INTERACTIVE) {
             this.currentKeyElement = this.keycap;
-        } else if (editMode === keyEditText){
+        } else if (editMode === EditMode.KEY_EDIT_TEXT){
             this.currentKeyElement = this.rawKeycap;
         }
 

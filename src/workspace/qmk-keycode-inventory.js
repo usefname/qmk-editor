@@ -6,12 +6,12 @@ import {
     LAYER_ARG,
     parseCaption, replaceArgInMultiCaption
 } from "@/lib/key-info.ts";
-import {layout_largest_x, layout_largest_y} from "@/lib/layout.js";
+import {layout_largest_x, layout_largest_y} from "@/lib/layout.ts";
 import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
 import daskeyboard from "@/lib/daskeyboard4-info.json";
 import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
 import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.ts";
-import {keyEditInteractive} from "@/lib/layers.js";
+import {EditMode} from "@/lib/keymap.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -295,7 +295,7 @@ export class QMKKeycodeInventory extends QMKElement {
         div.style.setProperty('--sample-kb-largest_x', this.largest_x.toString());
         for (let i = 0; i < this.layout.length; i++) {
             const key = this.layout[i];
-            const positionalKey = new QMKPositionalKey(key, -1, this.keymap[i], keyEditInteractive);
+            const positionalKey = new QMKPositionalKey(key, -1, this.keymap[i], EditMode.KEY_EDIT_INTERACTIVE);
             div.appendChild(positionalKey);
         }
         return div;

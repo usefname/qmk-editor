@@ -7,7 +7,7 @@ import daskeyboard from './lib/daskeyboard4-info.json';
 import {QMKSettings} from "@/qmk-settings.js";
 import {open, save} from "@tauri-apps/api/dialog";
 import {QMKImport} from "@/qmk-import.js";
-import {insertEmptyLayer} from "@/lib/layers.js";
+import {insertEmptyLayer} from "@/lib/keymap.ts";
 import {QMKBuild} from "@/qmk-build.js";
 
 document.body.insertAdjacentHTML('afterbegin',
