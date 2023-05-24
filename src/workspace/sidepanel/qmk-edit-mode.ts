@@ -1,5 +1,5 @@
-import {QMKElement} from "@/qmk-element.ts";
-import {EditMode} from "@/lib/keymap.ts";
+import {QMKElement} from "../..//qmk-element.ts";
+import {EditMode} from "../..//lib/keymap.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -16,9 +16,13 @@ document.body.insertAdjacentHTML('afterbegin',
     </template>`);
 
 export class QMKEditMode extends QMKElement {
-    constructor(defaultEditMode) {
+    private radioContainer: HTMLDivElement;
+    private interactiveOption: HTMLLabelElement;
+    private textOption: HTMLLabelElement;
+
+    constructor(defaultEditMode: EditMode) {
         super('qmk-edit-mode');
-        this.radioContainer = this.template.querySelector('#radio-container');
+        this.radioContainer = this.template.querySelector('#radio-container') as HTMLDivElement;
 
         this.interactiveOption = this.createRadioButton(EditMode.KEY_EDIT_INTERACTIVE);
         this.radioContainer.appendChild(this.interactiveOption);
@@ -26,24 +30,22 @@ export class QMKEditMode extends QMKElement {
         this.textOption = this.createRadioButton(EditMode.KEY_EDIT_TEXT);
         this.radioContainer.appendChild(this.textOption);
 
-        this.setValueChecked(this.template, defaultEditMode);
+        const inputElement = this.template.querySelector('input[value=' +  defaultEditMode + ']') as HTMLInputElement;
+        if (inputElement) {
+            inputElement.checked = true;
+        }
 
-        this.shadowRoot.addEventListener('change', this.onChange.bind(this));
-        this.shadowRoot.appendChild(this.template);
+        this.shadow.addEventListener('change', this.onChange.bind(this));
+        this.shadow.appendChild(this.template);
     }
 
-    onChange(ev) {
-        this.emitEvent('changeEditMode', ev.target.value);
-    }
-
-    setValueChecked(rootElement, value) {
-        let el = rootElement.querySelector('input[value=' +  value + ']');
-        if (el) {
-            el.checked = true;
+    onChange(ev: Event) {
+        if (ev.target && 'value' in ev.target) {
+            this.emitEvent('changeEditMode', ev.target.value);
         }
     }
 
-    createRadioButton(value) {
+    createRadioButton(value: EditMode): HTMLLabelElement {
         const label = document.createElement('label');
         label.classList.add('is-size-5');
         label.classList.add('radio');
