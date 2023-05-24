@@ -285,7 +285,6 @@ export class QMKKeycap extends QMKElement {
         this.removeChildren(this.keyCaptionElement);
 
         if (this.captionInfo.label.split) {
-            console.log("split: " + this.captionInfo.caption);
             this.keyCaptionElement.appendChild(this.createOuterKey(this.captionInfo.label.base));
             this.keyCaptionElement.appendChild(this.createInnerKey(this.captionInfo.label.inner as string));
         } else {

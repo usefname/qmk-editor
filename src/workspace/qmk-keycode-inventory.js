@@ -7,7 +7,7 @@ import {
     parseCaption, replaceArgInMultiCaption
 } from "@/lib/key-info.ts";
 import {layout_largest_x, layout_largest_y} from "@/lib/layout.ts";
-import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
+import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.ts";
 import daskeyboard from "@/lib/daskeyboard4-info.json";
 import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.ts";
 import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.ts";
@@ -84,7 +84,6 @@ export class QMKKeycodeInventory extends QMKElement {
 
     hideLayerWarning() {
         let rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
-        console.log(rootElement);
         rootElement.querySelectorAll('.layer-warning').forEach(el => {
             el.style.display = 'None';
         });

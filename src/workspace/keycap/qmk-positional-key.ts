@@ -1,7 +1,8 @@
-import {QMKElement} from "@/qmk-element.ts";
-import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.ts";
-import {QMKRawKeycap} from "@/workspace/keycap/qmk-raw-keycap.js";
-import {EditMode} from "@/lib/keymap.ts";
+import {QMKElement} from "../..//qmk-element.ts";
+import {QMKKeycap} from "../../workspace/keycap/qmk-keycap.ts";
+import {QMKRawKeycap} from "./qmk-raw-keycap.js";
+import {EditMode} from "../../lib/keymap.ts";
+import {LayoutKey} from "../../lib/layout.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -19,21 +20,31 @@ document.body.insertAdjacentHTML('afterbegin',
     </template>`);
 
 export class QMKPositionalKey extends QMKElement {
-    constructor(key, index, caption, editMode) {
+    private keyPositionElement: HTMLDivElement;
+    private keycap: QMKKeycap;
+    private rawKeycap: QMKRawKeycap;
+    private editMode: EditMode;
+    private caption: string;
+    private selected: boolean;
+    private currentKeyElement: QMKKeycap | QMKRawKeycap;
+
+    constructor(key: LayoutKey, index: number, caption: string, editMode: EditMode) {
         super('qmk-positional-key');
-        this.template.querySelector("#key-position").style.setProperty("--key_y", key.y);
-        this.template.querySelector("#key-position").style.setProperty("--key_x", key.x);
-        this.template.querySelector("#key-position").style.setProperty("--key_w", key.w ? key.w : 1);
-        this.template.querySelector("#key-position").style.setProperty("--key_h", key.h ? key.h : 1);
+
+        this.keyPositionElement = this.template.querySelector('#key-position') as HTMLDivElement;
+
+        this.keyPositionElement.style.setProperty("--key_y", String(key.y));
+        this.keyPositionElement.style.setProperty("--key_x", String(key.x));
+        this.keyPositionElement.style.setProperty("--key_w", String(key.w ? key.w : 1));
+        this.keyPositionElement.style.setProperty("--key_h", String(key.h ? key.h : 1));
 
 
-        this.keypositionElement = this.template.querySelector('#key-position');
         this.keycap = new QMKKeycap(index, caption);
-        this.template.querySelector("#key-position").appendChild(this.keycap);
+        this.keyPositionElement.appendChild(this.keycap);
         this.rawKeycap = new QMKRawKeycap(index, caption);
-        this.template.querySelector("#key-position").appendChild(this.rawKeycap);
+        this.keyPositionElement.appendChild(this.rawKeycap);
 
-        this.editMode = null;
+        this.editMode = editMode;
         this.caption = caption;
         this.selected = false;
 
@@ -41,10 +52,10 @@ export class QMKPositionalKey extends QMKElement {
         this.keycap.style.display = 'block';
         this.rawKeycap.style.display = 'none';
         this.setEditMode(editMode);
-        this.shadowRoot.appendChild(this.template);
+        this.shadow.appendChild(this.template);
     }
 
-    setEditMode(editMode) {
+    setEditMode(editMode: EditMode) {
         if (editMode === this.editMode) {
             return;
         }
@@ -62,12 +73,12 @@ export class QMKPositionalKey extends QMKElement {
         this.currentKeyElement.style.display = 'block';
     }
 
-    updateCaption(caption) {
+    updateCaption(caption: string) {
         this.caption = caption;
         this.currentKeyElement.updateCaption(caption);
     }
 
-    setSelected(value) {
+    setSelected(value: boolean) {
         this.selected = value;
         this.currentKeyElement.setSelected(value);
     }

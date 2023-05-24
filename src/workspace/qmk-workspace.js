@@ -3,7 +3,7 @@ import {QMKKeycodeInventory} from "@/workspace/qmk-keycode-inventory.js";
 import {QMKKeycapModal} from "@/workspace/qmk-keycap-modal.js";
 import {QMKEditMode} from "@/workspace/sidepanel/qmk-edit-mode.js";
 import {QmkLayerPicker} from "@/workspace/sidepanel/qmk-layer-picker.js";
-import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
+import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.ts";
 import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.ts";
 import jsKeyCodes from "@/lib/keycodes/jsKeyCodes.json";
 import {insertEmptyLayer, EditMode, removeLayer} from "@/lib/keymap.ts";

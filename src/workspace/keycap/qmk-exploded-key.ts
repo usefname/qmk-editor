@@ -101,7 +101,6 @@ export class QmkExplodedKey extends QMKElement {
 
         let self = this;
         select.addEventListener('change', (ev) => {
-            // console.log(ev.currentTarget);
             self.emitEvent('changeKeyBasicOption', ev.currentTarget.value);
             self.emitEvent('changeKeyOption', {value: ev.currentTarget.value, type: BASIC_ARG});
         });

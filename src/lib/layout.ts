@@ -1,12 +1,12 @@
 
-interface LayoutKey {
+export interface LayoutKey {
     x: number,
     y: number,
     w: number,
     h: number
 }
 
-type Layout = LayoutKey[];
+export type Layout = LayoutKey[];
 
 export const layout_largest_y = (layout: Layout) => {
     let largest_y = 0;
