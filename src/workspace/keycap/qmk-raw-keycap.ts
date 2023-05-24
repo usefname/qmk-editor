@@ -1,5 +1,5 @@
-import {QMKElement} from "@/qmk-element.ts";
-import {parseCaption, unicodeRegex} from "@/lib/key-info.ts";
+import {QMKElement} from "../../qmk-element.ts";
+import {CaptionInfo, parseCaption} from "../..//lib/key-info.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -71,14 +71,21 @@ document.body.insertAdjacentHTML('afterbegin',
     </template>`);
 
 export class QMKRawKeycap extends QMKElement {
-    constructor(index, caption) {
+    private keyIndex: number;
+    private keyElement: HTMLDivElement;
+    private modalElement: HTMLDivElement;
+    private inputElement: HTMLInputElement;
+    private captionInfo: CaptionInfo;
+
+    constructor(index: number, caption: string) {
         super('qmk-raw-keycap');
         this.keyIndex = index;
-        this.keyElement = this.template.querySelector('#key');
-        this.modalElement = this.template.querySelector('#modal');
-        this.inputElement = this.template.querySelector('input');
-        this.captionInfo = null;
-        this.updateCaption(caption);
+        this.keyElement = this.template.querySelector('#key') as HTMLDivElement;
+        this.modalElement = this.template.querySelector('#modal') as HTMLDivElement;
+        this.inputElement = this.template.querySelector('input') as HTMLInputElement;
+        this.captionInfo = parseCaption(caption);
+
+        this.updateCaptionElement(caption);
 
         this.addEvents([
             ['click', this.onKeycapClick],
@@ -95,15 +102,15 @@ export class QMKRawKeycap extends QMKElement {
             ['input', 'keyup', this.onKeyUp],
         ]);
 
-        this.shadowRoot.appendChild(this.template);
+        this.shadow.appendChild(this.template);
     }
 
-    stopProp(ev) {
+    stopProp(ev: Event) {
         ev.stopPropagation();
     }
 
 
-    onKeyUp(ev) {
+    onKeyUp(ev: KeyboardEvent) {
         if (ev.key === "Enter") {
             ev.stopPropagation();
             ev.preventDefault();
@@ -111,17 +118,17 @@ export class QMKRawKeycap extends QMKElement {
         }
     }
 
-    onSaveButton(e) {
+    onSaveButton(e: MouseEvent) {
         e.stopImmediatePropagation();
         this.saveCaption(this.inputElement.value);
     }
 
-    onExitModalClick(e) {
+    onExitModalClick(e: Event) {
         e.stopImmediatePropagation();
         this.emitEvent('selectedKey', {key: null});
     }
 
-    onKeycapClick(e) {
+    onKeycapClick(e: Event) {
         e.stopImmediatePropagation();
         this.emitEvent('selectedKey', {key: this.keyIndex});
     }
@@ -130,12 +137,12 @@ export class QMKRawKeycap extends QMKElement {
         return this.captionInfo;
     }
 
-    saveCaption(caption) {
+    saveCaption(caption: string) {
         this.emitEvent('selectedKey', {key: null});
         this.emitEvent("updateCaption", {key: this.keyIndex, caption: caption});
     }
 
-    setSelected(value) {
+    setSelected(value: boolean) {
         if (value) {
             this.keyElement.classList.add('key-selected');
             this.modalElement.classList.add('is-active');
@@ -146,10 +153,16 @@ export class QMKRawKeycap extends QMKElement {
         }
     }
 
-    updateCaption(caption) {
+    updateCaption(caption: string) {
         this.captionInfo = parseCaption(caption);
+        this.updateCaptionElement(caption);
+    }
+
+    private updateCaptionElement(caption: string) {
         const textNode = [...this.keyElement.childNodes].find(child => child.nodeType === Node.TEXT_NODE);
-        textNode.textContent = caption;
+        if (textNode) {
+            textNode.textContent = caption;
+        }
 
         this.inputElement.value = caption;
     }

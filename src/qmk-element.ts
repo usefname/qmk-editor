@@ -28,7 +28,7 @@ export class QMKElement extends HTMLElement {
         return element;
     }
 
-    addEventsToElement(rootElement: HTMLElement, events: any[]) {
+    addEventsToElement(rootElement: ParentNode, events: any[]) {
         for (let e of events) {
             const elements = rootElement.querySelectorAll(e[0]);
             for (const element of elements) {
