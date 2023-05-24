@@ -244,9 +244,9 @@ const parseInnerLabel = (captionFn: MultiFunctionKey) => {
         label = keycodeLabelMap.get(captionFn.args[0].value as string);
     }
     if (label === null) {
-        return captionFn.args[captionFn.args.length-1].value as string;
+        label = captionFn.args[captionFn.args.length-1].value as string;
     }
-    return "";
+    return label;
 }
 
 let basicCaptions = new Map<string, string>();

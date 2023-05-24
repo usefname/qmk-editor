@@ -1,5 +1,5 @@
 import {QMKElement} from "@/qmk-element.ts";
-import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
+import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.ts";
 import {QMKRawKeycap} from "@/workspace/keycap/qmk-raw-keycap.js";
 import {EditMode} from "@/lib/keymap.ts";
 
