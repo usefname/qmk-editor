@@ -1,148 +1,148 @@
-{
-  "DF": [
+[
+  ["DF", [
     "Layer"
-  ],
-  "MO": [
+  ]],
+  ["MO", [
     "Layer"
-  ],
-  "OSL": [
+  ]],
+  ["OSL", [
     "Layer"
-  ],
-  "TG": [
+  ]],
+  ["TG", [
     "Layer"
-  ],
-  "TO": [
+  ]],
+  ["TO", [
     "Layer"
-  ],
-  "TT": [
+  ]],
+  ["TT", [
     "Layer"
-  ],
-  "LCTL_T": [
+  ]],
+  ["LCTL_T", [
     "Basic"
-  ],
-  "CTL_T": [
+  ]],
+  ["CTL_T", [
     "Basic"
-  ],
-  "LSFT_T": [
+  ]],
+  ["LSFT_T", [
     "Basic"
-  ],
-  "SFT_T": [
+  ]],
+  ["SFT_T", [
     "Basic"
-  ],
-  "LALT_T": [
+  ]],
+  ["LALT_T", [
     "Basic"
-  ],
-  "LOPT_T": [
+  ]],
+  ["LOPT_T", [
     "Basic"
-  ],
-  "ALT_T": [
+  ]],
+  ["ALT_T", [
     "Basic"
-  ],
-  "OPT_T": [
+  ]],
+  ["OPT_T", [
     "Basic"
-  ],
-  "LGUI_T": [
+  ]],
+  ["LGUI_T", [
     "Basic"
-  ],
-  "LCMD_T": [
+  ]],
+  ["LCMD_T", [
     "Basic"
-  ],
-  "LWIN_T": [
+  ]],
+  ["LWIN_T", [
     "Basic"
-  ],
-  "GUI_T": [
+  ]],
+  ["GUI_T", [
     "Basic"
-  ],
-  "CMD_T": [
+  ]],
+  ["CMD_T", [
     "Basic"
-  ],
-  "WIN_T": [
+  ]],
+  ["WIN_T", [
     "Basic"
-  ],
-  "RCTL_T": [
+  ]],
+  ["RCTL_T", [
     "Basic"
-  ],
-  "RSFT_T": [
+  ]],
+  ["RSFT_T", [
     "Basic"
-  ],
-  "RALT_T": [
+  ]],
+  ["RALT_T", [
     "Basic"
-  ],
-  "ROPT_T": [
+  ]],
+  ["ROPT_T", [
     "Basic"
-  ],
-  "ALGR_T": [
+  ]],
+  ["ALGR_T", [
     "Basic"
-  ],
-  "RGUI_T": [
+  ]],
+  ["RGUI_T", [
     "Basic"
-  ],
-  "RCMD_T": [
+  ]],
+  ["RCMD_T", [
     "Basic"
-  ],
-  "RWIN_T": [
+  ]],
+  ["RWIN_T", [
     "Basic"
-  ],
-  "LSG_T": [
+  ]],
+  ["LSG_T", [
     "Basic"
-  ],
-  "SGUI_T": [
+  ]],
+  ["SGUI_T", [
     "Basic"
-  ],
-  "SCMD_T": [
+  ]],
+  ["SCMD_T", [
     "Basic"
-  ],
-  "SWIN_T": [
+  ]],
+  ["SWIN_T", [
     "Basic"
-  ],
-  "LAG_T": [
+  ]],
+  ["LAG_T", [
     "Basic"
-  ],
-  "RSG_T": [
+  ]],
+  ["RSG_T", [
     "Basic"
-  ],
-  "RAG_T": [
+  ]],
+  ["RAG_T", [
     "Basic"
-  ],
-  "LCA_T": [
+  ]],
+  ["LCA_T", [
     "Basic"
-  ],
-  "LSA_T": [
+  ]],
+  ["LSA_T", [
     "Basic"
-  ],
-  "RSA_T": [
+  ]],
+  ["RSA_T", [
     "Basic"
-  ],
-  "SAGR_T": [
+  ]],
+  ["SAGR_T", [
     "Basic"
-  ],
-  "RCS_T": [
+  ]],
+  ["RCS_T", [
     "Basic"
-  ],
-  "LCAG_T": [
+  ]],
+  ["LCAG_T", [
     "Basic"
-  ],
-  "RCAG_T": [
+  ]],
+  ["RCAG_T", [
     "Basic"
-  ],
-  "C_S_T": [
+  ]],
+  ["C_S_T", [
     "Basic"
-  ],
-  "MEH_T": [
+  ]],
+  ["MEH_T", [
     "Basic"
-  ],
-  "HYPR_T": [
+  ]],
+  ["HYPR_T", [
     "Basic"
-  ],
-  "ALL_T": [
+  ]],
+  ["ALL_T", [
     "Basic"
-  ],
-  "LM": [
+  ]],
+  ["LM", [
     "Layer",
     "Left Mod"
-  ],
-  "LT": [
+  ]],
+  ["LT", [
     "Layer",
     "Basic"
-  ]
-}
+  ]]
+]

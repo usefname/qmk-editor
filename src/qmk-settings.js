@@ -1,4 +1,4 @@
-import {QMKElement} from "@/qmk-element.js";
+import {QMKElement} from "@/qmk-element.ts";
 import {invoke} from "@tauri-apps/api/tauri";
 import {open} from "@tauri-apps/api/dialog";
 

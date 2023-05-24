@@ -1,16 +1,16 @@
-import {QMKElement} from "@/qmk-element.js";
+import {QMKElement} from "@/qmk-element.ts";
 import keycodes from "@/lib/keycodes/keycodes.json";
 import {
     appendDefaultArgs, BASIC_ARG,
     getKeyArgumentDesc,
     LAYER_ARG,
     parseCaption, replaceArgInMultiCaption
-} from "@/lib/key-info.js";
+} from "@/lib/key-info.ts";
 import {layout_largest_x, layout_largest_y} from "@/lib/layout.js";
 import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.js";
 import daskeyboard from "@/lib/daskeyboard4-info.json";
 import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
-import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.js";
+import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.ts";
 import {keyEditInteractive} from "../../src-svelte/editable-keyboard/keymapWorkspace.js";
 
 // language=HTML
@@ -66,14 +66,14 @@ export class QMKKeycodeInventory extends QMKElement {
             this.hideLayerWarning();
         }
 
-        const rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
+        const rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
         rootElement.querySelectorAll('.keycap-layer').forEach(el => {
             el.updateLayerOptions(layerCount, selectedLayer);
         });
     }
 
     showLayerWarning() {
-        let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
+        let rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
         rootElement.querySelectorAll('.layer-warning').forEach(el => {
             el.style.display = 'Block';
         });
@@ -83,7 +83,8 @@ export class QMKKeycodeInventory extends QMKElement {
     }
 
     hideLayerWarning() {
-        let rootElement = this.shadowRoot ? this.shadowRoot : this.template;
+        let rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
+        console.log(rootElement);
         rootElement.querySelectorAll('.layer-warning').forEach(el => {
             el.style.display = 'None';
         });
@@ -158,7 +159,7 @@ export class QMKKeycodeInventory extends QMKElement {
             let el = this.createTab(key);
             this.template.querySelector('#tab-list').appendChild(el);
 
-            let section = this.createSection(key, sectionMap);
+            let section = this.createSection(key, sectionMap, layerCount, selectedLayer);
             this.hideSection(section);
             this.sectionElement.appendChild(section);
             this.sectionElements.set(key, section);
@@ -172,6 +173,8 @@ export class QMKKeycodeInventory extends QMKElement {
             ['updateCaption', this.stopKeyEventPropagation],
             ['updateCaptionMultiKey', this.stopKeyEventPropagation],
         ]);
+
+        this.updateLayer(selectedLayer, layerCount);
 
         this.shadowRoot.appendChild(this.template);
     }
@@ -200,7 +203,7 @@ export class QMKKeycodeInventory extends QMKElement {
         sectionElement.style.display = 'None';
     }
 
-    createSection(sectionName, sectionMap) {
+    createSection(sectionName, sectionMap, layerCount, selectedLayer) {
         const section = document.createElement('div');
         section.classList.add('is-flex');
         section.classList.add('is-justify-content-center');
@@ -223,7 +226,7 @@ export class QMKKeycodeInventory extends QMKElement {
             }
 
             if (keyDesc.args) {
-               const explodedKey = new QmkExplodedKey(keyDesc, 0, 1);
+               const explodedKey = new QmkExplodedKey(keyDesc, layerCount, selectedLayer);
 
                if (requiresLayer) {
                    explodedKey.classList.add('require-layer');

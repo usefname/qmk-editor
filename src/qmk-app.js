@@ -1,4 +1,4 @@
-import {QMKElement} from './qmk-element.js';
+import {QMKElement} from './qmk-element';
 import {QMKError} from './qmk-error.js';
 import {invoke} from "@tauri-apps/api/tauri";
 import {QMKWorkspace} from './workspace/qmk-workspace.js'

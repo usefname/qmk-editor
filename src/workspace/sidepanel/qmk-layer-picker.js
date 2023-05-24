@@ -1,4 +1,4 @@
-import {QMKElement} from "@/qmk-element.js";
+import {QMKElement} from "@/qmk-element.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',

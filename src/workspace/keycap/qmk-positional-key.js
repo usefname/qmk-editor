@@ -1,4 +1,4 @@
-import {QMKElement} from "@/qmk-element.js";
+import {QMKElement} from "@/qmk-element.ts";
 import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
 import {QMKRawKeycap} from "@/workspace/keycap/qmk-raw-keycap.js";
 import {keyEditInteractive, keyEditText} from "../../../src-svelte/editable-keyboard/keymapWorkspace.js";

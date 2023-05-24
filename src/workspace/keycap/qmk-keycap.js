@@ -1,5 +1,5 @@
-import {QMKElement} from "@/qmk-element.js";
-import {parseCaption, unicodeRegex} from "@/lib/key-info.js";
+import {QMKElement} from "@/qmk-element.ts";
+import {parseCaption, unicodeRegex} from "@/lib/key-info.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',

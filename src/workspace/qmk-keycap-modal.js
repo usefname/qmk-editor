@@ -1,6 +1,6 @@
-import {QMKElement} from "@/qmk-element.js";
-import {BASIC_ARG, LAYER_ARG, parseCaption, replaceArgInMultiCaption} from "@/lib/key-info.js";
-import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.js";
+import {QMKElement} from "@/qmk-element.ts";
+import {BASIC_ARG, LAYER_ARG, parseCaption, replaceArgInMultiCaption} from "@/lib/key-info.ts";
+import {QmkExplodedKey} from "@/workspace/keycap/qmk-exploded-key.ts";
 import {QMKKeycap} from "@/workspace/keycap/qmk-keycap.js";
 
 // language=HTML

@@ -1,4 +1,4 @@
-import {QMKElement} from "@/qmk-element.js";
+import {QMKElement} from "@/qmk-element.ts";
 import {keyEditInteractive, keyEditText} from "../../../src-svelte/editable-keyboard/keymapWorkspace.js";
 
 // language=HTML

@@ -1,5 +1,7 @@
-import {QMKElement} from "@/qmk-element.js";
-import {allBasicCaptions, BASIC_ARG, LAYER_ARG} from "@/lib/key-info.js";
+// import {QMKElement} from '../../qmk-element';
+import {allBasicCaptions, BASIC_ARG, LAYER_ARG} from "../../lib/key-info.ts";
+import {MultiFunctionKey} from "../../lib/key-info.ts";
+import {QMKElement} from "../../qmk-element.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -25,24 +27,29 @@ document.body.insertAdjacentHTML('afterbegin',
     `);
 
 export class QmkExplodedKey extends QMKElement {
-    constructor(keyDesc, layerCount, selectedLayer) {
-        super('qmk-exploded-key');
-        this.classList.add('exploded-key');
+    // private layerCount: number;
+    // private selectedLayer: number;
+    private readonly explodedKey: HTMLDivElement;
 
-        this.layerCount = layerCount;
-        this.selectedLayer = selectedLayer;
+    constructor(keyDesc: MultiFunctionKey, layerCount: number, selectedLayer: number) {
+        super('qmk-exploded-key');
+
+        // this.layerCount = layerCount;
+        // this.selectedLayer = selectedLayer;
+
+        this.classList.add('exploded-key');
+        this.explodedKey = this.template.querySelector('#exploded-key') as HTMLDivElement;
 
         this.update(keyDesc, layerCount, selectedLayer);
 
-        this.shadowRoot.appendChild(this.template);
+        this.shadow.appendChild(this.template);
     }
 
-    update(keyDesc, layerCount, selectedLayer) {
-        let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
+    update(keyDesc: MultiFunctionKey, layerCount: number, selectedLayer: number) {
+        // let rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
 
-        this.layerCount = layerCount;
-        this.selectedLayer = selectedLayer;
-        this.explodedKey = rootElement.querySelector('#exploded-key');
+        // this.layerCount = layerCount;
+        // this.selectedLayer = selectedLayer;
         this.removeChildren(this.explodedKey);
         for (const arg of keyDesc.args) {
             if (arg.type === BASIC_ARG) {
@@ -56,10 +63,10 @@ export class QmkExplodedKey extends QMKElement {
 
     }
 
-    updateLayerOptions(layerCount, currentLayer) {
-        let rootElement = this.shadowRoot.childNodes.length > 0 ? this.shadowRoot : this.template;
-        const select = rootElement.getElementById('layerselect');
-        const previousSelected = rootElement.querySelector('#layerselect > Option:checked');
+    updateLayerOptions(layerCount: number, currentLayer: number) {
+        let rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
+        const select = rootElement?.getElementById('layerselect') as HTMLSelectElement;
+        const previousSelected = rootElement?.querySelector('#layerselect > Option:checked') as HTMLOptionElement;
         let lastId = previousSelected ? Number(previousSelected.value) : 0;
         this.removeChildren(select);
 
@@ -69,8 +76,8 @@ export class QmkExplodedKey extends QMKElement {
             }
 
             const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i;
+            option.value = String(i);
+            option.textContent = String(i);
             if (lastId === i) {
                 option.selected = true;
             }
@@ -80,9 +87,12 @@ export class QmkExplodedKey extends QMKElement {
     }
 
     createBasicOption() {
-        const basicOption = document.getElementById('qmk-exploded-key-basic').content.cloneNode(true);
+        const basicOption = this.cloneTemplate('qmk-exploded-key-basic');
         const select = basicOption.querySelector('select');
-        for (const [label, keycode] of Object.entries(allBasicCaptions())) {
+        if (!select) {
+            throw "Invalid template";
+        }
+        for (const [label, keycode] of allBasicCaptions().entries()) {
            const option = document.createElement('option');
            option.value = keycode;
            option.textContent = label + ' (' + keycode + ')';
@@ -91,15 +101,19 @@ export class QmkExplodedKey extends QMKElement {
 
         let self = this;
         select.addEventListener('change', (ev) => {
+            // console.log(ev.currentTarget);
             self.emitEvent('changeKeyBasicOption', ev.currentTarget.value);
             self.emitEvent('changeKeyOption', {value: ev.currentTarget.value, type: BASIC_ARG});
         });
         return basicOption;
     }
 
-    createLayerOption(layerCount, currentLayer) {
-        const layerOption = document.getElementById('qmk-exploded-key-layer').content.cloneNode(true);
+    createLayerOption(layerCount: number, currentLayer: number) {
+        const layerOption = this.cloneTemplate('qmk-exploded-key-layer');
         const select = layerOption.querySelector('select');
+        if (!select) {
+            throw "Invalid template";
+        }
         select.id = 'layerselect'
         for (let i = 0; i < layerCount; i++) {
             if (currentLayer === i) {
@@ -107,8 +121,8 @@ export class QmkExplodedKey extends QMKElement {
             }
 
             const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i;
+            option.value = String(i);
+            option.textContent = String(i);
             select.appendChild(option);
         }
         let self = this;
