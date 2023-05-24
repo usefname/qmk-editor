@@ -2,7 +2,7 @@ import {QMKElement} from "@/qmk-element.ts";
 import {QMKKeycodeInventory} from "@/workspace/qmk-keycode-inventory.js";
 import {QMKKeycapModal} from "@/workspace/qmk-keycap-modal.js";
 import {QMKEditMode} from "@/workspace/sidepanel/qmk-edit-mode.ts";
-import {QmkLayerPicker} from "@/workspace/sidepanel/qmk-layer-picker.js";
+import {QmkLayerPicker} from "@/workspace/sidepanel/qmk-layer-picker.ts";
 import {QMKPositionalKey} from "@/workspace/keycap/qmk-positional-key.ts";
 import {calcLayoutWidth, layout_largest_x, layout_largest_y} from "@/lib/layout.ts";
 import jsKeyCodes from "@/lib/keycodes/jsKeyCodes.json";
@@ -145,7 +145,7 @@ export class QMKWorkspace extends QMKElement {
             this.keyboard.keymap = insertEmptyLayer(this.keyboard.keymap, this.keyboard.layout.length);
             this.selectedLayer++;
             const layerCount = this.keyboard.keymap.length;
-            this.layerPickerElement.addLayer(this.selectedLayer);
+            this.layerPickerElement.addLayer(this.keyboard.keymap.length, this.selectedLayer);
             this.keycodeInventory.updateLayer(this.selectedLayer, layerCount);
             this.updateLayout();
         }
@@ -157,7 +157,7 @@ export class QMKWorkspace extends QMKElement {
             if (this.selectedLayer >= this.keyboard.keymap.length) {
                 this.selectedLayer = this.selectedLayer - 1;
             }
-            this.layerPickerElement.deleteLayer(this.selectedLayer);
+            this.layerPickerElement.deleteLayer(this.keyboard.keymap.length, this.selectedLayer);
             const layerCount = this.keyboard.keymap.length;
             this.keycodeInventory.updateLayer(this.selectedLayer, layerCount);
             this.updateLayout();
