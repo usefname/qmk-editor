@@ -243,7 +243,7 @@ export class QMKKeycodeInventory extends QMKElement {
                     }
                     topicParent.querySelectorAll(selector).forEach(keycap => {
                         let captionInfo = keycap.getParsedCaption();
-                        let newCaption = replaceArgInMultiCaption(captionInfo, value, type);
+                        let newCaption = replaceArgInMultiCaption(captionInfo.captionFn, value, type);
                         keycap.updateCaption(newCaption);
                     });
                 });
