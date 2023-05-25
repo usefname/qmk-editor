@@ -132,7 +132,6 @@ export class QmkLayerPicker extends QMKElement {
     updateLayerNumbers(parentNode: DocumentFragment | ShadowRoot) {
         const listElement = parentNode.querySelector('ul');
         if (!listElement) {
-            console.log('err');
             return;
         }
         const lis = listElement.children;
@@ -146,8 +145,6 @@ export class QmkLayerPicker extends QMKElement {
                 }
                 li.firstChild.setAttribute('layer', String(i));
                 li.firstChild.textContent = String(i);
-            } else {
-                console.log('err2');
             }
         }
     }

@@ -61,7 +61,7 @@ export class QMKKeycapModal extends QMKElement {
             ['editMultiKey', this.stopProp]
         ]);
 
-        this.shadowRoot.appendChild(this.template);
+        this.shadow.appendChild(this.template);
     }
 
     update(caption, index, layer, layerCount) {
@@ -79,7 +79,7 @@ export class QMKKeycapModal extends QMKElement {
     }
 
     onUpdateKeyOption(ev) {
-        let newCaption = replaceArgInMultiCaption(this.parsedCaption, ev.detail.value, ev.detail.type);
+        let newCaption = replaceArgInMultiCaption(this.parsedCaption.captionFn, ev.detail.value, ev.detail.type);
         this.caption = newCaption;
         this.keycap.updateCaption(newCaption);
     }

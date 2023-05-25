@@ -66,7 +66,7 @@ export class QMKKeycodeInventory extends QMKElement {
             this.hideLayerWarning();
         }
 
-        const rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
+        const rootElement = this.shadow.childNodes.length > 0 ? this.shadow : this.template;
         rootElement.querySelectorAll('.keycap-layer').forEach(el => {
             el.updateLayerOptions(layerCount, selectedLayer);
         });

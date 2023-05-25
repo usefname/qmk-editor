@@ -27,15 +27,10 @@ document.body.insertAdjacentHTML('afterbegin',
     `);
 
 export class QmkExplodedKey extends QMKElement {
-    // private layerCount: number;
-    // private selectedLayer: number;
     private readonly explodedKey: HTMLDivElement;
 
     constructor(keyDesc: MultiFunctionKey, layerCount: number, selectedLayer: number) {
         super('qmk-exploded-key');
-
-        // this.layerCount = layerCount;
-        // this.selectedLayer = selectedLayer;
 
         this.classList.add('exploded-key');
         this.explodedKey = this.template.querySelector('#exploded-key') as HTMLDivElement;
@@ -46,10 +41,6 @@ export class QmkExplodedKey extends QMKElement {
     }
 
     update(keyDesc: MultiFunctionKey, layerCount: number, selectedLayer: number) {
-        // let rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
-
-        // this.layerCount = layerCount;
-        // this.selectedLayer = selectedLayer;
         this.removeChildren(this.explodedKey);
         for (const arg of keyDesc.args) {
             if (arg.type === BASIC_ARG) {
@@ -60,15 +51,21 @@ export class QmkExplodedKey extends QMKElement {
                 this.explodedKey.appendChild(el);
             }
         }
-
     }
 
     updateLayerOptions(layerCount: number, currentLayer: number) {
         let rootElement = this.shadow.childNodes.length > 0 ? this.shadowRoot : this.template;
         const select = rootElement?.getElementById('layerselect') as HTMLSelectElement;
         const previousSelected = rootElement?.querySelector('#layerselect > Option:checked') as HTMLOptionElement;
-        let lastId = previousSelected ? Number(previousSelected.value) : 0;
+        let selectedId = previousSelected ? Number(previousSelected.value) : 0;
         this.removeChildren(select);
+        if (selectedId === currentLayer) {
+            if (currentLayer === 0) {
+                selectedId++;
+            } else {
+                selectedId--;
+            }
+        }
 
         for (let i = 0; i < layerCount; i++) {
             if (currentLayer === i) {
@@ -78,12 +75,14 @@ export class QmkExplodedKey extends QMKElement {
             const option = document.createElement('option');
             option.value = String(i);
             option.textContent = String(i);
-            if (lastId === i) {
+            if (selectedId === i) {
                 option.selected = true;
             }
 
             select.appendChild(option);
         }
+
+        this.emitEvent('changeKeyOption', {value: selectedId, type: LAYER_ARG});
     }
 
     createBasicOption() {
@@ -102,7 +101,6 @@ export class QmkExplodedKey extends QMKElement {
         let self = this;
         select.addEventListener('change', (ev: Event) => {
             if (ev.currentTarget && "value" in ev.currentTarget) {
-                self.emitEvent('changeKeyBasicOption', ev.currentTarget.value);
                 self.emitEvent('changeKeyOption', {value: ev.currentTarget.value, type: BASIC_ARG});
             }
         });
@@ -116,6 +114,9 @@ export class QmkExplodedKey extends QMKElement {
             throw "Invalid template";
         }
         select.id = 'layerselect'
+
+        let selectedLayer: number | null = null;
+
         for (let i = 0; i < layerCount; i++) {
             if (currentLayer === i) {
                 continue;
@@ -124,12 +125,17 @@ export class QmkExplodedKey extends QMKElement {
             const option = document.createElement('option');
             option.value = String(i);
             option.textContent = String(i);
+            if (selectedLayer === null) {
+                selectedLayer = i;
+                option.selected = true;
+            }
             select.appendChild(option);
+
         }
         let self = this;
+
         select.addEventListener('change', (ev) => {
             if (ev.currentTarget && "value" in ev.currentTarget) {
-                self.emitEvent('changeKeyLayerOption', ev.currentTarget.value);
                 self.emitEvent('changeKeyOption', {value: ev.currentTarget.value, type: LAYER_ARG});
             }
         });
