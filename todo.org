@@ -27,9 +27,9 @@ Stack tables together
 * DONE Recover frontend after error
 * DONE Show error popup instead of full screen error
 * DONE Save suggest replace current file
-* TODO Implement Mod for multikey (LM)
-* TODO Replace inner combo key when drag and dropping basic key
-* TODO Raw key edit does not work
+* DONE Implement Mod for multikey (LM)
+* DONE Replace inner combo key when drag and dropping basic key
+* DONE Raw key edit does not work
 * TODO Paint with drag and drop
 event.ctrlKey is not set
 * DONE Don't show hover after drop

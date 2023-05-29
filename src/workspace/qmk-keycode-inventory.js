@@ -109,7 +109,6 @@ export class QMKKeycodeInventory extends QMKElement {
             ["Lock keys", keycodes.lockKeys],
             ["Modifiers", keycodes.modifiers],
             ["Number pad", keycodes.numpad],
-            ["SpecialKeys", keycodes.special],
         ]);
 
         const mediaKeycodeMap = this.createKcSection([
@@ -120,17 +119,19 @@ export class QMKKeycodeInventory extends QMKElement {
         const commandsKeycodeMap = this.createKcSection([
             ["Navigation", keycodes.navigation],
             ["Commands", keycodes.commands],
+            ["SpecialKeys", keycodes.special],
             ["Linux", keycodes.linux],
         ])
 
         const layerKeycodeMap = this.createKcSection([
+            ["Layer Tap", keycodes.layerTap],
             ["Layer", keycodes.layers],
+            ["Layer With Modifier", keycodes.layerMod]
         ])
 
         const multiActionKeycodeMap = this.createKcSection([
             ["Mod Tap", keycodes.modTap],
-            ["Layer Tap", keycodes.layerTap],
-            ["Layer With Modifier", keycodes.layerMod]
+            ["Modified Keycode", keycodes.modifiers],
         ]);
 
         const sections = new Map([
@@ -138,7 +139,7 @@ export class QMKKeycodeInventory extends QMKElement {
             ["Commands", commandsKeycodeMap],
             ["Media", mediaKeycodeMap],
             ["Layers", layerKeycodeMap],
-            ["Multi action", multiActionKeycodeMap]
+            ["Modifiers", multiActionKeycodeMap]
         ])
 
 

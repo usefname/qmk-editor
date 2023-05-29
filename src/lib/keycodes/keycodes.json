@@ -388,7 +388,6 @@
   ],
   "modTap": [
     "LCTL_T",
-
     "LSFT_T",
     "LALT_T",
     "LGUI_T",
@@ -410,5 +409,27 @@
     "C_S_T",
     "MEH_T",
     "HYPR_T"
-  ]
+  ],
+"modifiers": [
+  "LCTL",
+  "LSFT",
+  "LALT",
+  "LGUI",
+  "RCTL",
+  "RSFT",
+  "RALT",
+  "RGUI",
+  "LSG",
+  "LAG",
+  "RSG",
+  "RAG",
+  "LCA",
+  "LSA",
+  "RSA",
+  "SAGR",
+  "RCS",
+  "LCAG",
+  "MEH",
+  "HYPR"
+]
 }

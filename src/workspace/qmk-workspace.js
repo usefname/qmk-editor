@@ -192,7 +192,7 @@ export class QMKWorkspace extends QMKElement {
         const key = ev.detail.key;
         const oldCaption = this.keyboard.keymap[this.selectedLayer][key];
         const parsedKey = parseCaption(oldCaption);
-        const newCaption = replaceArgInMultiCaption(parsedKey, ev.detail.caption, BASIC_ARG);
+        const newCaption = replaceArgInMultiCaption(parsedKey.captionFn, ev.detail.caption, BASIC_ARG);
         this.setKeyCaption(key, newCaption);
     }
 
@@ -218,7 +218,9 @@ export class QMKWorkspace extends QMKElement {
         let data = ev.dataTransfer.getData("text/plain");
         if (data.length > 0 && data.length < 1024) {
             let sourceKeyIndex = ev.dataTransfer.getData("_qmk/sourceIndex");
-            this.setKeyCaption(sourceKeyIndex, "KC_NO");
+            if (sourceKeyIndex > 0) {
+                this.setKeyCaption(sourceKeyIndex, "KC_NO");
+            }
         }
     }
 
