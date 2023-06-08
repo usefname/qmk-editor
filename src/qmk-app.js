@@ -7,7 +7,7 @@ import daskeyboard from './lib/daskeyboard4-info.json';
 import {QMKSettings} from "@/qmk-settings.js";
 import {open, save} from "@tauri-apps/api/dialog";
 import {QMKImport} from "@/qmk-import.js";
-import {insertEmptyLayer} from "@/lib/keymap.ts";
+import {insertEmptyLayer, padKeymap} from "@/lib/keymap.ts";
 import {QMKBuild} from "@/qmk-build.js";
 
 document.body.insertAdjacentHTML('afterbegin',
@@ -111,7 +111,7 @@ class QMKApp extends QMKElement {
         this.keyboard.keyboardName = keymapDescription.keyboard_name;
         this.keyboard.layoutName = keymapDescription.layout_name;
         this.keyboard.layout = loadedKeyboard.layouts[keymapDescription.layout_name].layout;
-        this.keyboard.keymap = keymapDescription.keymap;
+        this.keyboard.keymap = padKeymap(keymapDescription.keymap, this.keyboard.layout.length);
         this.keyboard.editorState.filename = keymapFile;
         this.keyboard.dirty = false;
         this.updateTitle();

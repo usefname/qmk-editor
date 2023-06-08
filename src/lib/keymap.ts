@@ -6,7 +6,7 @@ export enum EditMode {
 type Layer = string[];
 type Keymap = Layer[];
 
-export const padLayersSize = (layers: Keymap, layoutLenght: number) => {
+export const padKeymap = (layers: Keymap, layoutLenght: number) => {
     for (let i = 0; i < layers.length; i ++) {
         let layer = layers[i];
         let missingKeys = layoutLenght - layer.length;
