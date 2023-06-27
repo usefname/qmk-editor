@@ -1,5 +1,6 @@
 import {QMKElement} from "../..//qmk-element.ts";
 import {CaptionInfo, parseCaption, unicodeRegex} from "../../lib/key-info.ts";
+import keycodes from "../../lib/keycodes/keycodes.json";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
@@ -232,7 +233,9 @@ export class QMKKeycap extends QMKElement {
                 this.emitEvent("updateCaption", {key: sourceKeyIndex, caption: this.captionInfo.caption});
                 this.emitEvent("updateCaption", {key: this.keyIndex, caption: data});
             } else {
-                if (this.captionInfo.multiKey) {
+                let isBasicKeycode = keycodes.basic.includes(data.toUpperCase());
+
+                if (this.captionInfo.multiKey && isBasicKeycode) {
                     this.emitEvent("updateCaptionMultiKey", {key: this.keyIndex, caption: data});
                 } else {
                     this.emitEvent("updateCaption", {key: this.keyIndex, caption: data});
