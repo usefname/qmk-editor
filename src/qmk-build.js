@@ -141,6 +141,7 @@ export class QMKBuild extends QMKElement {
             }
             this.setBuildFinished();
             this.buildTextArea.scrollTop = this.buildTextArea.scrollHeight;
+            this.emitEvent('exit-build');
         });
     }
 
