@@ -73,7 +73,7 @@ class QMKApp extends QMKElement {
                this.needConfigUpdate = await invoke('need_config_update');
                if (this.needConfigUpdate) {
                    this.keyboard.editorState.filename = null;
-                   this.updatePage('config');
+                   this.updatePage('settings');
                } else {
                    const editorState = await invoke('get_state');
                    if (editorState !== null && editorState.filename !== null && editorState.filename.length > 0) {
@@ -152,6 +152,10 @@ class QMKApp extends QMKElement {
         this.page = newPage;
         switch (this.page) {
             case 'workspace':
+                if (!this.keyboard.keymap) {
+                    this.createImport(true);
+                    this.updatePage('import');
+                }
                 this.showWorkspace();
                 break;
             case 'settings':
