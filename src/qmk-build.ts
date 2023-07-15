@@ -1,75 +1,94 @@
-import {QMKElement} from "@/qmk-element.ts";
+// import {QMKElement} from "@/qmk-element.ts";
 import {listen} from "@tauri-apps/api/event";
 import {invoke} from "@tauri-apps/api/tauri";
+import {QMKElement} from "./qmk-element.ts";
+import {Keymap} from "./lib/keymap.ts";
+import {requireNonNull} from "./lib/type-guard.ts";
 
 // language=HTML
 document.body.insertAdjacentHTML('afterbegin',
-    `<template id="qmk-build">
-        <style>
-            #build-textarea {
-                height: 30rem;
-            }
-            .settings {
-                margin-top: 6rem;
-            }
-            .build-section {
-                margin-top: 2rem;
-            }
-            .field {
-                width: 40rem;
-            }
-        </style>
+    `
+        <template id="qmk-build">
+            <style>
+                #build-textarea {
+                    height: 30rem;
+                }
 
-        <div class="settings is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
-            <div class="build-section">
-                <h5 class="is-size-5">Keymap file</h5>
-                <div class="field is-horizontal">
-                    <div class="field-body control">
-                        <input id='keymap-input' class="input" type="text"/>
+                .settings {
+                    margin-top: 6rem;
+                }
+
+                .build-section {
+                    margin-top: 2rem;
+                }
+
+                .field {
+                    width: 40rem;
+                }
+            </style>
+
+            <div class="settings is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
+                <div class="build-section">
+                    <h5 class="is-size-5">Keymap file</h5>
+                    <div class="field is-horizontal">
+                        <div class="field-body control">
+                            <input id='keymap-input' class="input" type="text"/>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="build-section">
-                <h5 id='buildcommand-heading' class="is-size-5"></h5>
-                <div class="field is-horizontal">
-                    <div class="field-body">
-                        <textarea id='build-textarea' class="textarea" type="text" ></textarea>
+                <div class="build-section">
+                    <h5 id='buildcommand-heading' class="is-size-5"></h5>
+                    <div class="field is-horizontal">
+                        <div class="field-body">
+                            <textarea id='build-textarea' class="textarea" type="text"></textarea>
+                        </div>
                     </div>
                 </div>
+                <div class="build-section">
+                    <button id='exit-button' class="ml-4 button is-primary">Back</button>
+                </div>
             </div>
-            <div class="build-section">
-                <button id='exit-button' class="ml-4 button is-primary">Back</button>
-            </div>
-        </div>
-    </template>`
+        </template>`
 );
 
 export class QMKBuild extends QMKElement {
+    private keymapInput: HTMLInputElement;
+    private buildCommandTitle: HTMLHeadingElement;
+    private buildTextArea: HTMLTextAreaElement;
+    private exitButton: HTMLButtonElement;
+    private buildFinished: boolean;
+    private buildPromiseStopping: boolean;
+    private buildPromiseResolved: boolean;
+    private buildOutputListener: (() => void) | null;
+    private buildStatusListener: (() => void) | null;
+
     constructor() {
         super('qmk-build');
-        this.keymapInput = this.template.getElementById('keymap-input');
-        this.buildCommandTitle = this.template.getElementById('buildcommand-heading');
-        this.buildTextArea = this.template.getElementById('build-textarea');
-        this.exitButton = this.template.getElementById('exit-button');
+        this.keymapInput = requireNonNull(this.template.getElementById('keymap-input')) as HTMLInputElement;
+        this.buildCommandTitle = requireNonNull(this.template.getElementById('buildcommand-heading')) as HTMLHeadingElement;
+        this.buildTextArea = requireNonNull(this.template.getElementById('build-textarea')) as HTMLTextAreaElement;
+        this.exitButton = requireNonNull(this.template.getElementById('exit-button')) as HTMLButtonElement;
 
         this.buildFinished = false;
-        this.buildPromise = null;
         this.buildPromiseStopping = false;
-        this.buildPromiseResolved = null;
+        this.buildPromiseResolved = false;
 
         this.addEventsToElement(this.template, [
             ['#exit-button', 'click', this.onExitClick]
         ]);
 
         this.initElements();
-        this.shadowRoot.appendChild(this.template);
+        if (this.shadowRoot) {
+            this.shadowRoot.appendChild(this.template);
+        }
+        this.buildOutputListener = null;
+        this.buildStatusListener = null;
     }
 
     initElements() {
         this.buildFinished = false;
-        this.buildPromise = null;
         this.buildPromiseStopping = false;
-        this.buildPromiseResolved = null;
+        this.buildPromiseResolved = false;
 
         this.exitButton.innerText = 'Cancel build';
 
@@ -84,14 +103,14 @@ export class QMKBuild extends QMKElement {
     }
 
 
-    startBuild(keyboardName, layoutName, keymap) {
-        this.buildPromise = this._startBuild(keyboardName, layoutName, keymap);
+    startBuild(keyboardName: string, layoutName: string, keymap: Keymap) {
+        this._startBuild(keyboardName, layoutName, keymap);
     }
 
-    async _startBuild(keyboardName, layoutName, keymap) {
+    async _startBuild(keyboardName: string, layoutName: string, keymap: Keymap) {
         this.buildPromiseResolved = false;
         try {
-            const keymapPath = await invoke('create_keymap_path', {keyboardName: keyboardName});
+            const keymapPath: string = await invoke('create_keymap_path', {keyboardName: keyboardName});
             this.keymapInput.value = keymapPath;
             if (this.buildPromiseStopping) return;
             await this.enableBuildListeners();
@@ -110,7 +129,9 @@ export class QMKBuild extends QMKElement {
             this.successfulKeymap();
             if (this.buildPromiseStopping) return;
             const buildCommand = await invoke('start_flash', {keyboard: keyboardName});
-            this.buildCommandTitle.textContent += buildCommand;
+            if (this.buildCommandTitle.textContent) {
+                this.buildCommandTitle.textContent += buildCommand;
+            }
         } catch (err) {
             this.setBuildFinished();
             this.emitEvent('qmk-error', err);
@@ -129,7 +150,9 @@ export class QMKBuild extends QMKElement {
 
     async enableBuildListeners() {
         this.buildOutputListener = await listen('build_output', (event) => {
-            this.buildTextArea.textContent += event.payload;
+            if (this.buildTextArea.textContent !== null) {
+                this.buildTextArea.textContent += event.payload;
+            }
             this.buildTextArea.scrollTop = this.buildTextArea.scrollHeight;
         });
         this.buildStatusListener = await listen('build_finished', (event) => {
@@ -137,11 +160,13 @@ export class QMKBuild extends QMKElement {
             if (status) {
                 this.successfulFlash();
             } else {
-               this.failedFlash();
+                this.failedFlash();
             }
             this.setBuildFinished();
             this.buildTextArea.scrollTop = this.buildTextArea.scrollHeight;
-            this.emitEvent('exit-build');
+            if (status) {
+                this.emitEvent('exit-build', {});
+            }
         });
     }
 
@@ -184,7 +209,7 @@ export class QMKBuild extends QMKElement {
         if (this.buildFinished) {
             this.disableBuildListeners();
             this.initElements();
-            this.emitEvent('exit-build');
+            this.emitEvent('exit-build', {});
         } else {
             this.stopBuild();
         }

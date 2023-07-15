@@ -3,8 +3,8 @@ export enum EditMode {
     KEY_EDIT_TEXT = 'Text'
 }
 
-type Layer = string[];
-type Keymap = Layer[];
+export type Layer = string[];
+export type Keymap = Layer[];
 
 export const padKeymap = (layers: Keymap, layoutLenght: number) => {
     for (let i = 0; i < layers.length; i ++) {

@@ -8,7 +8,7 @@ import {QMKSettings} from "@/qmk-settings.js";
 import {open, save} from "@tauri-apps/api/dialog";
 import {QMKImport} from "@/qmk-import.js";
 import {insertEmptyLayer, padKeymap} from "@/lib/keymap.ts";
-import {QMKBuild} from "@/qmk-build.js";
+import {QMKBuild} from "@/qmk-build.ts";
 
 document.body.insertAdjacentHTML('afterbegin',
 // language=HTML
